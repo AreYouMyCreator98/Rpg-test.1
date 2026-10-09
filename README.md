@@ -2,15 +2,17 @@
 
 A procedural 3D browser action RPG, now with a village, shops, six quests, a cave dungeon, and stamina-based combat. V2 extends the original forest, hero, equipment, goblins and Goblin Chief encounter.
 
-**Game files:** `index.html` and `living-world.js`. Keep both together. No build, backend, account or API key is required. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
+**Game files:** `index.html`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
 
 ## GitHub Pages
 
-Upload **both game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The repository also includes the **Publish Realm of the Fallen** Actions workflow. It publishes just the two static game files when they change on `main`, and can be run manually from the Actions tab. It uses GitHub’s official Pages actions; it does not compile the game or install application dependencies.
+Upload **all five game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The repository also includes the **Publish Realm of the Fallen** Actions workflow. It publishes just the five static game files when they change on `main`, and can be run manually from the Actions tab. It uses GitHub’s official Pages actions; it does not compile the game or install application dependencies.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
 `README.md` and `tests/` are documentation and optional development checks, not runtime dependencies. The original playable version is preserved by Git tag **`v1.0-pre-living-world`**, pointing to commit `fbb002b`. Restoring that tag's `index.html` restores V1. Keep your browser's original save backup if rolling back; V1 cannot interpret new V2 equipment variants.
+
+The working V2 baseline is preserved by tag **`v2.0-pre-multiplayer`** (`645f83e`).
 
 ## The living village
 
@@ -97,3 +99,37 @@ node tests/v2-navigation.cjs
 `?test` enables deterministic stepping and inspection hooks for the automated tests; normal URLs do not expose them. Tests set up fixtures to isolate economy, quest and combat cases, then exercise the real transaction, item, collision, animation and damage paths. Touch tests dispatch Chromium multitouch events.
 
 See [VALIDATION.md](VALIDATION.md) for tested outcomes and remaining limitations. Physical Android/iPhone performance, Safari and hardware FPS targets require device testing; headless software WebGL does not establish those results.
+
+## Multiplayer: private rooms and public worlds
+
+Choose **Play together** on the title screen. Up to four players can join a private
+invite-code room or browse public worlds. Movement, equipment, sword attacks,
+enemy AI, bosses, ground loot, chests and the cave gate are shared. Nearby players
+earn kill XP; personal shops and quests remain available.
+
+This mode uses **Supabase**. Follow [the step-by-step setup](supabase/SETUP.md) to
+create a free-plan project, enable anonymous sign-in, run the SQL and configure
+the browser-safe URL/publishable key. The static game still needs no build process;
+include `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js` alongside
+the existing two game files. The Pages workflow publishes all five automatically.
+Supabase's pinned SDK loads from jsDelivr only when connecting to multiplayer.
+
+The room creator's browser simulates the shared world. The host must keep the tab
+active; there is no host migration. Menus do not pause the world. Rooms use fresh,
+session-only characters and never overwrite solo saves. Leaving restores solo
+progress. This is casual co-op, with client-reported movement/equipment, not an
+MMO or a cheat-resistant competitive service. Public/private room authorization
+is enforced with Supabase RPC/RLS and per-sender private Realtime topics.
+
+Additional optional development tests:
+
+```sh
+# Requires @electric-sql/pglite@0.3.14, only for testing SQL locally.
+node tests/multiplayer-sql.cjs
+node tests/multiplayer-browser.cjs
+```
+
+`PGLITE_PATH` can point to an externally installed PGlite package. The SQL test
+runs actual PostgreSQL functions and RLS in PGlite. The browser suite uses two
+clients with a deterministic Supabase service double; it tests the real transport
+adapter/game integration but does **not** establish connectivity to a live project.

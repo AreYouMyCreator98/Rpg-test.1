@@ -27,3 +27,41 @@ Physical Android and iPhone devices, Safari/WebKit, audible sound quality on dev
 ## Recovery
 
 The original working V1 is retained at tag `v1.0-pre-living-world`. V2 migrates the original LocalStorage key in place and keeps the first V1 payload in `realm-fallen-save-v1-backup` when available. New Game deliberately replaces current progress only after confirmation.
+
+## Multiplayer update — 9 October 2026
+
+The Supabase-backed co-op integration has been validated locally. **No live
+Supabase project has been configured or tested yet.** The user is creating one.
+The configured project URL and publishable key are intentionally blank.
+
+- `tests/multiplayer-sql.cjs` passed using PGlite 0.3.14 (PostgreSQL): SQL
+  installation and reinstallation, anonymous-user identities, private-room hiding,
+  bad-code rejection, four-member capacity, duplicate-membership rejection,
+  per-sender topic authorization, actual RLS rejection of a forged host write,
+  leave/host-end handling, public discovery and stale-room expiry. Auth and
+  Realtime schemas are test fixtures; hosted Supabase integration remains untested.
+- `tests/multiplayer-browser.cjs` passed with two browser clients and the real
+  `supabase-rooms.js` adapter against a deterministic Supabase SDK service double:
+  private creation/code join, public discovery/join, remote movement/equipment,
+  atomic contested loot pickup, remote sword damage, AI chasing and damaging a
+  guest, shared death/XP/drops, cave key and gate, Guardian attacking a guest while
+  the host's menu is open, host departure, solo-save restoration and cleanup.
+  No browser JavaScript exceptions were captured. Rendering is throttled in this
+  suite to keep software-GPU load from obscuring the gameplay/transport checks;
+  it does not measure network latency or hardware performance.
+- The actual pinned Supabase JS **2.117.3** browser SDK and its eight dependencies
+  were retrieved over certificate-verified HTTPS from jsDelivr. Chromium imported
+  them, created a client and initialized its private-channel API successfully.
+  This checks module compatibility, not connectivity to a real Supabase project.
+- All four original V2 suites passed during integration. The combat suite passed
+  again after the Guardian lunge correction and shared-world loop changes. The
+  correction stops the lunge short of its target instead of overshooting contact.
+- Solo saves remain in `realm-fallen-save-v1`. Co-op does not write that key;
+  tests verified its exact stored value stayed unchanged during the room session.
+  Leaving resumes the saved solo character. Co-op progression is session-only.
+
+Still required: apply `supabase/multiplayer.sql` to the actual project, enable
+anonymous sign-in, configure the browser-safe URL/key, and test private-channel
+RLS, two physical devices, public listings, latency and disconnection behavior
+against that hosted service. Four-client rendering, physical iOS/Android/Safari,
+provider quotas, real-world packet loss and mobile FPS have not been validated.
