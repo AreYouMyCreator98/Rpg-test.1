@@ -118,7 +118,7 @@ export function installLivingWorld(api) {
   }
   function portrait(n){return `<svg class="portrait" viewBox="0 0 80 90" aria-hidden="true"><path fill="#${n.color.toString(16)}" d="M7 90V62L25 50H55L73 62V90Z"/><path fill="#d4a676" d="M23 18L40 10L57 18V43L48 56H31L23 43Z"/><path fill="#67503a" d="M20 27V16L38 5L59 16V27L42 19Z"/><path fill="#273f32" d="M29 30H34V35H29ZM46 30H51V35H46Z"/><path stroke="#7d543b" d="M34 45H46"/></svg>`}
   function dialogue(n) {
-    vendor=n;api.modal(n.name+' · '+n.role,`<div class="dialogue-intro">${portrait(n)}<p>${n.id==='smith'?'A good blade grows with its bearer. Bring me coins, goblin teeth, and moonstones; I will temper your steel.':n.id==='merchant'?'Welcome home, traveller. I trade armour and healing draughts, and pay fairly for trophies from the wilds.':'Our village needs you. The forest grows restless, and something ancient stirs beneath the hills.'}</p></div><div class="menu-buttons">${n.id!=='elder'?'<button id="open-shop" class="primary">'+(n.id==='smith'?'Browse swords & upgrades':'Buy & sell goods')+'</button>':''}<button id="npc-quests">Ask about village work</button><button id="npc-leave">Farewell</button></div>`,'dialogue');
+    vendor=n;api.modal(n.name+' · '+n.role,`<div class="dialogue-intro">${portrait(n)}<p>${n.intro|| (n.id==='smith'?'A good blade grows with its bearer. Bring me coins, goblin teeth, and moonstones; I will temper your steel.':n.id==='merchant'?'Welcome home, traveller. I trade armour and healing draughts, and pay fairly for trophies from the wilds.':'Our village needs you. The forest grows restless, and something ancient stirs beneath the hills.')}</p></div><div class="menu-buttons">${['smith','merchant'].includes(n.id)?'<button id="open-shop" class="primary">'+(n.id==='smith'?'Browse swords & upgrades':'Buy & sell goods')+'</button>':''}<button id="npc-quests">Ask about village work</button><button id="npc-leave">Farewell</button></div>`,'dialogue');
     if($('open-shop'))$('open-shop').onclick=()=>shop(n);
     $('npc-quests').onclick=()=>questDialogue(n);$('npc-leave').onclick=api.closeModal;
   }
@@ -155,6 +155,8 @@ export function installLivingWorld(api) {
   const marker=document.createElement('div');marker.id='quest-marker';$('hud').append(marker);
   const journalButton=document.createElement('button');journalButton.id='journal-button';journalButton.textContent='J · Journal / Map';journalButton.onclick=()=>journal();document.querySelector('.quest').append(journalButton);
   function progress(q) {
+    if(q.enemyFamily)return data.quests[q.id]?.count||0;
+    if(q.bossFamily)return data.frontierBosses.includes(q.bossFamily)?1:0;
     if(q.id==='scouts')return data.quests.scouts.count;
     if(q.id==='teeth')return Math.min(10,quantity('tooth'));
     if(q.id==='supplies')return quantity('supplies')?1:0;
@@ -196,6 +198,7 @@ export function installLivingWorld(api) {
     }$('journal-map').onclick=worldMap;
   }
   function worldMap() {
+    if(api.getFrontier?.())return api.getFrontier().worldMap();
     const points=[...api.poi,{name:'Hollowroot Cave',x:-46,z:36}];
     const px=x=>(x+95)*2,py=z=>(z+100)*2;
     const labels=points.map((p,i)=>{const known=i===0||api.visited.includes(i)||i===5&&data.caveDiscovered;return `<g><circle cx="${px(p.x)}" cy="${py(p.z)}" r="5" fill="${known?'#edca80':'#879785'}"/><text x="${px(p.x)+8}" y="${py(p.z)-7}" fill="${known?'#f4e3b6':'#a7b19c'}">${known?(i===0?'Wanderer’s Village':p.name):'Undiscovered'}</text></g>`}).join('');
@@ -204,9 +207,10 @@ export function installLivingWorld(api) {
     api.modal('The Emerald Wilds',`<div class="eyebrow">North ↑ · ${cave?'You are in Hollowroot Cave':'Your discoveries'}</div><svg class="world-map" viewBox="0 0 440 420" role="img" aria-label="Map of the forest, village, river, ruins and cave"><rect width="440" height="420" rx="12" fill="#273f34"/><polyline points="${river}" stroke="#72b9bb" stroke-width="9" fill="none"/><polyline points="${[[0,64],[-23,36],[-14,18],[-14,-4],[28,-23],[11,-43],[-8,-66]].map(([x,z])=>px(x)+','+py(z)).join(' ')}" stroke="#b6a477" stroke-width="3" fill="none"/>${labels}<circle cx="${px(cave?-46:p.x)}" cy="${py(cave?36:p.z)}" r="5" fill="#fff" stroke="#e9c579" stroke-width="2"/></svg><p class="map-note">White: you · Gold: discovered · Grey: uncharted. Follow the trail north; the cave branches west from Whispering Forest.</p><button id="map-journal">Quest journal</button>`,'map');$('map-journal').onclick=journal;
   }
   function onKill(e,spawnLoot=true) {
+    if(e.family){if(e.isBoss){if(!data.frontierBosses.includes(e.family))data.frontierBosses.push(e.family)}else{const q=data.quests['hunt_'+e.family];if(q?.status==='active')q.count=Math.min(4,q.count+1)}}
     if(e.type===0&&data.quests.scouts.status==='active')data.quests.scouts.count=Math.min(5,data.quests.scouts.count+1);
     // A tooth is real loot; collecting or turning it in still requires interaction.
-    if(spawnLoot&&e.type!==3)api.drop('tooth',e.root.position.x-.4,e.root.position.z+.4);
+    if(spawnLoot&&e.type!==3&&!e.family)api.drop('tooth',e.root.position.x-.4,e.root.position.z+.4);
   }
   function updateQuestHUD() {
     if(!data.quests)return;let q=questDefinitions.find(q=>q.id===data.tracked&&data.quests[q.id].status==='active');
@@ -347,9 +351,10 @@ export function installLivingWorld(api) {
   function restore(saved) {
     const old=saved?.living||{};data={...old,quests:{},tracked:typeof old.tracked==='string'?old.tracked:'',suppliesRecovered:!!old.suppliesRecovered};
     for(const q of questDefinitions){const p=old.quests?.[q.id];data.quests[q.id]={status:['available','active','claimed'].includes(p?.status)?p.status:'available',count:Number.isFinite(p?.count)?Math.max(0,Math.min(q.goal,p.count)):0}}
+    data.frontierBosses=Array.isArray(old.frontierBosses)?[...new Set(old.frontierBosses.filter(id=>questDefinitions.some(q=>q.bossFamily===id)))]:[];
     vendor=null;data.area=old.area==='cave'?'cave':'world';data.guardianDead=old.guardianDead===true;data.gateOpen=old.gateOpen===true;data.keyChest=old.keyChest===true;data.hiddenChest=old.hiddenChest===true;
   }
   restore(null);
   function serialize(){return data}
-  return {enterCave,exitCave,returnToVillage,caveBlocked,afterStart,guardian,guardianDefeated,guardianAttack,guardianTell,cavePatrols,interact,hint,update,restore,serialize,onKill,updateQuestHUD,journal,worldMap,acceptQuest,claimQuest,questDialogue,questDefinitions,progress,purchase,sell,upgrade,upgradeCost,shop,dialogue,npcs,buildings,quantity};
+  return {registerNPC:npc,enterCave,exitCave,returnToVillage,caveBlocked,afterStart,guardian,guardianDefeated,guardianAttack,guardianTell,cavePatrols,interact,hint,update,restore,serialize,onKill,updateQuestHUD,journal,worldMap,acceptQuest,claimQuest,questDialogue,questDefinitions,progress,purchase,sell,upgrade,upgradeCost,shop,dialogue,npcs,buildings,quantity};
 }
