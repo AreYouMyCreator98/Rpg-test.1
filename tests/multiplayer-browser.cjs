@@ -12,7 +12,7 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
 }}`;
 (async()=>{
  const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader','--disable-background-timer-throttling','--disable-renderer-backgrounding']});
- const rooms=new Map(),members=new Map(),subscriptions=new Map(),errors=[];let serial=0;
+ const rooms=new Map(),members=new Map(),subscriptions=new Map(),errors=[];let serial=0,delayPage=null,releaseState=null,stateWaiting=null;
  function roomState(uid){const r=rooms.get(members.get(uid));return r?{...r,players:[...r.players]}:null}
  try{
  const context=await browser.newContext({viewport:{width:960,height:700}});
@@ -22,7 +22,7 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  await context.exposeBinding('__roomRpc',({page},uid,name,args)=>{
   if(name==='realm_create_room'){if(members.has(uid))throw Error('Already joined');const code=String(++serial).padStart(16,'0'),r={id:crypto.randomUUID(),code,host:uid,public:args.is_public,name:args.player_name+'’s world',players:[{id:uid,name:args.player_name}]};rooms.set(code,r);members.set(uid,code);return roomState(uid)}
   if(name==='realm_join_room'){const r=rooms.get(args.invite_code);if(!r)throw Error('Room not found');if(r.players.length>=4)throw Error('Room full');r.players.push({id:uid,name:args.player_name});members.set(uid,r.code);return roomState(uid)}
-  if(name==='realm_room_state')return roomState(uid);
+  if(name==='realm_room_state'){if(page===delayPage){delayPage=null;const stale=roomState(uid);return new Promise(resolve=>{releaseState=()=>resolve(stale);stateWaiting?.()})}return roomState(uid);}
   if(name==='realm_list_rooms')return [...rooms.values()].filter(r=>r.public).map(r=>({code:r.code,name:r.name,count:r.players.length}));
   if(name==='realm_leave_room'){const r=rooms.get(members.get(uid));if(r){if(r.host===uid){rooms.delete(r.code);for(const p of r.players)members.delete(p.id)}else{r.players=r.players.filter(p=>p.id!==uid);members.delete(uid)}}return null}
   throw Error('Unknown RPC '+name);
@@ -75,7 +75,7 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  await a.evaluate(()=>__realm.net.lobby());await a.click('#create-public');await a.waitForFunction(()=>__realm.net.active);
  await b.setViewportSize({width:390,height:844});await b.evaluate(()=>__realm.net.lobby());await b.locator('#room-name').fill('');await b.locator('#room-name').pressSequentially('Mira');assert.equal(await b.evaluate(()=>__realm.panel),'multiplayer');await b.click('#refresh-rooms');await b.waitForSelector('#room-list button');await b.click('#room-list button');await b.waitForFunction(()=>__realm.net.active);
  assert.equal(await b.evaluate(()=>__realm.net.code),await a.evaluate(()=>__realm.net.code));await b.evaluate(()=>__realm.net.lobby());assert(await b.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await b.screenshot({path:process.env.MULTIPLAYER_SCREENSHOT||'/tmp/realm-multiplayer-mobile.png'});
- await b.evaluate(()=>__realm.net.leave('Done'));await a.evaluate(()=>__realm.net.leave('Done'));
+ const waiting=new Promise(resolve=>{stateWaiting=resolve});delayPage=b;await waiting;await b.evaluate(()=>__realm.net.leave('Done'));releaseState();await b.waitForTimeout(500);await b.evaluate(()=>__realm.net.lobby());await b.click('#refresh-rooms');await b.waitForSelector('#room-list button');await b.click('#room-list button');await b.waitForFunction(()=>__realm.net.active);await b.evaluate(()=>__realm.net.leave('Done'));await a.evaluate(()=>__realm.net.leave('Done'));
  assert.deepEqual(errors,[]);console.log('PASS host departure restores solo, public discovery/join, leave cleanup, no browser exceptions');
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
