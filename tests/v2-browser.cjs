@@ -1,0 +1,44 @@
+// Optional developer tests. The game itself has no Node or build dependency.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const {chromium} = require(process.env.PLAYWRIGHT_PATH || 'playwright');
+(async () => {
+ const browser = await chromium.launch({executablePath:process.env.CHROMIUM_PATH || '/usr/bin/chromium',headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader']});
+ try {
+ const page = await browser.newPage({viewport:{width:960,height:640}}), errors=[];
+ page.on('pageerror', e=>errors.push(e.message));
+ // Optional certificate-verified copy for proxy-constrained test environments.
+ if(process.env.THREE_TEST_MODULE) await page.route('https://cdn.jsdelivr.net/**',r=>r.fulfill({path:process.env.THREE_TEST_MODULE,contentType:'application/javascript'}));
+ await page.addInitScript(()=>localStorage.setItem('realm-fallen-settings',JSON.stringify({quality:'low',sound:false})));
+ await page.goto((process.env.GAME_URL || 'http://127.0.0.1:8000/')+'?test');
+ await page.waitForFunction(()=>window.__realm);
+ await page.click('#play');
+ await page.evaluate(()=>__realm.setPosition(-7,57));await page.keyboard.press('KeyE');
+ await page.waitForSelector('#open-shop');await page.click('#open-shop');
+ assert(await page.evaluate(()=>__realm.living.purchase('w1')));
+ assert.equal(await page.evaluate(()=>__realm.player.coins),15);
+ assert.equal(await page.evaluate(()=>__realm.living.purchase('w1')),false);
+ await page.evaluate(()=>{__realm.player.weapon='w1';__realm.equipVisual();__realm.player.coins=100;__realm.addItem('tooth',2)});
+ assert(await page.evaluate(()=>__realm.living.upgrade('w1')));
+ assert.equal(await page.evaluate(()=>__realm.player.weapon),'w1~1');
+ assert.equal(await page.evaluate(()=>__realm.living.quantity('w1')),0);
+ assert.equal(await page.evaluate(()=>__realm.living.quantity('w1~1')),1);
+ assert.equal(await page.evaluate(()=>__realm.player.coins),65);
+ assert.equal(await page.evaluate(()=>__realm.living.quantity('tooth')),0);
+ assert.equal(await page.evaluate(()=>__realm.living.upgrade('w1')),false);
+ await page.evaluate(()=>{__realm.closeModal();__realm.setPosition(8,54)});await page.keyboard.press('KeyE');await page.click('#open-shop');
+ await page.evaluate(()=>__realm.addItem('gem'));
+ assert(await page.evaluate(()=>__realm.living.sell('gem')));
+ assert.equal(await page.evaluate(()=>__realm.living.sell('gem')),false);
+ assert.equal(await page.evaluate(()=>__realm.living.sell('w1~1')),false);
+ assert(await page.evaluate(()=>__realm.living.purchase('potion')));
+ console.log('PASS village dialogues, shop debits, upgrade identity, duplicate purchase/sale protection, equipped-sale protection');
+ await page.evaluate(()=>__realm.save());await page.reload();await page.waitForFunction(()=>window.__realm);await page.click('#continue');
+ assert.equal(await page.evaluate(()=>__realm.player.weapon),'w1~1');
+ assert.equal(await page.evaluate(()=>__realm.readSave().version),2);
+ console.log('PASS V2 inventory save/load');
+ await page.evaluate(()=>{__realm.closeModal();__realm.setPosition(0,64)});
+ await page.screenshot({path:'/tmp/realm-tests/v2-village.png'});
+ assert.deepEqual(errors,[]);
+ } finally {await browser.close()}
+})().catch(e=>{console.error(e);process.exitCode=1});
