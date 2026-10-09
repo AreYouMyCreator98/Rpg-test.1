@@ -1,7 +1,7 @@
 // Recover older cached HTML before it can pair its obsolete HUD with this module.
 // This module must retain this guard while pre-design-system pages remain cached.
-if(!document.getElementById('gold-counter')){
- const fresh=new URL(location.href),release='realm-release-20261010-2';
+if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-cinematic-20261010-1"]')){
+ const fresh=new URL(location.href),release='realm-cinematic-20261010-1';
  if(fresh.searchParams.get('v')!==release){fresh.searchParams.set('v',release);location.replace(fresh.href)}
  else{document.body.textContent='The game update could not load. Reopen the game to retry. Your saved journey is safe.'}
  await new Promise(()=>{}); // Navigation replaces this document; never initialize mixed UI.
@@ -30,7 +30,7 @@ export const ROADS=[
  [[-20,-235],[40,-245],[113,-210]]
 ];
 export function roadDistance(x,z){let best=Infinity;for(const r of ROADS)for(let i=1;i<r.length;i++){const [ax,az]=r[i-1],[bx,bz]=r[i],dx=bx-ax,dz=bz-az,t=Math.max(0,Math.min(1,((x-ax)*dx+(z-az)*dz)/(dx*dx+dz*dz)));best=Math.min(best,Math.hypot(x-ax-t*dx,z-az-t*dz))}return best}
-export function terrainColor(x,z){return z<-260?0x99adb0:x>75&&z<-150?0x647565:x<-215&&z<-25?0x7d8773:x<-100&&z>85?0x849657:0x548b60}
+export function terrainColor(x,z){return z<-260?0x99adb0:x>75&&z<-150?0x647565:x<-215&&z<-25?0x7d8773:x<-100&&z>85?0x849657:0x3c7750}
 export function extraHeight(x,z){const blend=Math.max(0,Math.min(1,(Math.max(Math.abs(x),Math.abs(z))-85)/45));return blend*(3*Math.sin(x*.018)*Math.cos(z*.027)+14*Math.exp(-((x+65)**2+(z+295)**2)/4200))}
 
 export function installFrontier(api){
@@ -42,7 +42,7 @@ export function installFrontier(api){
  function house(x,z,color,large=false){const y=ground(x,z),g=new THREE.Group();g.position.set(x,y,z);root.add(g);const w=large?8:5,d=large?7:4,h=large?5:3;
   prop('box',0xc0b58f,0,h/2,0,w,h,d,g);const gable=new THREE.BufferGeometry();const vertices=[];for(const zz of [-d/2,d/2])vertices.push(-w/2,h,zz,w/2,h,zz,0,h+1.6,zz);gable.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));gable.computeVertexNormals();g.add(new THREE.Mesh(gable,mat(0xc0b58f,{side:THREE.DoubleSide})));prop('box',0x738177,0,.25,0,w+.4,.5,d+.4,g);
   for(const s of [-1,1]){const roof=prop('box',color,s*w*.26,h+.8,0,w*.62,.25,d+1,g);roof.rotation.z=-s*.5;for(const xx of [-w*.45,0,w*.45])prop('box',0x604936,xx,h/2,s*d*.505,.14,h,.14,g);for(const xx of [-w*.3,w*.3])prop('box',mat(0xffd998,{emissive:0x7a481b,emissiveIntensity:.3}),xx,h*.6,s*(d/2+.04),.7,.9,.04,g)}
-  prop('box',0x544936,0,1,d/2+.05,1.2,2,.1,g);api.obstacle(x,z,large?5.5:3);structures.push({x,z,w,d,color:'#aaa98e',kind:'house'});return g;
+  prop('box',0x544936,0,1,d/2+.05,1.2,2,.1,g);api.obstacle(x,z,large?5.5:3);structures.push({x,z,w,d,color:'#aaa98e',kind:'house',g});return g;
  }
  function tower(x,z){let y=ground(x,z);prop('cyl',0x85938c,x,y+4,z,2.5,8,2.5);prop('cone',0x556e88,x,y+9.2,z,3,3,3);api.obstacle(x,z,2.7);structures.push({x,z,w:5,d:5,color:'#c0c8b0',kind:'tower'})}
  for(const s of SETTLEMENTS){
@@ -72,7 +72,7 @@ export function installFrontier(api){
  // Spatially grouped instancing permits view-distance culling of a much larger forest.
  const chunks=new Map();for(let i=0;i<3400;i++){const x=BOUNDS.left+random(i*3)*510,z=BOUNDS.top+random(i*3+1)*520;if(Math.abs(x)<97&&Math.abs(z)<102||api.pathDist(x,z)<5||Math.abs(z-api.riverZ(x))<9||SETTLEMENTS.some(s=>Math.hypot(x-s.x,z-s.z)<(s.kind==='city'?48:23))||FAMILIES.some(f=>Math.hypot(x-f.x,z-f.z)<18||Math.hypot(x-f.bx,z-f.bz)<15))continue;
   const key=Math.floor(x/48)+','+Math.floor(z/48);if(!chunks.has(key))chunks.set(key,{x:Math.floor(x/48)*48+24,z:Math.floor(z/48)*48+24,trunk:[],leaf:[],rock:[]});const chunk=chunks.get(key),y=ground(x,z),h=4+random(i*3+2)*4;
-  if(z<-263||random(i+8000)>.8){chunk.rock.push([x,y+.7,z,1,.9,1.2]);vegetation.push({x,z,rock:true})}else{chunk.trunk.push([x,y+h*.35,z,.22,h*.7,.22]);chunk.leaf.push([x,y+h*.72,z,2,h*.7,2]);api.obstacle(x,z,.5);vegetation.push({x,z})}
+  if(z<-263||random(i+8000)>.8){chunk.rock.push([x,y+.7,z,1,.9,1.2]);vegetation.push({x,z,rock:true})}else{chunk.trunk.push([x,y+h*.35,z,.22,h*.7,.22]);for(let j=0;j<3;j++)chunk.leaf.push([x,y+h*(.45+j*.23),z,2.15-j*.43,h*.52,2.15-j*.43]);api.obstacle(x,z,.5);vegetation.push({x,z})}
  }
  const chunkMeshes=[];for(const c of chunks.values())for(const [shape,color,list] of [['cyl',0x65503b,c.trunk],['cone',c.z<-230?0x527d75:0x37724d,c.leaf],['orb',0x82978e,c.rock]]){if(!list.length)continue;const m=api.instance(shape,color,list);root.add(m);chunkMeshes.push({m,x:c.x,z:c.z})}
  // Populate enemy families with articulated bodies, not recoloured goblins.

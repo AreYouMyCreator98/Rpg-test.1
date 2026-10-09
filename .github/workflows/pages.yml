@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - index.html
+      - visual-world.js
       - ui.css
       - ui.js
       - frontier.js

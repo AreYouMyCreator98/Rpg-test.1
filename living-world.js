@@ -54,7 +54,7 @@ export function installLivingWorld(api) {
     }
     const canvas=document.createElement('canvas');canvas.width=512;canvas.height=96;const ctx=canvas.getContext('2d');ctx.fillStyle='#5b4530';ctx.fillRect(0,0,512,96);ctx.strokeStyle='#cfb477';ctx.strokeRect(5,5,502,86);ctx.fillStyle='#f2dcad';ctx.font='30px Georgia';ctx.textAlign='center';ctx.fillText(label,256,57);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
     const sign=new THREE.Mesh(new THREE.PlaneGeometry(2.8,.53),new THREE.MeshBasicMaterial({map:texture}));sign.position.set(0,2.75,2.4);g.add(sign);
-    obstacle(x,z,3.25); buildings.push({x,z,label});
+    obstacle(x,z,3.25); buildings.push({x,z,label,g});
   }
   building(-12,65,0x805b48,'Ember & Iron'); building(12,72,0x466764,'The Wayfarer Tavern');
   building(-14,55,0x647656,'Weaver’s Cottage'); building(14,55,0x976a4d,'Village Storehouse');
@@ -278,9 +278,9 @@ export function installLivingWorld(api) {
   function setArea(area) {
     data.area=area;const inside=area==='cave';cave.visible=inside;outsideRoots.forEach(o=>o.visible=!inside);
     npcs.forEach(n=>n.root.visible=!inside);caveLights.forEach(l=>l.visible=inside);
-    scene.background.setHex(inside?0x172730:0x9dc5b7);scene.fog.color.copy(scene.background);scene.fog.density=inside?.027:api.settings.quality==='low'?.017:.012;
-    api.sun.intensity=inside?.55:3.1;api.sun.castShadow=!inside;
-    scene.children.filter(o=>o.isHemisphereLight).forEach(l=>l.intensity=inside?1.4:2.1);
+    scene.background.setHex(inside?0x172730:0x9dbab0);scene.fog.color.copy(scene.background);scene.fog.density=inside?.027:api.settings.quality==='low'?.0095:.0075;
+    api.sun.intensity=inside?.55:3.35;api.sun.castShadow=!inside;
+    scene.children.filter(o=>o.isHemisphereLight).forEach(l=>l.intensity=inside?1.4:1.25);
     for(const e of api.enemies){e.label.style.display='none';e.root.visible=e.hp>0&&!!e.cave===inside}
     tell.visible=false;
   }
