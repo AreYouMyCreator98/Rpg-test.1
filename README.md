@@ -2,17 +2,21 @@
 
 A procedural 3D browser action RPG with a continuous expanded overworld, five settlements, sixteen quests, seven bosses, a cave dungeon and optional four-player Supabase co-op. The original forest, hero, equipment, goblins, village and Goblin Chief remain playable.
 
-**Game files:** `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
+**Game files:** `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
 
 ## GitHub Pages
 
-Upload **all six game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The repository also includes the **Publish Realm of the Fallen** Actions workflow. It publishes just the six static game files when they change on `main`, and can be run manually from the Actions tab. It uses GitHub’s official Pages actions; it does not compile the game or install application dependencies.
+Upload **all eight game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The repository also includes the **Publish Realm of the Fallen** Actions workflow. It publishes just the eight static game files when they change on `main`, and can be run manually from the Actions tab. It uses GitHub’s official Pages actions; it does not compile the game or install application dependencies.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
 `README.md` and `tests/` are documentation and optional development checks, not runtime dependencies. The original playable version is preserved by Git tag **`v1.0-pre-living-world`**, pointing to commit `fbb002b`. Restoring that tag's `index.html` restores V1. Keep your browser's original save backup if rolling back; V1 cannot interpret new V2 equipment variants.
 
 The working V2 baseline is preserved by tag **`v2.0-pre-multiplayer`** (`645f83e`).
+
+## Emerald glass interface
+
+The HUD follows the supplied portrait reference: separate gold pill, circular navigation, compass minimap/location pill, contextual talk action, illustrated equipment, concentric joystick and asymmetrical combat controls. Inventory, shops, journal, dialogue, settings and co-op menus use the same local design system. See [UI-DESIGN-SYSTEM.md](UI-DESIGN-SYSTEM.md) for tokens, SVG icons, integration points and validation limits. The previous interface is preserved by tag `v2.2-pre-reference-ui`.
 
 ## The Shattered Marches expansion
 
