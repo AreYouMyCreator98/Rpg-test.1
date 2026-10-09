@@ -2,17 +2,27 @@
 
 A procedural 3D browser action RPG with a continuous expanded overworld, five settlements, sixteen quests, seven bosses, a cave dungeon and optional four-player Supabase co-op. The original forest, hero, equipment, goblins, village and Goblin Chief remain playable.
 
-**Game files:** `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
+**Game files:** `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
 
 ## GitHub Pages
 
-Upload **all eight game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
+Upload **all nine game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
 `README.md` and `tests/` are documentation and optional development checks, not runtime dependencies. The original playable version is preserved by Git tag **`v1.0-pre-living-world`**, pointing to commit `fbb002b`. Restoring that tag's `index.html` restores V1. Keep your browser's original save backup if rolling back; V1 cannot interpret new V2 equipment variants.
 
 The working V2 baseline is preserved by tag **`v2.0-pre-multiplayer`** (`645f83e`).
+
+## Cinematic world presentation
+
+The existing world now has emerald woodland layers, wind-touched grass, wildflowers and ferns, worn paths, roof courses and timber bracing, framed glowing lanterns, a taller ruin skyline and a distant northern citadel. Warm sunlight, a cool sky gradient, filmic tone mapping, terrain ambient shading and soft character grounding work together without a full-screen postprocessing pass. Medium and High retain real-time sun shadows. Lantern glow is an inexpensive procedural halo, not screen-space bloom or an extra light per lantern.
+
+The existing hero rig has a pleated cape, faceted pauldrons, hair and ear detail, metal sword fittings and a heraldic shield. Equipment still recolours the same live armour/weapon materials. The camera tries a small shoulder adjustment around obstacles before increasing elevation; movement and the minimap follow its actual bearing.
+
+`visual-world.js` owns presentation only. Terrain uses the existing height function and is split into cullable tiles; building surfaces are batched; repeated scenery is spatially instanced; nearby grass has a simple vertex wind shader. Adaptive resolution steps down after sustained slow frames and recovers gradually, within the selected graphics preset. No combat timing, quest rewards, enemy counts, network protocol or save schema changed. The original is preserved as **`v2.3-pre-cinematic-world`**.
+
+This is a playable visual upgrade, not a claim of pixel-identical reproduction of the reference. Physical Samsung/iPhone frame rates and thermal behaviour still need device testing. See `VALIDATION.md` for actual checks and measured rendering workloads.
 
 ## Emerald glass interface
 
@@ -135,7 +145,7 @@ This mode uses **Supabase**. Follow [the step-by-step setup](supabase/SETUP.md) 
 create a free-plan project, enable anonymous sign-in, run the SQL and configure
 the browser-safe URL/publishable key. The static game still needs no build process;
 include `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js` alongside
-the existing two game files. The Pages workflow publishes all five automatically.
+the other game files. GitHub Pages serves the versioned runtime files directly from main.
 Supabase's pinned SDK loads from jsDelivr only when connecting to multiplayer.
 
 The room creator's browser simulates the shared world. The host must keep the tab

@@ -228,7 +228,7 @@ export function installVisualWorld(api) {
   function resetResolution(){scale=1;quality=api.settings.quality;sampleTime=samples=slow=fast=0;renderer.setPixelRatio(baseRatio());}
   // Hysteresis prevents oscillation. Resolution only; combat and input continue every RAF.
   function sampleFrame(seconds){
-    if(!api.active||document.hidden||seconds<=0||seconds>.25)return;
+    if(!api.active||document.hidden||seconds<=0||seconds>2)return;
     sampleTime+=seconds;samples++;if(sampleTime<3)return;
     const ms=sampleTime/samples*1000;sampleTime=samples=0;
     slow=ms>36?slow+1:0;fast=ms<23?fast+1:0;

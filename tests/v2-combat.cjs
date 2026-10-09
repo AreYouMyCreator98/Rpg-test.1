@@ -30,7 +30,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
  await page.evaluate(()=>{const g=__realm.living.guardian;g.hp=260;g.state='chase';g.stagger=0;g.root.position.set(299,0,-51);__realm.setPosition(299,-49);__realm.player.hp=160});
  for(let i=0;i<18;i++){if(await page.evaluate(()=>__realm.living.guardian.hp<=0))break;await page.evaluate(()=>__realm.startAttack());await step(48)}
  assert.equal(await page.evaluate(()=>__realm.living.guardian.hp),0);assert.equal(await page.evaluate(()=>__realm.state),'playing');console.log('PASS Guardian defeated through normal sword combat');
- await page.evaluate(()=>{__realm.setPosition(300,5);__realm.living.exitCave()});await page.click('#pause-button');await page.click('#reset-boss');await page.evaluate(()=>{__realm.setPosition(-8,-65);__realm.player.hp=__realm.player.maxHp});
+ await page.evaluate(()=>{__realm.setPosition(300,5);__realm.living.exitCave()});await page.click('#pause-touch');await page.click('#reset-boss');await page.evaluate(()=>{__realm.setPosition(-8,-65);__realm.player.hp=__realm.player.maxHp});
  for(let i=0;i<22;i++){if(await page.evaluate(()=>__realm.bossDead))break;await page.evaluate(()=>__realm.startAttack());await step(48)}assert.equal(await page.evaluate(()=>__realm.bossDead),true);console.log('PASS existing Goblin Chief still takes sword damage, dies and awards victory');
  assert.deepEqual(errors,[]);
  }finally{await browser.close()}
