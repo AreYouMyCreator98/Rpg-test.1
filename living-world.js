@@ -18,6 +18,7 @@ export function installLivingWorld(api) {
     if (!i.qty) api.player.inventory.splice(api.player.inventory.indexOf(i), 1);
     return true;
   };
+  items.caveblade={name:'Hollowroot Fang',type:'weapon',rarity:2,damage:24,icon:'⚔',color:0x70c8c7,desc:'A rare crystal-edged blade from the Guardian.'};
   // Upgrade variants represent individual items, never a global bonus to every copy.
   for (const id of Object.keys(items)) if (items[id].type === 'weapon') {
     items[id].base = id; items[id].upgrade = 0;
@@ -196,7 +197,7 @@ export function installLivingWorld(api) {
   function updateQuestHUD() {
     if(!data.quests)return;let q=questDefinitions.find(q=>q.id===data.tracked&&data.quests[q.id].status==='active');
     q??=questDefinitions.find(q=>data.quests[q.id].status==='active');
-    if(!q){marker.style.display='none';return}
+    if(data.area==='cave')$('location').textContent='Hollowroot Cave';if(!q){marker.style.display='none';return}
     $('objective').textContent=q.name+' · '+progress(q)+' / '+q.goal;
     let target=q.target;const complete=progress(q)>=q.goal;
     if(complete){const n=npcs.find(n=>n.id===q.giver);target=[n.root.position.x,n.root.position.z]}else if(q.id==='trail'&&api.visited.includes(2))target=[-8,-66];
@@ -204,10 +205,123 @@ export function installLivingWorld(api) {
     const dx=target[0]-hero.root.position.x,dz=target[1]-hero.root.position.z;
     marker.textContent='◆ '+(complete?'Return to '+npcs.find(n=>n.id===q.giver).name:q.name)+' · '+Math.round(Math.hypot(dx,dz))+'m';marker.style.display='block';
   }
-  function interact() {const n=nearestNPC();if(n){dialogue(n);return true}if(Math.hypot(hero.root.position.x-24,hero.root.position.z+29)<2.7&&!data.suppliesRecovered){if(api.enemies.some(e=>e.hp>0&&Math.hypot(e.root.position.x-24,e.root.position.z+29)<10)){api.toast('Clear the camp before recovering its supplies.');return true}data.suppliesRecovered=true;api.addItem('supplies');api.save();api.toast('Recovered the village supplies');return true}if(Math.hypot(hero.root.position.x-board.x,hero.root.position.z-board.z)<3){journal();return true}return false}
-  function hint(){if(!data.suppliesRecovered&&Math.hypot(hero.root.position.x-24,hero.root.position.z+29)<2.7)return 'Recover village supplies';const n=nearestNPC();return n?'Talk to '+n.name:Math.hypot(hero.root.position.x-board.x,hero.root.position.z-board.z)<3?'Read village noticeboard':null}
+  // A separate coordinate region shares the same renderer, hero, inventory and AI.
+  const cave=new THREE.Group();scene.add(cave);cave.visible=false;
+  const rooms=[[296,304,-34,8],[300,316,-24,-14],[288,312,-62,-32]];
+  const inFloor=(x,z)=>rooms.some(([l,r,t,b])=>x>=l&&x<=r&&z>=t&&z<=b);
+  function caveBlocked(x,z,r=.4) {
+    if(![[x-r,z-r],[x+r,z-r],[x-r,z+r],[x+r,z+r]].every(([x,z])=>inFloor(x,z)))return true;
+    if(!data.gateOpen&&Math.abs(z+31)<.4+r)return true;
+    return x+r>306&&z+r>-53&&z-r<-43;
+  }
+  const floorMatrices=[],rockMatrices=[],dummy=new THREE.Object3D();
+  for(let x=287;x<318;x+=2)for(let z=-63;z<10;z+=2)if(inFloor(x,z)){
+    dummy.position.set(x,-.2,z);dummy.scale.set(2,.4,2);dummy.rotation.set(0,0,0);dummy.updateMatrix();floorMatrices.push(dummy.matrix.clone());
+    for(const [dx,dz] of [[2,0],[-2,0],[0,2],[0,-2]])if(!inFloor(x+dx,z+dz)){
+      dummy.position.set(x+dx*.55,2.8,z+dz*.55);dummy.scale.set(dx?1.4:1.7,3.5,dx?1.7:1.4);dummy.rotation.set(0,Math.sin(x*z)*.3,0);dummy.updateMatrix();rockMatrices.push(dummy.matrix.clone());
+    }
+  }
+  const caveFloor=new THREE.InstancedMesh(api.geo.box,mat(0x465653),floorMatrices.length);floorMatrices.forEach((m,i)=>caveFloor.setMatrixAt(i,m));cave.add(caveFloor);
+  const caveRocks=new THREE.InstancedMesh(api.geo.orb,mat(0x46535a),rockMatrices.length);rockMatrices.forEach((m,i)=>caveRocks.setMatrixAt(i,m));cave.add(caveRocks);
+  mesh('box',mat(0x25353c,{side:THREE.DoubleSide}),302,8,-27,36,.3,76,cave);
+  const pool=mesh('box',mat(0x297f98,{emissive:0x103e58,emissiveIntensity:.4,transparent:true,opacity:.86,metalness:.3,roughness:.25}),309,.08,-48,6,.12,10,cave);
+  const torchPositions=[],torchFlames=[];
+  for(const [x,z] of [[296.7,3],[303.3,-9],[296.7,-23],[314.8,-20],[289.2,-38],[310.7,-57]]){
+    mesh('cyl',0x745333,x,1.6,z,.09,1,.09,cave);
+    const flame=mesh('cone',mat(0xffc379,{emissive:0xff8c2d,emissiveIntensity:1.7}),x,2.2,z,.22,.7,.22,cave);
+    torchPositions.push(new THREE.Vector3(x,2.3,z));torchFlames.push(flame);
+  }
+  const caveLights=Array.from({length:3},()=>{const l=new THREE.PointLight(0xffb775,10,18,1.6);l.visible=false;scene.add(l);return l});
+  for(let i=0;i<28;i++){
+    const x=i%2?289+Math.sin(i)*.6:311+Math.sin(i)*.4,z=-35-(i%14)*1.8;
+    const crystal=mesh('cone',mat(i%3?0x68c6bf:0x9878db,{emissive:i%3?0x246b70:0x462e78,emissiveIntensity:.9}),x,.8,z,.35,1.4+(i%3)*.4,.35,cave);crystal.rotation.z=Math.sin(i)*.4;
+  }
+  for(const x of [297,303])for(const z of [-4,-16,-28]){
+    mesh('box',0x756047,x,2,z,.22,4,.24,cave);mesh('box',0x756047,300,4,z,6.4,.22,.25,cave);
+  }
+  for(const x of [309,314])mesh('box',0x786449,x,1.5,-18,.2,3,.2,cave);
+  mesh('box',0x8f7855,311.5,2.7,-18,5.5,.16,2,cave);
+  for(let y=.3;y<2.7;y+=.4)mesh('box',0x997f5a,308.7,y,-17.4,.7,.09,.09,cave);
+  const gate=new THREE.Group();gate.position.set(300,0,-31);cave.add(gate);
+  for(let x=-3.8;x<4;x+=.7)mesh('box',0x7f9287,x,1.6,0,.13,3.2,.16,gate);
+  mesh('box',0x8e7d51,0,1.4,.13,.45,.55,.12,gate);
+  const dungeonChests=[];
+  function caveChest(x,z,key){const g=new THREE.Group();g.position.set(x,.5,z);cave.add(g);mesh('box',0x88603d,0,0,0,1.2,.8,.85,g);mesh('box',0xd3bc72,0,.05,.44,.2,.4,.05,g);dungeonChests.push({x,z,key,g})}
+  caveChest(313,-21,'keyChest');caveChest(290,-59,'hiddenChest');
+  const entranceY=ground(-46,35);obstacle(-49,35,1.8);obstacle(-43,35,1.8);obstacle(-46,33,1.4);
+  for(const x of [-49,-43])mesh('orb',0x687773,x,entranceY+2,35,2.3,3,2);
+  mesh('orb',0x748279,-46,entranceY+4.2,35,4,1.6,2.2);
+  mesh('box',0x152b2c,-46,entranceY+1.6,34.5,3.6,3.2,.12);
+  const outsideRoots=scene.children.filter(o=>o!==cave&&!caveLights.includes(o)&&o!==hero.root&&!api.enemies.some(e=>e.root===o)&&!o.isLight&&o!==api.sun.target);
+  const cavePatrols=[[300,-8,0],[301,-20,1],[309,-19,0],[298,-37,1]].map(p=>api.spawnEnemy(...p));cavePatrols.forEach(e=>e.cave=true);
+  const guardian=api.spawnEnemy(299,-51,3);Object.assign(guardian,{guardian:true,cave:true,name:'Varg',hp:260,maxHp:260,xp:110,dmg:22,speed:2});guardian.bodyMat.color.setHex(0x566e80);guardian.bladeMat.color.setHex(0x72c1c0);guardian.label.firstChild.textContent='Varg · Guardian';
+  const tell=new THREE.Mesh(new THREE.RingGeometry(.95,1,48),mat(0xf0b560,{emissive:0xe87d30,emissiveIntensity:.8,side:THREE.DoubleSide,transparent:true,opacity:.7}));tell.rotation.x=-Math.PI/2;tell.visible=false;scene.add(tell);
+  function setArea(area) {
+    data.area=area;const inside=area==='cave';cave.visible=inside;outsideRoots.forEach(o=>o.visible=!inside);
+    npcs.forEach(n=>n.root.visible=!inside);caveLights.forEach(l=>l.visible=inside);
+    scene.background.setHex(inside?0x172730:0x9dc5b7);scene.fog.color.copy(scene.background);scene.fog.density=inside?.027:api.settings.quality==='low'?.017:.012;
+    api.sun.intensity=inside?.35:3.1;api.sun.castShadow=!inside;
+    scene.children.filter(o=>o.isHemisphereLight).forEach(l=>l.intensity=inside?.85:2.1);
+    for(const e of api.enemies){e.label.style.display='none';e.root.visible=e.hp>0&&!!e.cave===inside}
+    tell.visible=false;
+  }
+  function enterCave() {
+    if(api.state!=='playing'||Math.hypot(hero.root.position.x+46,hero.root.position.z-38)>4)return false;
+    data.caveDiscovered=true;setArea('cave');api.setPosition(300,5);api.clearAction();api.save();api.toast('Discovered · Hollowroot Cave');return true;
+  }
+  function exitCave() {
+    if(Math.hypot(hero.root.position.x-300,hero.root.position.z-5)>3.5)return false;
+    setArea('world');api.setPosition(-46,39);api.clearAction();api.save();api.toast('The forest air welcomes you back.');return true;
+  }
+  function returnToVillage(){setArea('world');api.setPosition(0,64);api.clearAction()}
+  function caveInteract() {
+    if(data.area!=='cave'){if(Math.hypot(hero.root.position.x+46,hero.root.position.z-38)<3)return enterCave();return false}
+    if(Math.hypot(hero.root.position.x-300,hero.root.position.z-5)<3)return exitCave();
+    if(!data.gateOpen&&Math.abs(hero.root.position.z+31)<3&&Math.abs(hero.root.position.x-300)<4){
+      if(!quantity('cavekey')){api.toast('A key lies in the eastern scaffold chamber.');return true}
+      removeItem('cavekey',1);data.gateOpen=true;gate.visible=false;api.sound('loot');api.save();api.toast('The iron gate opens.');return true;
+    }
+    const c=dungeonChests.find(c=>!data[c.key]&&Math.hypot(hero.root.position.x-c.x,hero.root.position.z-c.z)<2.6);
+    if(c){if(api.enemies.some(e=>e.hp>0&&e.root.position.distanceTo(hero.root.position)<7)){api.toast('Defeat the nearby guards first.');return true}
+      data[c.key]=true;c.g.rotation.z=.16;
+      if(c.key==='keyChest')api.drop('cavekey',c.x-.7,c.z);else{api.drop('gem',c.x+.4,c.z,2);api.drop('coin',c.x-.4,c.z,55)}api.save();return true;
+    }return false;
+  }
+  function caveHint(){const p=hero.root.position;if(data.area!=='cave')return Math.hypot(p.x+46,p.z-38)<3?'Enter Hollowroot Cave':null;
+    if(Math.hypot(p.x-300,p.z-5)<3)return 'Return to Whispering Forest';
+    if(!data.gateOpen&&Math.abs(p.z+31)<3)return quantity('cavekey')?'Unlock the iron gate':'Gate locked · find the key';
+    if(dungeonChests.some(c=>!data[c.key]&&Math.hypot(p.x-c.x,p.z-c.z)<2.6))return 'Open cave chest';return null;
+  }
+  function guardianDefeated(e) {
+    if(data.guardianDead)return;data.guardianDead=true;tell.visible=false;
+    api.drop('caveblade',e.root.position.x+.7,e.root.position.z);api.drop('relic',e.root.position.x-.7,e.root.position.z);api.drop('coin',e.root.position.x,e.root.position.z+1,65);
+    api.sound('victory');api.toast('Varg has fallen • recover the ancient relic');
+  }
+  function guardianAttack(e,dt) {
+    const a=e.attack;a.t+=dt;const phase=a.t/a.duration,pattern=e.pattern%3;
+    if(!a.aim)a.aim=hero.root.position.clone().sub(e.root.position).setY(0).normalize();
+    api.face(e,Math.atan2(a.aim.x,a.aim.z),dt*2);api.animate(e,0,dt,a);
+    tell.visible=phase<.7;tell.position.copy(e.root.position);tell.position.y=.06;tell.scale.setScalar(pattern===2?4.3:pattern===0?3.6:2.4);tell.material.opacity=.25+Math.min(1,phase)*.6;
+    if(pattern===1&&phase>.5&&phase<.75)api.move(e,a.aim.x*dt*8,a.aim.z*dt*8);
+    if(phase>.67&&!e.hit){e.hit=true;const d=hero.root.position.clone().sub(e.root.position),range=pattern===2?4.3:pattern===0?3.6:2.6;
+      if(d.length()<range&&(pattern===2||d.normalize().dot(a.aim)>-.2))api.hurtPlayer(e.dmg*(pattern===2?1.3:1),e.root.position);
+      api.burst(e.root.position,0xdbb778,pattern===2?22:8);api.sound('heavy');
+    }
+    if(phase>=1){e.state='chase';e.cooldown=1.3;tell.visible=false}
+  }
+  function caveUpdate(time) {
+    gate.visible=!data.gateOpen;dungeonChests.forEach(c=>c.g.rotation.z=data[c.key]?.16:0);
+    if(data.area!=='cave'){tell.visible=false;return}
+    const nearest=[...torchPositions].sort((a,b)=>a.distanceToSquared(hero.root.position)-b.distanceToSquared(hero.root.position));
+    caveLights.forEach((l,i)=>{l.position.copy(nearest[i]);l.intensity=9+Math.sin(time*7+i)});
+    torchFlames.forEach((f,i)=>f.scale.y=.65+Math.sin(time*8+i)*.12);pool.position.y=.08+Math.sin(time*1.5)*.015;
+    if(guardian.state!=='attack'||guardian.hp<=0)tell.visible=false;
+  }
+  function afterStart(){setArea(data.area==='cave'?'cave':'world');if(data.guardianDead){guardian.hp=0;guardian.dead=4;guardian.state='death';guardian.root.visible=false}}
+  function interact() {if(caveInteract())return true;const n=nearestNPC();if(n){dialogue(n);return true}if(Math.hypot(hero.root.position.x-24,hero.root.position.z+29)<2.7&&!data.suppliesRecovered){if(api.enemies.some(e=>e.hp>0&&Math.hypot(e.root.position.x-24,e.root.position.z+29)<10)){api.toast('Clear the camp before recovering its supplies.');return true}data.suppliesRecovered=true;api.addItem('supplies');api.save();api.toast('Recovered the village supplies');return true}if(Math.hypot(hero.root.position.x-board.x,hero.root.position.z-board.z)<3){journal();return true}return false}
+  function hint(){const c=caveHint();if(c)return c;if(!data.suppliesRecovered&&Math.hypot(hero.root.position.x-24,hero.root.position.z+29)<2.7)return 'Recover village supplies';const n=nearestNPC();return n?'Talk to '+n.name:Math.hypot(hero.root.position.x-board.x,hero.root.position.z-board.z)<3?'Read village noticeboard':null}
   function update(dt,time) {
-    supplyCrate.visible=!data.suppliesRecovered;forge.scale.y=.8+Math.sin(time*9)*.15;lanterns.forEach((m,i)=>m.material.emissiveIntensity=.85+Math.sin(time*3+i)*.15);
+    caveUpdate(time);supplyCrate.visible=data.area!=='cave'&&!data.suppliesRecovered;forge.scale.y=.8+Math.sin(time*9)*.15;lanterns.forEach((m,i)=>m.material.emissiveIntensity=.85+Math.sin(time*3+i)*.15);
     for(const n of npcs){const near=n.root.position.distanceTo(hero.root.position)<4;let speed=0;
       if(n.id==='merchant'&&!near){const x=n.x+Math.sin(time*.22)*1.2;speed=Math.abs(x-n.root.position.x)/Math.max(dt,.001);n.root.position.x=x;}
       api.animate(n,speed,dt);if(near)api.face(n,Math.atan2(hero.root.position.x-n.root.position.x,hero.root.position.z-n.root.position.z),dt);
@@ -217,9 +331,9 @@ export function installLivingWorld(api) {
   function restore(saved) {
     const old=saved?.living||{};data={...old,quests:{},tracked:typeof old.tracked==='string'?old.tracked:'',suppliesRecovered:!!old.suppliesRecovered};
     for(const q of questDefinitions){const p=old.quests?.[q.id];data.quests[q.id]={status:['available','active','claimed'].includes(p?.status)?p.status:'available',count:Number.isFinite(p?.count)?Math.max(0,Math.min(q.goal,p.count)):0}}
-    vendor=null;
+    vendor=null;data.area=old.area==='cave'?'cave':'world';data.guardianDead=old.guardianDead===true;data.gateOpen=old.gateOpen===true;data.keyChest=old.keyChest===true;data.hiddenChest=old.hiddenChest===true;
   }
   restore(null);
   function serialize(){return data}
-  return {interact,hint,update,restore,serialize,onKill,updateQuestHUD,journal,worldMap,acceptQuest,claimQuest,questDialogue,questDefinitions,progress,purchase,sell,upgrade,upgradeCost,shop,dialogue,npcs,buildings,quantity};
+  return {enterCave,exitCave,returnToVillage,caveBlocked,afterStart,guardian,guardianDefeated,guardianAttack,cavePatrols,interact,hint,update,restore,serialize,onKill,updateQuestHUD,journal,worldMap,acceptQuest,claimQuest,questDialogue,questDefinitions,progress,purchase,sell,upgrade,upgradeCost,shop,dialogue,npcs,buildings,quantity};
 }
