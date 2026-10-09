@@ -203,10 +203,10 @@ export function installLivingWorld(api) {
     const p=hero.root.position,cave=p.x>200;
     api.modal('The Emerald Wilds',`<div class="eyebrow">North ↑ · ${cave?'You are in Hollowroot Cave':'Your discoveries'}</div><svg class="world-map" viewBox="0 0 440 420" role="img" aria-label="Map of the forest, village, river, ruins and cave"><rect width="440" height="420" rx="12" fill="#273f34"/><polyline points="${river}" stroke="#72b9bb" stroke-width="9" fill="none"/><polyline points="${[[0,64],[-23,36],[-14,18],[-14,-4],[28,-23],[11,-43],[-8,-66]].map(([x,z])=>px(x)+','+py(z)).join(' ')}" stroke="#b6a477" stroke-width="3" fill="none"/>${labels}<circle cx="${px(cave?-46:p.x)}" cy="${py(cave?36:p.z)}" r="5" fill="#fff" stroke="#e9c579" stroke-width="2"/></svg><p class="map-note">White: you · Gold: discovered · Grey: uncharted. Follow the trail north; the cave branches west from Whispering Forest.</p><button id="map-journal">Quest journal</button>`,'map');$('map-journal').onclick=journal;
   }
-  function onKill(e) {
+  function onKill(e,spawnLoot=true) {
     if(e.type===0&&data.quests.scouts.status==='active')data.quests.scouts.count=Math.min(5,data.quests.scouts.count+1);
     // A tooth is real loot; collecting or turning it in still requires interaction.
-    if(e.type!==3)api.drop('tooth',e.root.position.x-.4,e.root.position.z+.4);
+    if(spawnLoot&&e.type!==3)api.drop('tooth',e.root.position.x-.4,e.root.position.z+.4);
   }
   function updateQuestHUD() {
     if(!data.quests)return;let q=questDefinitions.find(q=>q.id===data.tracked&&data.quests[q.id].status==='active');
@@ -312,18 +312,19 @@ export function installLivingWorld(api) {
     api.drop('caveblade',e.root.position.x+.7,e.root.position.z);api.drop('relic',e.root.position.x-.7,e.root.position.z);api.drop('coin',e.root.position.x,e.root.position.z+1,65);
     api.sound('victory');api.toast('Varg has fallen • recover the ancient relic');
   }
-  function guardianAttack(e,dt) {
+  function guardianAttack(e,dt,target=hero) {
     const a=e.attack;a.t+=dt;const phase=a.t/a.duration,pattern=e.pattern%3;
-    if(!a.aim)a.aim=hero.root.position.clone().sub(e.root.position).setY(0).normalize();
+    if(!a.aim)a.aim=target.root.position.clone().sub(e.root.position).setY(0).normalize();
     api.face(e,Math.atan2(a.aim.x,a.aim.z),dt*2);api.animate(e,0,dt,a);
-    tell.visible=phase<.7;tell.position.copy(e.root.position);tell.position.y=.06;tell.scale.setScalar(pattern===2?4.3:pattern===0?3.6:2.4);tell.material.opacity=.25+Math.min(1,phase)*.6;
-    if(pattern===1&&phase>.5&&phase<.75)api.move(e,a.aim.x*dt*8,a.aim.z*dt*8);
-    if(phase>.67&&!e.hit){e.hit=true;const d=hero.root.position.clone().sub(e.root.position),range=pattern===2?4.3:pattern===0?3.6:2.6;
-      if(d.length()<range&&(pattern===2||d.normalize().dot(a.aim)>-.2))api.hurtPlayer(e.dmg*(pattern===2?1.3:1),e.root.position);
+    guardianTell(e);
+    if(pattern===1&&phase>.5&&phase<.75){const distance=target.root.position.distanceTo(e.root.position),step=Math.min(dt*8,Math.max(0,distance-.8));api.move(e,a.aim.x*step,a.aim.z*step)}
+    if(phase>.67&&!e.hit){e.hit=true;const d=target.root.position.clone().sub(e.root.position),range=pattern===2?4.3:pattern===0?3.6:2.6;
+      if(d.length()<range&&(pattern===2||d.normalize().dot(a.aim)>-.2))api.hurtPlayer(e.dmg*(pattern===2?1.3:1),e.root.position,target.netId);
       api.burst(e.root.position,0xdbb778,pattern===2?22:8);api.sound('heavy');
     }
     if(phase>=1){e.state='chase';e.cooldown=1.3;tell.visible=false}
   }
+  function guardianTell(e){const phase=e.attack?e.attack.t/e.attack.duration:1,pattern=e.pattern%3;tell.visible=data.area==='cave'&&e.hp>0&&e.state==='attack'&&phase<.7;tell.position.copy(e.root.position);tell.position.y=.06;tell.scale.setScalar(pattern===2?4.3:pattern===0?3.6:2.4);tell.material.opacity=.25+Math.min(1,phase)*.6}
   function caveUpdate(time) {
     gate.visible=!data.gateOpen;dungeonChests.forEach(c=>c.g.rotation.z=data[c.key]?.16:0);
     if(data.area!=='cave'){tell.visible=false;return}
@@ -350,5 +351,5 @@ export function installLivingWorld(api) {
   }
   restore(null);
   function serialize(){return data}
-  return {enterCave,exitCave,returnToVillage,caveBlocked,afterStart,guardian,guardianDefeated,guardianAttack,cavePatrols,interact,hint,update,restore,serialize,onKill,updateQuestHUD,journal,worldMap,acceptQuest,claimQuest,questDialogue,questDefinitions,progress,purchase,sell,upgrade,upgradeCost,shop,dialogue,npcs,buildings,quantity};
+  return {enterCave,exitCave,returnToVillage,caveBlocked,afterStart,guardian,guardianDefeated,guardianAttack,guardianTell,cavePatrols,interact,hint,update,restore,serialize,onKill,updateQuestHUD,journal,worldMap,acceptQuest,claimQuest,questDialogue,questDefinitions,progress,purchase,sell,upgrade,upgradeCost,shop,dialogue,npcs,buildings,quantity};
 }
