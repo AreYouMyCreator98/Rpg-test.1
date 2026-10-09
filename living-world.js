@@ -7,6 +7,7 @@ export function migrateSave(data) {
 
 export function installLivingWorld(api) {
   const {THREE, scene, mesh, mat, hero, items, ground, character, obstacle, $} = api;
+  api.poi[0].name="Wanderer’s Village";
   const npcs = [], village = new THREE.Group(); scene.add(village);
   const buildings = [];
   let data = {}, vendor = null;
@@ -42,6 +43,17 @@ export function installLivingWorld(api) {
     mesh('orb', 0xdeb969, .37, 1, 2.35, .08, .08, .08, g);
     mesh('box', 0x614b35, 0, 3, 2.3, 5.5, .15, .13, g);
     mesh('box', 0x7e8173, 1.7, 4.5, -1.1, .65, 2, .65, g);
+    // Timber framing and glazing on every side, including the camera-facing rear.
+    for(const side of [-1,1]){
+      for(const h of [.7,2.8])mesh('box',0x6c5036,side*2.74,h,0,.1,.13,4.4,g);
+      for(const z of [-1.9,0,1.9])mesh('box',0x6c5036,side*2.74,1.7,z,.1,3.3,.13,g);
+      mesh('box',mat(0xe5c782,{emissive:0x705128,emissiveIntensity:.3}),side*2.8,1.8,.6,.025,.75,.7,g);
+      for(const xx of [-2.6,0,2.6])mesh('box',0x6c5036,xx,1.7,side*2.24,.14,3.3,.1,g);
+      const shape=new THREE.BufferGeometry();shape.setAttribute('position',new THREE.Float32BufferAttribute([-2.7,3.3,side*2.2,2.7,3.3,side*2.2,0,4.8,side*2.2],3));shape.computeVertexNormals();g.add(new THREE.Mesh(shape,mat(0xb9ad85,{side:THREE.DoubleSide})));
+      mesh('box',0x6c5036,0,3.3,side*2.3,5.4,.15,.15,g);mesh('box',0x6c5036,0,4,side*2.3,.15,1.5,.15,g);
+    }
+    const canvas=document.createElement('canvas');canvas.width=512;canvas.height=96;const ctx=canvas.getContext('2d');ctx.fillStyle='#5b4530';ctx.fillRect(0,0,512,96);ctx.strokeStyle='#cfb477';ctx.strokeRect(5,5,502,86);ctx.fillStyle='#f2dcad';ctx.font='30px Georgia';ctx.textAlign='center';ctx.fillText(label,256,57);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+    const sign=new THREE.Mesh(new THREE.PlaneGeometry(2.8,.53),new THREE.MeshBasicMaterial({map:texture}));sign.position.set(0,2.75,2.4);g.add(sign);
     obstacle(x,z,3.25); buildings.push({x,z,label});
   }
   building(-12,65,0x805b48,'Ember & Iron'); building(12,72,0x466764,'The Wayfarer Tavern');
@@ -65,15 +77,16 @@ export function installLivingWorld(api) {
   const forge=mesh('cone',mat(0xffc464,{emissive:0xff5c0b,emissiveIntensity:2}),-7,fy+1.4,63,.6,1,.45,village);
   mesh('box',0x454f50,-7,ground(-7,60)+.85,60,1.2,.3,.6,village);
   mesh('box',0x535950,-7,ground(-7,60)+.4,60,.45,.8,.45,village);
+  obstacle(8,57,1.3);obstacle(-7,63,.8);obstacle(-7,60,.6);
   const stallY=ground(8,57);mesh('box',0x8c6949,8,stallY+.8,57,3,1,.8,village);
   for(const s of [-1,1]) mesh('cyl',0x695037,8+s*1.6,stallY+1.6,57,.09,3.2,.09,village);
   for(let i=0;i<6;i++) mesh('box',i%2?0xe5cd94:0x547970,6.5+i*.6,stallY+3.1,57,.6,.12,2.2,village);
   for(let i=0;i<5;i++) mesh('orb',0xc99058,7+i*.4,stallY+1.4,57,.17,.2,.17,village);
   const board={x:1,z:72};mesh('box',0x73553b,1,ground(1,72)+1.8,72,2.8,1.6,.18,village);
   for(const x of [-.1,2.1]) mesh('box',0x695139,x,ground(x,72)+1,72,.13,2.5,.15,village);
-  for(let i=0;i<3;i++)mesh('box',0xdfd0a0,.2+i*.75,ground(1,72)+1.8,72.12,.55,.8,.025,village);
+  for(let i=0;i<3;i++)for(const side of [-1,1])mesh('box',0xdfd0a0,.2+i*.75,ground(1,72)+1.8,72+side*.12,.55,.8,.025,village);
   function npc(id,name,role,x,z,color) {
-    const ch=character();ch.root.position.set(x,ground(x,z),z);ch.weapon.visible=false;ch.bodyMat.color.setHex(color);
+    const ch=character();ch.root.position.set(x,ground(x,z),z);ch.weapon.visible=false;ch.bodyMat.color.setHex(color);ch.cape.material=mat(id==='elder'?0x6b7050:0x4d586d);if(id==='smith'){ch.cape.visible=false;mesh('box',0x634632,0,1.14,.28,.5,.7,.05,ch.rig)}for(const m of ch.head.children)if(m.material?.color?.getHex()===0x775331)m.material=mat(id==='elder'?0xb8b29c:id==='merchant'?0x39342e:0x775331);
     const label=document.createElement('div');label.className='npc-label';label.textContent=name+' · '+role;label.style.display='none';$('world-ui').append(label);const n={...ch,id,name,role,x,z,color,label};npcs.push(n);return n;
   }
   const smith=npc('smith','Bram','Blacksmith',-7,58,0x87583c);
@@ -211,6 +224,7 @@ export function installLivingWorld(api) {
   const rooms=[[296,304,-34,8],[300,316,-24,-14],[288,312,-62,-32]];
   const inFloor=(x,z)=>rooms.some(([l,r,t,b])=>x>=l&&x<=r&&z>=t&&z<=b);
   function caveBlocked(x,z,r=.4) {
+    r+=.8; // Keep bodies outside the faceted wall silhouettes.
     if(![[x-r,z-r],[x+r,z-r],[x-r,z+r],[x+r,z+r]].every(([x,z])=>inFloor(x,z)))return true;
     if(!data.gateOpen&&Math.abs(z+31)<.4+r)return true;
     return x+r>306&&z+r>-53&&z-r<-43;
@@ -268,7 +282,7 @@ export function installLivingWorld(api) {
   }
   function enterCave() {
     if(api.state!=='playing'||Math.hypot(hero.root.position.x+46,hero.root.position.z-38)>4)return false;
-    data.caveDiscovered=true;setArea('cave');api.setPosition(300,5);api.clearAction();api.save();api.toast('Discovered · Hollowroot Cave');return true;
+    data.caveDiscovered=true;setArea('cave');api.setPosition(300,0);api.clearAction();api.save();api.toast('Discovered · Hollowroot Cave');return true;
   }
   function exitCave() {
     if(Math.hypot(hero.root.position.x-300,hero.root.position.z-5)>3.5)return false;

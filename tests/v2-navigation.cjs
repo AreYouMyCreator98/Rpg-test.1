@@ -1,0 +1,22 @@
+const path=require('node:path'),os=require('node:os');
+const artifacts=process.env.TEST_ARTIFACT_DIR||path.join(os.tmpdir(),'realm-tests');require('node:fs').mkdirSync(artifacts,{recursive:true});
+const assert=require('node:assert/strict');const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
+(async()=>{const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader']});try{
+ const page=await browser.newPage({viewport:{width:960,height:640}}),errors=[];page.on('pageerror',e=>errors.push(e.message));if(process.env.THREE_TEST_MODULE)await page.route('https://cdn.jsdelivr.net/**',r=>r.fulfill({path:process.env.THREE_TEST_MODULE,contentType:'application/javascript'}));
+ await page.addInitScript(()=>localStorage.setItem('realm-fallen-settings',JSON.stringify({quality:'low',sound:false})));await page.goto((process.env.GAME_URL||'http://127.0.0.1:8000/')+'?test');await page.waitForFunction(()=>window.__realm);await page.click('#play');
+ await page.evaluate(()=>{__realm.setPosition(-46,39);__realm.living.enterCave();for(const e of __realm.enemies){e.hp=0;e.dead=4;e.respawn=999}});
+ const walk=async(key,frames)=>{await page.keyboard.down(key);await page.evaluate(n=>{for(let i=0;i<n;i++)__realm.step()},frames);await page.keyboard.up(key)};
+ assert.equal(await page.evaluate(()=>__realm.blocked(__realm.hero.root.position.x,__realm.hero.root.position.z)),false);
+ await walk('KeyW',280);assert(await page.evaluate(()=>__realm.hero.root.position.z)<-18);
+ await walk('KeyD',189);assert(await page.evaluate(()=>__realm.hero.root.position.x)>312);
+ await page.keyboard.press('KeyE');await page.keyboard.press('KeyE');assert.equal(await page.evaluate(()=>__realm.living.quantity('cavekey')),1);
+ await walk('KeyA',189);await walk('KeyW',170);let z=await page.evaluate(()=>__realm.hero.root.position.z);assert(z>-30&&z<-28,'closed gate stops hero');
+ await page.keyboard.press('KeyE');assert.equal(await page.evaluate(()=>__realm.living.serialize().gateOpen),true);
+ await walk('KeyW',320);assert(await page.evaluate(()=>__realm.hero.root.position.z)<-49);
+ await walk('KeyD',150);let x=await page.evaluate(()=>__realm.hero.root.position.x);assert(x<305,'underground water stops hero');
+ console.log('PASS keyboard traversal from cave portal to scaffold key, locked gate, arena, and water boundary');
+ await page.screenshot({path:path.join(artifacts,'v2-cave-traversal.png')});
+ await page.evaluate(()=>{__realm.living.returnToVillage();__realm.setPosition(0,65)});await page.mouse.move(450,300);await page.mouse.down({button:'right'});await page.mouse.move(830,300,{steps:8});await page.mouse.up({button:'right'});await page.mouse.wheel(0,500);await page.waitForTimeout(500);await page.screenshot({path:path.join(artifacts,'v2-village-overview.png')});
+ const metrics=await page.evaluate(()=>({drawCalls:__realm.renderer.info.render.calls,triangles:__realm.renderer.info.render.triangles,geometries:__realm.renderer.info.memory.geometries}));console.log('Low-quality village render workload (not device FPS):',metrics);
+ assert.deepEqual(errors,[]);
+ }finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});

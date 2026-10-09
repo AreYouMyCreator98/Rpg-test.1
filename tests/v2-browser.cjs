@@ -1,3 +1,5 @@
+const path=require('node:path'),os=require('node:os');
+const artifacts=process.env.TEST_ARTIFACT_DIR||path.join(os.tmpdir(),'realm-tests');require('node:fs').mkdirSync(artifacts,{recursive:true});
 // Optional developer tests. The game itself has no Node or build dependency.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -78,13 +80,24 @@ const {chromium} = require(process.env.PLAYWRIGHT_PATH || 'playwright');
  assert.equal(await page.evaluate(()=>__realm.living.serialize().area),'cave');
  assert.equal(await page.evaluate(()=>__realm.living.guardian.hp),0);
  assert.equal(await page.evaluate(()=>__realm.living.quantity('relic')),1);
- await page.screenshot({path:'/tmp/realm-tests/v2-cave.png'});
+ await page.screenshot({path:path.join(artifacts,'v2-cave.png')});
  await page.evaluate(()=>__realm.setPosition(300,5));await page.keyboard.press('KeyE');
  assert.equal(await page.evaluate(()=>__realm.living.serialize().area),'world');
  assert.equal(await page.evaluate(()=>__realm.blocked(__realm.hero.root.position.x,__realm.hero.root.position.z)),false);
  console.log('PASS cave entry/exit, wall/water/gate collision, key consumption, Guardian drops, distinct chief state, dungeon persistence');
+ await page.evaluate(()=>{__realm.setPosition(-1,70);__realm.living.questDialogue(__realm.living.npcs[2]);__realm.living.acceptQuest('trail');__realm.living.acceptQuest('guardian');__realm.living.acceptQuest('relic');__realm.closeModal();__realm.setPosition(-14,9);__realm.step();__realm.setPosition(-8,-66);__realm.step();__realm.setPosition(-1,70);__realm.living.questDialogue(__realm.living.npcs[2])});
+ for(const id of ['trail','guardian','relic']){assert(await page.evaluate(id=>__realm.living.claimQuest(id),id));assert.equal(await page.evaluate(id=>__realm.living.claimQuest(id),id),false)}
+ assert.equal(await page.evaluate(()=>__realm.living.quantity('relic')),0);
+ await page.evaluate(()=>{__realm.closeModal();__realm.setPosition(8,54);__realm.living.questDialogue(__realm.living.npcs[1]);__realm.living.acceptQuest('supplies');__realm.closeModal();__realm.setPosition(24,-29);for(const e of __realm.enemies)if(e.hp>0&&e.root.position.distanceTo(__realm.hero.root.position)<12)__realm.hurtEnemy(e,10000)});
+ await page.keyboard.press('KeyE');await page.keyboard.press('KeyE');assert.equal(await page.evaluate(()=>__realm.living.quantity('supplies')),1);
+ await page.evaluate(()=>{__realm.setPosition(8,54);__realm.living.questDialogue(__realm.living.npcs[1])});assert(await page.evaluate(()=>__realm.living.claimQuest('supplies')));
+ assert.equal(await page.evaluate(()=>__realm.living.claimQuest('supplies')),false);
+ assert.equal(await page.evaluate(()=>Object.values(__realm.living.serialize().quests).filter(q=>q.status==='claimed').length),6);
+ await page.evaluate(()=>__realm.save());await page.reload();await page.waitForFunction(()=>window.__realm);await page.click('#continue');
+ assert.equal(await page.evaluate(()=>Object.values(__realm.living.serialize().quests).filter(q=>q.status==='claimed').length),6);
+ console.log('PASS all six quests accepted/completed through their action and item pipelines, consumed relic/supplies, rewards remain claimed after reload');
  await page.evaluate(()=>{__realm.closeModal();__realm.setPosition(0,64)});
- await page.screenshot({path:'/tmp/realm-tests/v2-village.png'});
+ await page.screenshot({path:path.join(artifacts,'v2-village.png')});
  assert.deepEqual(errors,[]);
  } finally {await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});

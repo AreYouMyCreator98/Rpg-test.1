@@ -1,72 +1,99 @@
-# Realm of the Fallen
+# Realm of the Fallen — V2: The Living World
 
-A playable, procedural 3D fantasy action RPG for desktop and mobile browsers. The complete game is in **index.html**. No installation, build, account, API key, or backend is needed.
+A procedural 3D browser action RPG, now with a village, shops, six quests, a cave dungeon, and stamina-based combat. V2 extends the original forest, hero, equipment, goblins and Goblin Chief encounter.
 
-## Play on GitHub Pages
+**Game files:** `index.html` and `living-world.js`. Keep both together. No build, backend, account or API key is required. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
 
-1. Upload `index.html` to the root of this repository, on your `main` branch.
-2. Open the repository's **Settings → Pages**.
-3. Under **Build and deployment**, select **Deploy from a branch**.
-4. Select **main** and **/ (root)**, then click **Save**.
-5. Wait for GitHub's Pages deployment to finish, then open the website link shown in that settings page.
+## GitHub Pages
 
-For this repository, the expected address is:
-`https://areyoumycreator98.github.io/Rpg-test.1/`
+Upload **both game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. GitHub publishes updates when that branch changes.
 
-This address becomes available only after you upload the files and enable Pages. This delivery does not publish the site automatically. An internet connection is required to load the pinned Three.js 0.160.1 module from jsDelivr. Everything else—models, terrain, interface, effects, and sound—is generated locally.
+Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
-## Your journey
+`README.md` and `tests/` are documentation and optional development checks, not runtime dependencies. The original playable version is preserved by Git tag **`v1.0-pre-living-world`**, pointing to commit `fbb002b`. Restoring that tag's `index.html` restores V1. Keep your browser's original save backup if rolling back; V1 cannot interpret new V2 equipment variants.
 
-Start at the campfire and follow the pale trail into Whispering Forest. Defeat scouts, collect their loot, and equip upgrades in your satchel. Cross Stonebridge River, clear the goblin encampment and its guarded chest, then follow the uphill trail to Mountain Ruins. Defeat Gruk to receive the legendary Ember Sword and Guardian Armour. Continue exploring after victory, or reset the chief encounter from the pause menu.
+## The living village
 
-- Three attack animations form a combo; click again during a swing to queue the next strike.
-- Dodge through enemy attacks. Large enemies telegraph slower, stronger attacks.
-- Gruk alternates quick slashes, heavier strikes, and a wider area attack.
-- Collect nearby drops with the Loot action. Coins enter your balance; equipment, potions, teeth, and moonstones enter your inventory.
-- Equipment changes the hero's appearance and combat statistics. Materials are collectible trophies; there is no shop or crafting system.
-- Potions restore 65 HP, capped at maximum health. Rest at your starting campfire for a full heal.
-- Two bridges and the eastern shallows cross the river. Deep water blocks movement.
-- Regular enemies return after approximately 75 seconds once their area is out of sight. The chief returns only when you reset his encounter.
-- Falling in battle returns you to camp without losing equipment or XP.
-- The maximum level is 20.
+The original starting campfire remains at the centre of the settlement. Four timber-and-plaster buildings surround the village, alongside a forge, market stall, lanterns, barrels, fences and noticeboard.
 
-## Controls
+- **Bram, blacksmith:** buy swords, equip purchases, or temper a weapon up to three times. Each upgrade adds **4 weapon damage**. Costs start at **35 coins and 2 teeth**; later ranks require more coins, more teeth and a moonstone. The forge previews costs and damage before purchase.
+- **Mira, merchant:** buy potions and armour, sell trophies and unwanted equipment. Equipped gear must be unequipped before sale. Quest items cannot be sold or dropped.
+- **Elowen, village keeper:** explains the main questline. The noticeboard opens your journal; accept and complete quests in conversations with their giver.
+
+New characters receive **45 coins** to afford a first sword or basic armour. Returning characters keep their existing balance. Upgrading converts exactly one inventory copy into an upgraded variant; it does not duplicate the weapon or improve other copies for free.
+
+## Six quests
+
+| Quest | Giver | Task | Reward |
+| --- | --- | --- | --- |
+| A quieter forest | Bram | Defeat 5 scouts after acceptance | 45 coins, 40 XP |
+| Teeth for the forge | Bram | Deliver 10 goblin teeth | 60 coins, 55 XP |
+| The missing caravan | Mira | Clear the camp and recover its marked supplies | 75 coins, 65 XP |
+| Beyond Stonebridge | Elowen | Discover the river crossing and Mountain Ruins | 60 coins, 70 XP |
+| Beneath the roots | Elowen | Defeat Hollowroot's Guardian | 130 coins, 120 XP |
+| A light brought home | Elowen | Bring the ancient relic back to the village | 180 coins, 140 XP |
+
+Rewards can only be claimed once. Delivery quests consume their required items. Previously discovered landmarks and an already-defeated Guardian count when accepting those quests; scout kills count from acceptance. Selling or upgrading with teeth can reduce your current delivery progress until you gather more.
+
+The journal separates main and side quests. Track an accepted quest for a distance indicator and a nearby golden world marker. The map shows your position, the original trail, river, locations, and discoveries. The original Chief objective remains available when no village quest is tracked.
+
+## Hollowroot Cave
+
+Follow the western branch from Whispering Forest to the rock entrance. Interact to enter; the exit remains behind you in the entry passage.
+
+Explore torchlit corridors and the eastern scaffold chamber. Defeat nearby guards, open its chest and collect the **Hollowroot Key**. Interact with the iron gate to consume the key and open it permanently. Beyond it lies a larger chamber with crystals, underground water, hidden treasure and **Varg, the Rootbound Guardian**.
+
+Varg has three telegraphed attacks: a sweeping strike, a committed lunge, and a wider ground slam. The amber ring marks the danger zone. Dodge or leave that zone before contact; a shield can soften a frontal hit. Defeating him drops **Hollowroot Fang**, an **Ancient Relic**, and coins. Collect them before returning to Elowen. Uncollected drops also survive reloads.
+
+The Guardian is a persistent one-time encounter per new game. Gruk, the original Goblin Chief, remains in the Mountain Ruins and can still be reset from the pause menu. Resetting Gruk does not reset quests, cave treasure or the Guardian.
+
+## Combat and controls
 
 | Desktop | Action |
 | --- | --- |
-| W A S D | Move relative to camera |
-| Shift | Sprint |
-| Right mouse drag | Orbit camera |
-| Mouse wheel | Zoom |
-| Left click | Attack / queue combo |
-| Space | Dodge roll |
-| E | Collect nearby loot, open chest, rest at fire |
+| W A S D | Camera-relative movement |
+| Shift | Sprint; drains stamina |
+| Right mouse drag / wheel | Orbit / zoom |
+| Left click | Strike; click during a swing to queue the next combo hit |
+| Space | Dodge; costs 25 stamina |
+| F, held | Raise shield against frontal attacks |
+| E | Collect nearby loot, talk, open chests/gates, enter/exit cave, rest |
 | I | Inventory and equipment |
-| H | Drink a potion |
+| H | Drink potion |
+| J / M | Quest journal / world map |
 | Escape | Pause / close menu |
 
-On phones and tablets, use the left joystick and the Attack, Dodge, Loot, Heal, Satchel, and Pause buttons. Swipe the world to orbit the camera. Movement and attack support simultaneous touches. Portrait and landscape layouts are supported.
+On phones, move with the joystick; push it fully to sprint. Swipe open world space to orbit. Use Attack, Dodge, Heal, Block, Interact/Loot, Satchel, Journal and Pause. **Block is held**, not toggled. Movement works simultaneously with attack or blocking. Portrait and landscape are supported.
 
-## Settings and saves
+Stamina regenerates after a short pause. Sprinting and dodging spend it; blocking consumes stamina on impact and slowly while held. A successful frontal block reduces incoming damage by roughly 78%. If your guard breaks, you briefly cannot dodge, but ordinary walking and sword attacks still work. Turning your back to an attacker leaves you unprotected.
 
-Low graphics limits rendering resolution and turns off shadows; Medium and High increase resolution and enable shadows. Audio starts after interaction and can be switched off in Settings.
+The three-hit combo identity is unchanged. V2 adds eased attack transitions, hip/shoulder counter-rotation, tucked rolls, enemy recoil, brief impact shake, light/heavy hit sounds and improved group separation. Potions restore up to 65 HP; the original campfire fully heals you. Level cap remains 20.
 
-Progress saves automatically after important actions, every eight seconds during play, and when leaving the page. **Continue** restores your character, position, inventory, equipment, coins, XP, discoveries, opened chests, remaining loot, and chief completion. **Begin new game** asks before replacing an existing save.
+## Saves and compatibility
 
-Saves belong to the current browser and website origin. Private browsing, storage restrictions, or clearing browser data may prevent or erase saving. Changing from a local address to GitHub Pages does not transfer saves. Invalid saves are rejected defensively.
+V2 continues using the existing **`realm-fallen-save-v1` LocalStorage key**, with a **version 2 payload**. It migrates V1 levels, XP, health, coins, inventory, equipment, discoveries, chest state, drops and Chief completion. Before the first migration on Continue, the original payload is backed up as **`realm-fallen-save-v1-backup`** when storage is available.
+
+V2 also saves upgraded item identities, stamina, quest statuses/counters, gate/key/chest state, Guardian completion, relic ownership and the current region. New Game asks before replacing progress. Saves belong to that browser and website origin; they do not transfer automatically between localhost and GitHub Pages. Private browsing or clearing site data can remove saves. Corrupt or unsupported save versions are rejected rather than crashing the game.
 
 ## Development and validation
 
-The game is a static HTML document with inline CSS and JavaScript. It uses genuine Three.js WebGL geometry, instanced vegetation, delta-time movement, articulated character rigs, contact-window melee checks, and Web Audio synthesis. There are no asset files or build dependencies.
-
-For optional local development, any static HTTP server can serve the repository. For example, if Python is already available:
+Serve this directory with any static HTTP server. For example, if Python is available:
 
 ```sh
 python -m http.server 8000
 ```
 
-The game itself does not need Python or a server installation when hosted on GitHub Pages. Use the existing checkout; a separate Git worktree is unnecessary.
+Use the existing checkout; no worktree or application build is needed. `index.html` retains V1 rendering, character rigs, controls, combat, inventory and saves. `living-world.js` adds village/economy, quest, and cave systems through explicit integration hooks.
 
-Browser validation was performed with headless Chromium and software WebGL, using automated desktop input and emulated touchscreen input. Checks exercised startup/rendering, keyboard movement, camera orbit, combat damage, death and loot, inventory/equipment changes, healing, dodging, river/bridge collision, save restoration, boss rewards, corrupt saves, touch multitasking, responsive layouts, and settings. Test-only instrumentation is available when the URL includes `?test`; normal play does not expose it.
+Optional automated checks are in `tests/`. They need an existing Node.js, Playwright and Chromium installation **for testing only**. Set `PLAYWRIGHT_PATH` and `CHROMIUM_PATH` if those tools are installed outside normal locations. `GAME_URL` defaults to the locally served root. `THREE_TEST_MODULE` optionally points to a certificate-verified copy of the pinned CDN module when a test machine's browser cannot trust its HTTPS proxy. No certificate checks are disabled.
 
-The test machine's Chromium did not trust its network proxy certificate. Browser tests therefore received the exact pinned CDN module fetched separately over certificate-verified HTTPS. Certificate validation was not disabled. Physical Android/iPhone devices, Safari, production GitHub Pages deployment, and hardware frame-rate targets have not been verified here.
+```sh
+node tests/v2-browser.cjs
+node tests/v2-combat.cjs
+node tests/v2-mobile.cjs
+node tests/v2-navigation.cjs
+```
+
+`?test` enables deterministic stepping and inspection hooks for the automated tests; normal URLs do not expose them. Tests set up fixtures to isolate economy, quest and combat cases, then exercise the real transaction, item, collision, animation and damage paths. Touch tests dispatch Chromium multitouch events.
+
+See [VALIDATION.md](VALIDATION.md) for tested outcomes and remaining limitations. Physical Android/iPhone performance, Safari and hardware FPS targets require device testing; headless software WebGL does not establish those results.

@@ -1,3 +1,5 @@
+const path=require('node:path'),os=require('node:os');
+const artifacts=process.env.TEST_ARTIFACT_DIR||path.join(os.tmpdir(),'realm-tests');require('node:fs').mkdirSync(artifacts,{recursive:true});
 const assert=require('node:assert/strict');
 const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
 (async()=>{
