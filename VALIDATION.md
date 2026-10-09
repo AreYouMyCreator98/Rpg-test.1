@@ -41,7 +41,7 @@ The development network restriction was resolved before live testing.
   bad-code rejection, four-member capacity, duplicate-membership rejection,
   per-sender topic authorization, actual RLS rejection of a forged host write,
   leave/host-end handling, public discovery and stale-room expiry. Auth and
-  Realtime schemas are test fixtures; hosted Supabase integration remains untested.
+  Realtime schemas are fixtures in this local suite; hosted checks are listed below.
 - `tests/multiplayer-browser.cjs` passed with two browser clients and the real
   `supabase-rooms.js` adapter against a deterministic Supabase SDK service double:
   private creation/code join, public discovery/join, remote movement/equipment,
@@ -71,7 +71,8 @@ The development network restriction was resolved before live testing.
   HTTP and WebSocket traffic passed through a certificate-verifying proxy adapter;
   the adapter preserves text and binary frames. This avoids Chromium's untrusted
   proxy certificate without disabling TLS validation. Separate direct live RPC
-  checks also verified guest read access but rejected host-topic write permission.
+  checks also verified that the permission helper allows guest reads and denies
+  guest writes to the host’s topic.
 - Initial live tests exposed a test-proxy binary-frame decoding issue, which was
   corrected. Auth identities are now kept in memory per tab so Supabase's
   persistent-auth BroadcastChannel cannot replace another tab's identity.
