@@ -30,9 +30,14 @@ The original working V1 is retained at tag `v1.0-pre-living-world`. V2 migrates 
 
 ## Multiplayer update — 9 October 2026
 
-The Supabase-backed co-op integration has been validated locally. **No live
-Supabase project has been configured or tested yet.** The user is creating one.
-The configured project URL and publishable key are intentionally blank.
+The Supabase-backed co-op integration has been validated locally. The user-supplied
+project URL and browser-safe publishable key are configured in `multiplayer-config.js`.
+**Hosted Supabase authentication, SQL installation and Realtime have not been
+verified yet.** This workspace’s network proxy rejected HTTPS tunnelling to the
+new project with HTTP 403 before the request reached Supabase. Its hostname has
+been added to the environment configuration draft; applying that change is still
+required for live tests from this workspace. This is not an observed Supabase
+authentication failure.
 
 - `tests/multiplayer-sql.cjs` passed using PGlite 0.3.14 (PostgreSQL): SQL
   installation and reinstallation, anonymous-user identities, private-room hiding,
@@ -61,7 +66,7 @@ The configured project URL and publishable key are intentionally blank.
   Leaving resumes the saved solo character. Co-op progression is session-only.
 
 Still required: apply `supabase/multiplayer.sql` to the actual project, enable
-anonymous sign-in, configure the browser-safe URL/key, and test private-channel
+anonymous sign-in, and test private-channel
 RLS, two physical devices, public listings, latency and disconnection behavior
 against that hosted service. Four-client rendering, physical iOS/Android/Safari,
 provider quotas, real-world packet loss and mobile FPS have not been validated.
