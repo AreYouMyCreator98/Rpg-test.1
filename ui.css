@@ -70,3 +70,4 @@
 @media(orientation:landscape) and (max-height:600px){.touch-actions #attack-touch{bottom:max(15px,var(--safe-bottom))}.touch-actions #dodge-touch{bottom:max(12px,var(--safe-bottom))}}
 
 @media(max-width:360px){.slots{grid-template-columns:repeat(2,1fr)}}
+@media(orientation:portrait) and (max-width:360px){#stick{width:100px}.context-action{bottom:34dvh}}
