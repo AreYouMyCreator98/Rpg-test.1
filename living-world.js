@@ -45,7 +45,7 @@ export function installLivingWorld(api) {
     obstacle(x,z,3.25); buildings.push({x,z,label});
   }
   building(-12,65,0x805b48,'Ember & Iron'); building(12,72,0x466764,'The Wayfarer Tavern');
-  building(-13,80,0x647656,'Weaver’s Cottage'); building(12,85,0x976a4d,'Village Storehouse');
+  building(-14,55,0x647656,'Weaver’s Cottage'); building(14,55,0x976a4d,'Village Storehouse');
   function barrel(x,z) {
     const y=ground(x,z); mesh('cyl',0x8c6440,x,y+.55,z,.42,1.1,.42,village);
     for (const h of [.15,.9]) mesh('cyl',0x58675f,x,y+h,z,.44,.08,.44,village);
@@ -74,7 +74,7 @@ export function installLivingWorld(api) {
   for(let i=0;i<3;i++)mesh('box',0xdfd0a0,.2+i*.75,ground(1,72)+1.8,72.12,.55,.8,.025,village);
   function npc(id,name,role,x,z,color) {
     const ch=character();ch.root.position.set(x,ground(x,z),z);ch.weapon.visible=false;ch.bodyMat.color.setHex(color);
-    const n={...ch,id,name,role,x,z,color};npcs.push(n);return n;
+    const label=document.createElement('div');label.className='npc-label';label.textContent=name+' · '+role;label.style.display='none';$('world-ui').append(label);const n={...ch,id,name,role,x,z,color,label};npcs.push(n);return n;
   }
   const smith=npc('smith','Bram','Blacksmith',-7,58,0x87583c);
   mesh('box',0x6b7370,0,-.65,.35,.4,.25,.2,smith.arms[1]);
@@ -138,6 +138,7 @@ export function installLivingWorld(api) {
   });
   const supplyCrate=mesh('box',0xa17a4c,24,ground(24,-29)+.55,-29,1.2,1.1,1.2);
   mesh('box',0xe8cb7f,0,0,.51,.16,1.03,.03,supplyCrate);
+  const beacon=mesh('orb',mat(0xe9c579,{emissive:0xb58132,emissiveIntensity:.6}),0,3,0,.18,.28,.18);beacon.visible=false;beacon.castShadow=false;
   const marker=document.createElement('div');marker.id='quest-marker';$('hud').append(marker);
   const journalButton=document.createElement('button');journalButton.id='journal-button';journalButton.textContent='J · Journal / Map';journalButton.onclick=()=>journal();document.querySelector('.quest').append(journalButton);
   function progress(q) {
@@ -197,12 +198,12 @@ export function installLivingWorld(api) {
   function updateQuestHUD() {
     if(!data.quests)return;let q=questDefinitions.find(q=>q.id===data.tracked&&data.quests[q.id].status==='active');
     q??=questDefinitions.find(q=>data.quests[q.id].status==='active');
-    if(data.area==='cave')$('location').textContent='Hollowroot Cave';if(!q){marker.style.display='none';return}
+    if(data.area==='cave')$('location').textContent='Hollowroot Cave';if(!q){marker.style.display='none';beacon.visible=false;return}
     $('objective').textContent=q.name+' · '+progress(q)+' / '+q.goal;
     let target=q.target;const complete=progress(q)>=q.goal;
     if(complete){const n=npcs.find(n=>n.id===q.giver);target=[n.root.position.x,n.root.position.z]}else if(q.id==='trail'&&api.visited.includes(2))target=[-8,-66];
-    if(hero.root.position.x>200){marker.textContent=complete?'◆ Return to the village':'◆ Explore Hollowroot · find the gate key';marker.style.display='block';return}
-    const dx=target[0]-hero.root.position.x,dz=target[1]-hero.root.position.z;
+    if(hero.root.position.x>200){beacon.visible=false;marker.textContent=complete?'◆ Return to the village':'◆ Explore Hollowroot · find the gate key';marker.style.display='block';return}
+    const dx=target[0]-hero.root.position.x,dz=target[1]-hero.root.position.z;beacon.visible=Math.hypot(dx,dz)<55;beacon.position.set(target[0],ground(...target)+2.7,target[1]);beacon.rotation.y+=.08;
     marker.textContent='◆ '+(complete?'Return to '+npcs.find(n=>n.id===q.giver).name:q.name)+' · '+Math.round(Math.hypot(dx,dz))+'m';marker.style.display='block';
   }
   // A separate coordinate region shares the same renderer, hero, inventory and AI.
@@ -226,7 +227,7 @@ export function installLivingWorld(api) {
   mesh('box',mat(0x25353c,{side:THREE.DoubleSide}),302,8,-27,36,.3,76,cave);
   const pool=mesh('box',mat(0x297f98,{emissive:0x103e58,emissiveIntensity:.4,transparent:true,opacity:.86,metalness:.3,roughness:.25}),309,.08,-48,6,.12,10,cave);
   const torchPositions=[],torchFlames=[];
-  for(const [x,z] of [[296.7,3],[303.3,-9],[296.7,-23],[314.8,-20],[289.2,-38],[310.7,-57]]){
+  for(const [x,z] of [[296.7,3],[303.3,-9],[296.7,-23],[314.8,-20],[289.2,-38],[310.7,-57],[298.5,-56]]){
     mesh('cyl',0x745333,x,1.6,z,.09,1,.09,cave);
     const flame=mesh('cone',mat(0xffc379,{emissive:0xff8c2d,emissiveIntensity:1.7}),x,2.2,z,.22,.7,.22,cave);
     torchPositions.push(new THREE.Vector3(x,2.3,z));torchFlames.push(flame);
@@ -260,8 +261,8 @@ export function installLivingWorld(api) {
     data.area=area;const inside=area==='cave';cave.visible=inside;outsideRoots.forEach(o=>o.visible=!inside);
     npcs.forEach(n=>n.root.visible=!inside);caveLights.forEach(l=>l.visible=inside);
     scene.background.setHex(inside?0x172730:0x9dc5b7);scene.fog.color.copy(scene.background);scene.fog.density=inside?.027:api.settings.quality==='low'?.017:.012;
-    api.sun.intensity=inside?.35:3.1;api.sun.castShadow=!inside;
-    scene.children.filter(o=>o.isHemisphereLight).forEach(l=>l.intensity=inside?.85:2.1);
+    api.sun.intensity=inside?.55:3.1;api.sun.castShadow=!inside;
+    scene.children.filter(o=>o.isHemisphereLight).forEach(l=>l.intensity=inside?1.4:2.1);
     for(const e of api.enemies){e.label.style.display='none';e.root.visible=e.hp>0&&!!e.cave===inside}
     tell.visible=false;
   }
@@ -322,7 +323,7 @@ export function installLivingWorld(api) {
   function hint(){const c=caveHint();if(c)return c;if(!data.suppliesRecovered&&Math.hypot(hero.root.position.x-24,hero.root.position.z+29)<2.7)return 'Recover village supplies';const n=nearestNPC();return n?'Talk to '+n.name:Math.hypot(hero.root.position.x-board.x,hero.root.position.z-board.z)<3?'Read village noticeboard':null}
   function update(dt,time) {
     caveUpdate(time);supplyCrate.visible=data.area!=='cave'&&!data.suppliesRecovered;forge.scale.y=.8+Math.sin(time*9)*.15;lanterns.forEach((m,i)=>m.material.emissiveIntensity=.85+Math.sin(time*3+i)*.15);
-    for(const n of npcs){const near=n.root.position.distanceTo(hero.root.position)<4;let speed=0;
+    for(const n of npcs){if(data.area!=='cave'&&api.state!=='title'&&n.root.position.distanceTo(hero.root.position)<17)api.project(n.root.position.clone().add(new THREE.Vector3(0,2.7,0)),n.label);else n.label.style.display='none';const near=n.root.position.distanceTo(hero.root.position)<4;let speed=0;
       if(n.id==='merchant'&&!near){const x=n.x+Math.sin(time*.22)*1.2;speed=Math.abs(x-n.root.position.x)/Math.max(dt,.001);n.root.position.x=x;}
       api.animate(n,speed,dt);if(near)api.face(n,Math.atan2(hero.root.position.x-n.root.position.x,hero.root.position.z-n.root.position.z),dt);
       if(n.id==='smith'&&!near){n.arms[1].rotation.x=-.6-Math.max(0,Math.sin(time*3))*.9;}
