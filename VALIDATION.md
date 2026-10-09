@@ -83,3 +83,13 @@ Not validated: four simultaneous rendered clients, physical iOS/Android/Safari,
 mobile FPS, hostile-client anti-cheat, provider quota exhaustion, sustained
 packet loss or long-running sessions. The two-client live checks used a single
 cloud machine; they are not a substitute for a test on two physical devices.
+
+## Shattered Marches expansion — 10 October 2026
+
+`tests/frontier-browser.cjs` runs the real WebGL game in Chromium. It verifies 49 enemies, 16 quest definitions, four added settlements, collision-grid routes from the starting village to every quest giver and boss, all ten new quests through the real damage/death pipeline, five unique boss weapon drops, rejection of repeated claims, frontier weapon and coordinate persistence, and permanent boss completion after reload. Each new boss takes a normal sword hit and naturally selects all three damaging attack patterns. Map tests cover waypoint placement/clear, journal navigation, cave mode and portrait layout bounds. No page exceptions were captured.
+
+All four original V2 suites were rerun successfully after integration, including original Guardian/Chief sword combat, old-save migration, cave traversal and genuine simultaneous Chromium touch input. `tests/multiplayer-browser.cjs` adds two-client checks for poses beyond z −300, frontier boss flags and unique loot replication; the existing private/public room, authority, shared-loot, cave and solo-save isolation checks remain in place.
+
+Terrain is baked once into the map canvas; dynamic markers update at about 6 Hz. Vegetation uses spatial chunks and lower draw distance on Low. Collision uses nearby grid cells. These checks do **not** establish sustained FPS, battery use or thermal performance on physical Android/iPhone hardware; physical Safari/device testing remains unperformed. Navigation is a collision-grid reachability check, supplemented by the existing real-input cave traversal suite, rather than a complete manual walk of every overworld road.
+
+The expanded two-client suite also passed against the configured **live Supabase project** using its actual anonymous Auth, room RPCs and authenticated Realtime transport. It verified private/public joins, shared pickup exclusivity, authoritative guest combat, northern-region movement, the Stormheart boss completion flag and its weapon drop reaching the other client, host departure and room cleanup. The environment's HTTPS/WebSocket proxy was used with certificate verification enabled; no service double was used for this live suite.

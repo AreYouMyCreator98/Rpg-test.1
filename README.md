@@ -1,18 +1,38 @@
-# Realm of the Fallen — V2: The Living World
+# Realm of the Fallen — The Shattered Marches
 
-A procedural 3D browser action RPG, now with a village, shops, six quests, a cave dungeon, and stamina-based combat. V2 extends the original forest, hero, equipment, goblins and Goblin Chief encounter.
+A procedural 3D browser action RPG with a continuous expanded overworld, five settlements, sixteen quests, seven bosses, a cave dungeon and optional four-player Supabase co-op. The original forest, hero, equipment, goblins, village and Goblin Chief remain playable.
 
-**Game files:** `index.html`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
+**Game files:** `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
 
 ## GitHub Pages
 
-Upload **all five game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The repository also includes the **Publish Realm of the Fallen** Actions workflow. It publishes just the five static game files when they change on `main`, and can be run manually from the Actions tab. It uses GitHub’s official Pages actions; it does not compile the game or install application dependencies.
+Upload **all six game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The repository also includes the **Publish Realm of the Fallen** Actions workflow. It publishes just the six static game files when they change on `main`, and can be run manually from the Actions tab. It uses GitHub’s official Pages actions; it does not compile the game or install application dependencies.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
 `README.md` and `tests/` are documentation and optional development checks, not runtime dependencies. The original playable version is preserved by Git tag **`v1.0-pre-living-world`**, pointing to commit `fbb002b`. Restoring that tag's `index.html` restores V1. Keep your browser's original save backup if rolling back; V1 cannot interpret new V2 equipment variants.
 
 The working V2 baseline is preserved by tag **`v2.0-pre-multiplayer`** (`645f83e`).
+
+## The Shattered Marches expansion
+
+The playable overworld is approximately **eight times its previous area**, bounded by x −330…180 and z −340…180. Follow the western road from the original village to **Dawnwatch City**, then explore **Briarfield**, **Frostmere** and **Reedhaven**. Northern roads climb into the mountains; a third bridge links Dawnwatch to the northern territories. Village fountains restore health and stamina through Interact. Terrain, trees, buildings, enemies and combat remain genuine WebGL geometry.
+
+| Territory / quest giver | New enemies | Boss / unique weapon |
+| --- | --- | --- |
+| Briarfield · Warden Rowan | Greyfang wolves | Fenrir, the Moonfang · Moonfang Sabre |
+| Dawnwatch · Sister Aveline | Restless skeletons | Morvain, the Bone Regent · Dawnbreaker |
+| Dawnwatch · Marshal Cera | Ashroad brigands | Captain Rook, the Oathbreaker · Oathkeeper |
+| Reedhaven · Herbalist Nessa | Mirefang spiders | Silkmaw, Brood Mother · Silksteel Fang |
+| Frostmere · Sage Orin | Stormbound elementals | Astrax, the Stormheart · Stormheart Edge |
+
+Each giver offers a four-enemy hunt and a boss quest. Accept and claim rewards in conversation. Hunt counters start on acceptance; boss victories are remembered even if their quest is accepted later. Rewards can be claimed once. Boss weapons drop in the world and can be equipped and tempered at Bram's forge. Normal enemies respawn; defeated frontier bosses stay defeated in that solo save.
+
+The **minimap** renders terrain relief and elevation contours, trees, rocks, roads, river crossings, buildings, quest targets, villagers, enemies, loot and party members. Use **+/−** for range, **N** to toggle north-up, and **Map** for the full atlas. Click or tap the atlas to place a waypoint; the minimap displays its distance. Inside Hollowroot, the map switches to cave rooms, the gate, pool, crystal formations and chest locations.
+
+Old saves retain their original key, character, equipment, coins and quests. New quests and boss flags receive defaults; expanded positions and new weapons survive reload. Co-op synchronizes the expanded coordinates, telegraphs, boss completion and unique loot. As before, co-op uses fresh session characters and leaves solo saves untouched. Clients on different world revisions receive a reload message instead of silently desynchronizing.
+
+The pre-expansion working version is preserved by **`v2.1-pre-frontier`**. Repeated new trees and rocks use spatially grouped instancing; nearby collision uses a spatial grid; Low graphics reduces vegetation draw distance. Device frame rates depend on hardware and have not been certified.
 
 ## The living village
 

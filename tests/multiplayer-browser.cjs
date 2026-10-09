@@ -60,6 +60,12 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  // Kill with real queued sword swings; both clients converge and see the loot.
  for(let i=0;i<12;i++){if(await a.evaluate(()=>__realm.enemies[0].hp<=0))break;await b.waitForFunction(()=>!__realm.attack);await b.evaluate(()=>{__realm.player.hp=100;const e=__realm.enemies[0];__realm.setPosition(e.root.position.x,e.root.position.z+1.4);__realm.startAttack()});await b.waitForFunction(()=>!__realm.attack);await b.waitForTimeout(250)}
  await b.waitForFunction(()=>__realm.enemies[0].hp<=0);assert(await b.evaluate(()=>__realm.player.xp>0));await b.waitForFunction(()=>__realm.loot.some(l=>l.id==='tooth'));
+ await a.evaluate(()=>{__realm.setPosition(-60,-308);const e=__realm.enemies.find(e=>e.family==='elemental'&&e.isBoss);e.hp=e.maxHp;e.state='chase';e.cooldown=0});
+ await b.evaluate(()=>{__realm.setPosition(-69,-310);__realm.player.hp=100});
+ await a.waitForFunction(()=>[...__realm.net.peers.values()].some(p=>p.pose?.z<-300));
+ await a.evaluate(()=>{const e=__realm.enemies.find(e=>e.family==='elemental'&&e.isBoss);__realm.hurtEnemy(e,9999)});
+ await b.waitForFunction(()=>__realm.living.serialize().frontierBosses.includes('elemental')&&__realm.loot.some(l=>l.id==='frontier_elemental'));
+ console.log('PASS expanded northern coordinates, new boss death flags and unique loot replicate');
  // Shared cave key/chest and gate through actual pickup/interaction API.
  await a.evaluate(()=>{for(const e of __realm.enemies)if(e.cave&&!e.guardian){e.hp=0;e.dead=4}__realm.setPosition(-46,38);__realm.living.enterCave();__realm.setPosition(313,-21);__realm.pickup()});
  await b.evaluate(()=>{__realm.setPosition(-46,38);__realm.living.enterCave();__realm.setPosition(312.3,-21)});

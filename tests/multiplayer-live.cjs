@@ -46,6 +46,11 @@ const {chromium,request}=require(process.env.PLAYWRIGHT_PATH||'playwright');
  await b.waitForFunction(()=>__realm.player.hp<100,null,{timeout:30000});const hp=await a.evaluate(()=>__realm.enemies[0].hp);
  for(let i=0;i<4;i++){await b.evaluate(()=>{__realm.player.hp=100;const e=__realm.enemies[0];__realm.setPosition(e.root.position.x,e.root.position.z+1.3);__realm.startAttack()});await b.waitForFunction(()=>!__realm.attack);await b.waitForTimeout(500);if(await a.evaluate(h=>__realm.enemies[0].hp<h,hp))break}
  assert(await a.evaluate(h=>__realm.enemies[0].hp<h,hp));console.log('PASS live guest damage and guest sword attacks reach authoritative host');
+ await a.evaluate(()=>__realm.setPosition(-60,-308));await b.evaluate(()=>{__realm.setPosition(-69,-310);__realm.player.hp=100});
+ await a.waitForFunction(()=>[...__realm.net.peers.values()].some(p=>p.pose?.z<-300),null,{timeout:30000});
+ await a.evaluate(()=>__realm.hurtEnemy(__realm.enemies.find(e=>e.family==='elemental'&&e.isBoss),9999));
+ await b.waitForFunction(()=>__realm.living.serialize().frontierBosses.includes('elemental')&&__realm.loot.some(l=>l.id==='frontier_elemental'),null,{timeout:30000});
+ console.log('PASS live northern territory pose, expansion boss completion and unique loot replication');
  await a.evaluate(()=>__realm.net.leave('Validation complete'));await b.waitForFunction(()=>!__realm.net.active,null,{timeout:15000});
  await a.evaluate(()=>__realm.net.lobby());await a.click('#create-public');await a.waitForFunction(()=>__realm.net.active,null,{timeout:30000});
  await b.evaluate(()=>__realm.net.lobby());await b.click('#refresh-rooms');await b.waitForSelector('#room-list button',{timeout:30000});
