@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
     paths:
+      - ui.css
+      - ui.js
       - index.html
       - frontier.js
       - living-world.js
@@ -38,7 +40,7 @@ jobs:
       - name: Stage the static game
         run: |
           mkdir -p _site
-          cp index.html frontier.js living-world.js multiplayer.js multiplayer-config.js supabase-rooms.js _site/
+          cp ui.css ui.js index.html frontier.js living-world.js multiplayer.js multiplayer-config.js supabase-rooms.js _site/
       - name: Upload game files
         uses: actions/upload-pages-artifact@v3
         with:

@@ -7,8 +7,7 @@ export function installMultiplayer(api) {
   const peers=new Map(),seen=new Map();let request=0;
   const shieldGeometry=new THREE.CylinderGeometry(.36,.36,.09,8),shieldMaterial=new THREE.MeshStandardMaterial({color:0x786245,flatShading:true});
   const button=document.createElement('button');button.id='multiplayer';button.textContent='Play together';$('title').querySelector('.buttons').append(button);button.onclick=lobby;
-  const party=document.createElement('button');party.id='party-button';party.textContent='Party';party.style.cssText='position:fixed;left:12px;top:180px;z-index:6;font-size:11px;padding:8px 12px';party.hidden=true;document.body.append(party);party.onclick=lobby;
-  const style=document.createElement('style');style.textContent='.room-input{width:100%;padding:12px;background:#16312a;color:#f3eee0;border:1px solid #6a795b;border-radius:8px;font:inherit;margin:7px 0 14px;user-select:text;touch-action:auto}.room-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #ffffff20}.room-note{font-size:12px;line-height:1.6}.party-label{position:absolute;color:#d0eedb;font-size:11px;text-shadow:0 1px 4px #000;transform:translate(-50%,-100%);white-space:nowrap}.invite-code{font:20px monospace;color:#e9c579;user-select:text;overflow-wrap:anywhere}@media(max-height:500px){#party-button{top:165px}}';document.head.append(style);
+  const party=document.createElement('button');party.id='party-button';party.textContent='Party';party.hidden=true;document.body.append(party);party.onclick=lobby;
   function send(m){transport?.send(m)}
   function event(data,to){if(to===id||!to)applyEvent(data);if(host)send({type:'event',data,to})}
   function command(data){if(host)handleCommand(id,{...data,request:++request});else{sendPose();send({type:'command',data:{...data,request:++request}})}}
