@@ -1,3 +1,11 @@
+// Recover older cached HTML before it can pair its obsolete HUD with this module.
+// This module must retain this guard while pre-design-system pages remain cached.
+if(!document.getElementById('gold-counter')){
+ const fresh=new URL(location.href),release='realm-release-20261010-2';
+ if(fresh.searchParams.get('v')!==release){fresh.searchParams.set('v',release);location.replace(fresh.href)}
+ else{document.body.textContent='The game update could not load. Reopen the game to retry. Your saved journey is safe.'}
+ await new Promise(()=>{}); // Navigation replaces this document; never initialize mixed UI.
+}
 // The Shattered Marches: world data is also used by terrain, navigation and maps.
 export const BOUNDS={left:-330,right:180,top:-340,bottom:180};
 export const SETTLEMENTS=[

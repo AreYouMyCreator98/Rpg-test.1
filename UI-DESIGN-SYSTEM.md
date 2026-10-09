@@ -26,3 +26,9 @@ The contextual action appears only for the existing valid interaction. Nameplate
 `tests/ui-browser.cjs` captures actual Chromium/WebGL screenshots at 864×1536, 390×844, 320×568, 844×390 and 1440×900, plus a simulated 44px top/34px bottom safe area. It checks reference anchors, action target sizes, circular control separation, full currency display and menu actions. Screenshots go to `TEST_ARTIFACT_DIR` or `/tmp/realm-tests`.
 
 The reference was compared visually and by normalized HUD anchors, not by an automated pixel-difference score. The world scene, camera/player location, live values and platform font rasterization differ from the supplied image; this is not a claim of literal pixel identity. Physical Android/iPhone/Safari behavior and sustained device performance have not been tested in this environment.
+
+## Deployment cache compatibility
+
+GitHub Pages can retain HTML and modules independently for ten minutes. Keep every local import and stylesheet URL versioned. `scripts/stage-pages.py` replaces the source release token with `GITHUB_SHA` when staging the eight runtime files; this is a static copy/stamp operation, not an application build. The source files also run directly without this step. For manual deployments, stage with a new `GITHUB_SHA` value and upload the output files.
+
+Do not remove the legacy-HUD check at the top of `frontier.js` while old entry pages may remain in browser caches. It recovers old HTML via a versioned navigation before creating the map, preserving LocalStorage. The startup CSS check prevents exposing a playable, unstyled HUD when styling fails. `tests/ui-cache-upgrade.cjs` covers stale-entry recovery and failed CSS with a saved character.
