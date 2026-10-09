@@ -6,7 +6,7 @@ A procedural 3D browser action RPG with a continuous expanded overworld, five se
 
 ## GitHub Pages
 
-Upload **all eight game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The repository also includes the **Publish Realm of the Fallen** Actions workflow. It publishes just the eight static game files when they change on `main`, and can be run manually from the Actions tab. It uses GitHub’s official Pages actions; it does not compile the game or install application dependencies.
+Upload **all eight game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 

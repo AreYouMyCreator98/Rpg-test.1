@@ -29,6 +29,6 @@ The reference was compared visually and by normalized HUD anchors, not by an aut
 
 ## Deployment cache compatibility
 
-GitHub Pages can retain HTML and modules independently for ten minutes. Keep every local import and stylesheet URL versioned. `scripts/stage-pages.py` replaces the source release token with `GITHUB_SHA` when staging the eight runtime files; this is a static copy/stamp operation, not an application build. The source files also run directly without this step. For manual deployments, stage with a new `GITHUB_SHA` value and upload the output files.
+GitHub Pages can retain HTML and modules independently for ten minutes. Keep every local import and stylesheet URL versioned. `scripts/stage-pages.py` validates the shared release identity and copies the eight runtime files unchanged. The Pages setting publishes `main` directly; the custom workflow validates only, avoiding two competing publishers. The source files run directly without staging. Before each runtime update, rotate the release string consistently in `index.html`, `frontier.js` and `multiplayer.js`; the validator rejects missing or inconsistent local dependency versions.
 
 Do not remove the legacy-HUD check at the top of `frontier.js` while old entry pages may remain in browser caches. It recovers old HTML via a versioned navigation before creating the map, preserving LocalStorage. The startup CSS check prevents exposing a playable, unstyled HUD when styling fails. `tests/ui-cache-upgrade.cjs` covers stale-entry recovery and failed CSS with a saved character.

@@ -1,50 +1,32 @@
-name: Publish Realm of the Fallen
+name: Validate game release
 
 on:
   push:
     branches: [main]
     paths:
-      - scripts/stage-pages.py
+      - index.html
       - ui.css
       - ui.js
-      - index.html
       - frontier.js
       - living-world.js
       - multiplayer.js
       - multiplayer-config.js
       - supabase-rooms.js
+      - scripts/stage-pages.py
       - .github/workflows/pages.yml
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
-concurrency:
-  group: realm-pages
-  cancel-in-progress: false
-
+# Settings → Pages already publishes main / (root). Keep exactly one publisher.
+# This workflow validates the versioned source files; it must not deploy a second artifact.
 jobs:
-  publish:
+  validate:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Check out tested game files
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Read Pages configuration
-        uses: actions/configure-pages@v5
-      - name: Stage the static game
-        run: |
-          python scripts/stage-pages.py
-      - name: Upload game files
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-      - name: Publish
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Validate the static release
+        run: python scripts/stage-pages.py
