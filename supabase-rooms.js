@@ -2,7 +2,7 @@
 // with the host. Private per-sender topics prevent guests spoofing host packets.
 export async function connectSupabase(url,key,receive) {
   const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm');
-  const db=createClient(url,key,{auth:{storage:sessionStorage,storageKey:'realm-coop-auth-'+new URL(url).hostname,persistSession:true,autoRefreshToken:true,detectSessionInUrl:false},realtime:{params:{eventsPerSecond:40}}});
+  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:true,detectSessionInUrl:false},realtime:{params:{eventsPerSecond:40}}});
   try {
   let {data:{session},error}=await db.auth.getSession();if(error)throw error;
   if(!session){const result=await db.auth.signInAnonymously();if(result.error)throw result.error;session=result.data.session}
@@ -51,7 +51,8 @@ export async function connectSupabase(url,key,receive) {
       const ch=channels.get(id);if(ch)await ch.send({type:'broadcast',event:'game',payload:m});
     }catch(e){errorMessage(e)}finally{if(m.type==='create'||m.type==='join')joining=false}
   }
-  // Reloading the host tab ends its previous ephemeral room cleanly.
+  // Each tab has an in-memory identity. Persistent Supabase auth broadcasts
+  // sign-in changes across tabs, which would replace another tab's room identity.
   await rpc('leave_room');
   receive({type:'hello',id,protocol:1});
   return {send,async close(){closed=true;try{await leave()}catch{}await db.auth.stopAutoRefresh();db.realtime.disconnect()}};

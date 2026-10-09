@@ -30,14 +30,11 @@ The original working V1 is retained at tag `v1.0-pre-living-world`. V2 migrates 
 
 ## Multiplayer update — 9 October 2026
 
-The Supabase-backed co-op integration has been validated locally. The user-supplied
-project URL and browser-safe publishable key are configured in `multiplayer-config.js`.
-**Hosted Supabase authentication, SQL installation and Realtime have not been
-verified yet.** This workspace’s network proxy rejected HTTPS tunnelling to the
-new project with HTTP 403 before the request reached Supabase. Its hostname has
-been added to the environment configuration draft; applying that change is still
-required for live tests from this workspace. This is not an observed Supabase
-authentication failure.
+The Supabase-backed co-op integration has been validated locally **and against
+the configured live Supabase project**. Anonymous sign-in, the installed room
+functions and private Realtime messaging all responded successfully. The user
+supplied the browser-safe project URL/key and enabled the Auth/SQL configuration.
+The development network restriction was resolved before live testing.
 
 - `tests/multiplayer-sql.cjs` passed using PGlite 0.3.14 (PostgreSQL): SQL
   installation and reinstallation, anonymous-user identities, private-room hiding,
@@ -65,8 +62,23 @@ authentication failure.
   tests verified its exact stored value stayed unchanged during the room session.
   Leaving resumes the saved solo character. Co-op progression is session-only.
 
-Still required: apply `supabase/multiplayer.sql` to the actual project, enable
-anonymous sign-in, and test private-channel
-RLS, two physical devices, public listings, latency and disconnection behavior
-against that hosted service. Four-client rendering, physical iOS/Android/Safari,
-provider quotas, real-world packet loss and mobile FPS have not been validated.
+- `tests/multiplayer-live.cjs` passed against the real project with two Chromium
+  clients: anonymous sign-in, private room creation/code join and hidden listing,
+  authenticated Realtime, remote avatars, contested loot granted once, a guest
+  taking enemy damage and damaging the host's enemy with sword attacks, public
+  discovery/join, host departure and room cleanup. No browser exceptions occurred.
+  No Supabase responses or gameplay messages were mocked. In this cloud workspace,
+  HTTP and WebSocket traffic passed through a certificate-verifying proxy adapter;
+  the adapter preserves text and binary frames. This avoids Chromium's untrusted
+  proxy certificate without disabling TLS validation. Separate direct live RPC
+  checks also verified guest read access but rejected host-topic write permission.
+- Initial live tests exposed a test-proxy binary-frame decoding issue, which was
+  corrected. Auth identities are now kept in memory per tab so Supabase's
+  persistent-auth BroadcastChannel cannot replace another tab's identity.
+- A delayed room-state response delivered after leaving was tested: it does not
+  restore stale membership, and the client can immediately join another room.
+
+Not validated: four simultaneous rendered clients, physical iOS/Android/Safari,
+mobile FPS, hostile-client anti-cheat, provider quota exhaustion, sustained
+packet loss or long-running sessions. The two-client live checks used a single
+cloud machine; they are not a substitute for a test on two physical devices.

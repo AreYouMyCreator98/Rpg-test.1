@@ -133,3 +133,12 @@ node tests/multiplayer-browser.cjs
 runs actual PostgreSQL functions and RLS in PGlite. The browser suite uses two
 clients with a deterministic Supabase service double; it tests the real transport
 adapter/game integration but does **not** establish connectivity to a live project.
+
+An opt-in live test is available as `node tests/multiplayer-live.cjs`. It creates
+two anonymous users and temporary rooms in the configured project, then cleans
+up room membership. Run it only when authorized to test that project. It uses
+real Supabase RPC and Realtime traffic. For this proxy-constrained cloud workspace,
+set `REALM_TEST_PROXY=1` and `NETWORK_TOOLS_ROOT` to a directory containing
+`ws@8.22.0` and `https-proxy-agent@7.0.6`. The proxy test path verifies TLS for
+both HTTP and WebSockets and preserves binary frames; it does not weaken the game’s
+normal browser connection.
