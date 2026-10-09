@@ -122,18 +122,104 @@ export function installLivingWorld(api) {
     }
     $('shop-back').onclick=()=>dialogue(n);
   }
-  function questDialogue(n) {api.modal('Village work','<p>The village keeper can guide your next journey.</p><button id="work-back">Back</button>','dialogue');$('work-back').onclick=()=>dialogue(n)}
-  function interact() {const n=nearestNPC();if(n){dialogue(n);return true}if(Math.hypot(hero.root.position.x-board.x,hero.root.position.z-board.z)<3){questDialogue(npcs[2]);return true}return false}
-  function hint(){const n=nearestNPC();return n?'Talk to '+n.name:Math.hypot(hero.root.position.x-board.x,hero.root.position.z-board.z)<3?'Read village noticeboard':null}
+  const questDefinitions = [
+    {id:'scouts',name:'A quieter forest',kind:'Side',giver:'smith',description:'Defeat five goblin scouts after accepting this task.',goal:5,gold:45,xp:40,target:[-23,36]},
+    {id:'teeth',name:'Teeth for the forge',kind:'Side',giver:'smith',description:'Bring Bram ten goblin teeth. Turning them in consumes them.',goal:10,gold:60,xp:55,target:[-23,36]},
+    {id:'supplies',name:'The missing caravan',kind:'Side',giver:'merchant',description:'Clear the goblin encampment and recover the marked supply crate.',goal:1,gold:75,xp:65,target:[24,-29]},
+    {id:'trail',name:'Beyond Stonebridge',kind:'Main',giver:'elder',description:'Discover Stonebridge River and investigate the Mountain Ruins.',goal:2,gold:60,xp:70,target:[-14,9]},
+    {id:'guardian',name:'Beneath the roots',kind:'Main',giver:'elder',description:'Enter Hollowroot Cave, find the gate key and defeat its Guardian.',goal:1,gold:130,xp:120,target:[-46,36]},
+    {id:'relic',name:'A light brought home',kind:'Main',giver:'elder',description:'Recover the ancient relic from the Guardian and bring it to Elowen.',goal:1,gold:180,xp:140,target:[-46,36]}
+  ];
+  Object.assign(items,{
+    supplies:{name:'Village Supplies',type:'quest',rarity:1,icon:'▣',desc:'Recovered caravan goods. Return to Mira.'},
+    cavekey:{name:'Hollowroot Key',type:'quest',rarity:2,icon:'⚿',desc:'Opens the gate in Hollowroot Cave.'},
+    relic:{name:'Ancient Relic',type:'quest',rarity:3,icon:'✧',desc:'A fragment of the old light. Return it to Elowen.'}
+  });
+  const supplyCrate=mesh('box',0xa17a4c,24,ground(24,-29)+.55,-29,1.2,1.1,1.2);
+  mesh('box',0xe8cb7f,0,0,.51,.16,1.03,.03,supplyCrate);
+  const marker=document.createElement('div');marker.id='quest-marker';$('hud').append(marker);
+  const journalButton=document.createElement('button');journalButton.id='journal-button';journalButton.textContent='J · Journal / Map';journalButton.onclick=()=>journal();document.querySelector('.quest').append(journalButton);
+  function progress(q) {
+    if(q.id==='scouts')return data.quests.scouts.count;
+    if(q.id==='teeth')return Math.min(10,quantity('tooth'));
+    if(q.id==='supplies')return quantity('supplies')?1:0;
+    if(q.id==='trail')return [2,4].filter(i=>api.visited.includes(i)).length;
+    if(q.id==='guardian')return data.guardianDead?1:0;
+    return quantity('relic')?1:0;
+  }
+  function acceptQuest(id) {
+    const q=questDefinitions.find(q=>q.id===id);
+    if(!q||api.panel!=='quest-dialogue'||vendor?.id!==q.giver||nearestNPC()!==vendor||data.quests[id].status!=='available')return false;
+    data.quests[id].status='active';data.tracked=id;api.save();api.toast('Quest accepted · '+q.name);return true;
+  }
+  function claimQuest(id) {
+    const q=questDefinitions.find(q=>q.id===id);
+    if(!q||api.panel!=='quest-dialogue'||vendor?.id!==q.giver||nearestNPC()!==vendor||data.quests[id].status!=='active'||progress(q)<q.goal)return false;
+    // Mark claimed before awarding: repeated clicks cannot repeat the transaction.
+    data.quests[id].status='claimed';
+    if(id==='teeth')removeItem('tooth',10);if(id==='supplies')removeItem('supplies',1);if(id==='relic')removeItem('relic',1);
+    api.player.coins+=q.gold;api.awardXP(q.xp);api.save();api.sound('level');api.toast('Completed · '+q.name);return true;
+  }
+  function questDialogue(n) {
+    vendor=n;api.modal(n.name+' · Village work','<div id="quest-list"></div><button id="quest-back">Back to conversation</button>','quest-dialogue');
+    for(const q of questDefinitions.filter(q=>q.giver===n.id)){
+      const status=data.quests[q.id].status,ready=progress(q)>=q.goal;
+      const row=document.createElement('section');row.className='quest-entry';
+      row.innerHTML=`<div class="eyebrow">${q.kind} quest</div><h3>${q.name}</h3><p>${q.description}</p><small>${status==='claimed'?'Completed':progress(q)+' / '+q.goal} · ${q.gold} coins + ${q.xp} XP</small>`;
+      const b=document.createElement('button');b.textContent=status==='available'?'Accept quest':status==='claimed'?'Reward claimed':ready?'Complete quest':'In progress';b.disabled=status==='claimed'||status==='active'&&!ready;
+      b.onclick=()=>{status==='available'?acceptQuest(q.id):claimQuest(q.id);questDialogue(n)};row.append(b);$('quest-list').append(row);
+    }
+    $('quest-back').onclick=()=>dialogue(n);
+  }
+  function journal() {
+    if(api.state!=='playing')return;
+    api.modal('Journal of the wilds','<div class="journal-tabs"><button id="journal-map">World map</button></div><div id="journal-quests"></div>','journal');
+    for(const kind of ['Main','Side'])for(const q of questDefinitions.filter(q=>q.kind===kind)){
+      const state=data.quests[q.id],n=npcs.find(n=>n.id===q.giver),row=document.createElement('section');row.className='quest-entry';
+      row.innerHTML=`<div class="eyebrow">${kind} · ${state.status}</div><h3>${q.name}</h3><p>${q.description}</p><small>${state.status==='claimed'?'Completed':progress(q)+' / '+q.goal} · ${q.gold} coins / ${q.xp} XP · Speak to ${n.name}</small>`;
+      if(state.status==='active'){const b=document.createElement('button');b.textContent=data.tracked===q.id?'Tracked':'Track objective';b.onclick=()=>{data.tracked=q.id;api.save();journal()};row.append(b)}$('journal-quests').append(row);
+    }$('journal-map').onclick=worldMap;
+  }
+  function worldMap() {
+    const points=[...api.poi,{name:'Hollowroot Cave',x:-46,z:36}];
+    const px=x=>(x+95)*2,py=z=>(z+100)*2;
+    const labels=points.map((p,i)=>{const known=i===0||api.visited.includes(i)||i===5&&data.caveDiscovered;return `<g><circle cx="${px(p.x)}" cy="${py(p.z)}" r="5" fill="${known?'#edca80':'#879785'}"/><text x="${px(p.x)+8}" y="${py(p.z)-7}" fill="${known?'#f4e3b6':'#a7b19c'}">${known?(i===0?'Wanderer’s Village':p.name):'Undiscovered'}</text></g>`}).join('');
+    const river=Array.from({length:39},(_,i)=>{const x=-95+i*5;return px(x)+','+py(9+Math.sin(x*.052)*7)}).join(' ');
+    const p=hero.root.position,cave=p.x>200;
+    api.modal('The Emerald Wilds',`<div class="eyebrow">North ↑ · ${cave?'You are in Hollowroot Cave':'Your discoveries'}</div><svg class="world-map" viewBox="0 0 440 420" role="img" aria-label="Map of the forest, village, river, ruins and cave"><rect width="440" height="420" rx="12" fill="#273f34"/><polyline points="${river}" stroke="#72b9bb" stroke-width="9" fill="none"/><polyline points="${[[0,64],[-23,36],[-14,18],[-14,-4],[28,-23],[11,-43],[-8,-66]].map(([x,z])=>px(x)+','+py(z)).join(' ')}" stroke="#b6a477" stroke-width="3" fill="none"/>${labels}<circle cx="${px(cave?-46:p.x)}" cy="${py(cave?36:p.z)}" r="5" fill="#fff" stroke="#e9c579" stroke-width="2"/></svg><p class="map-note">White: you · Gold: discovered · Grey: uncharted. Follow the trail north; the cave branches west from Whispering Forest.</p><button id="map-journal">Quest journal</button>`,'map');$('map-journal').onclick=journal;
+  }
+  function onKill(e) {
+    if(e.type===0&&data.quests.scouts.status==='active')data.quests.scouts.count=Math.min(5,data.quests.scouts.count+1);
+    // A tooth is real loot; collecting or turning it in still requires interaction.
+    if(e.type!==3)api.drop('tooth',e.root.position.x-.4,e.root.position.z+.4);
+  }
+  function updateQuestHUD() {
+    if(!data.quests)return;let q=questDefinitions.find(q=>q.id===data.tracked&&data.quests[q.id].status==='active');
+    q??=questDefinitions.find(q=>data.quests[q.id].status==='active');
+    if(!q){marker.style.display='none';return}
+    $('objective').textContent=q.name+' · '+progress(q)+' / '+q.goal;
+    let target=q.target;const complete=progress(q)>=q.goal;
+    if(complete){const n=npcs.find(n=>n.id===q.giver);target=[n.root.position.x,n.root.position.z]}else if(q.id==='trail'&&api.visited.includes(2))target=[-8,-66];
+    if(hero.root.position.x>200){marker.textContent=complete?'◆ Return to the village':'◆ Explore Hollowroot · find the gate key';marker.style.display='block';return}
+    const dx=target[0]-hero.root.position.x,dz=target[1]-hero.root.position.z;
+    marker.textContent='◆ '+(complete?'Return to '+npcs.find(n=>n.id===q.giver).name:q.name)+' · '+Math.round(Math.hypot(dx,dz))+'m';marker.style.display='block';
+  }
+  function interact() {const n=nearestNPC();if(n){dialogue(n);return true}if(Math.hypot(hero.root.position.x-24,hero.root.position.z+29)<2.7&&!data.suppliesRecovered){if(api.enemies.some(e=>e.hp>0&&Math.hypot(e.root.position.x-24,e.root.position.z+29)<10)){api.toast('Clear the camp before recovering its supplies.');return true}data.suppliesRecovered=true;api.addItem('supplies');api.save();api.toast('Recovered the village supplies');return true}if(Math.hypot(hero.root.position.x-board.x,hero.root.position.z-board.z)<3){journal();return true}return false}
+  function hint(){if(!data.suppliesRecovered&&Math.hypot(hero.root.position.x-24,hero.root.position.z+29)<2.7)return 'Recover village supplies';const n=nearestNPC();return n?'Talk to '+n.name:Math.hypot(hero.root.position.x-board.x,hero.root.position.z-board.z)<3?'Read village noticeboard':null}
   function update(dt,time) {
-    forge.scale.y=.8+Math.sin(time*9)*.15;lanterns.forEach((m,i)=>m.material.emissiveIntensity=.85+Math.sin(time*3+i)*.15);
+    supplyCrate.visible=!data.suppliesRecovered;forge.scale.y=.8+Math.sin(time*9)*.15;lanterns.forEach((m,i)=>m.material.emissiveIntensity=.85+Math.sin(time*3+i)*.15);
     for(const n of npcs){const near=n.root.position.distanceTo(hero.root.position)<4;let speed=0;
       if(n.id==='merchant'&&!near){const x=n.x+Math.sin(time*.22)*1.2;speed=Math.abs(x-n.root.position.x)/Math.max(dt,.001);n.root.position.x=x;}
       api.animate(n,speed,dt);if(near)api.face(n,Math.atan2(hero.root.position.x-n.root.position.x,hero.root.position.z-n.root.position.z),dt);
       if(n.id==='smith'&&!near){n.arms[1].rotation.x=-.6-Math.max(0,Math.sin(time*3))*.9;}
     }
   }
-  function restore(saved) {data=saved?.living||{};vendor=null;}
+  function restore(saved) {
+    const old=saved?.living||{};data={...old,quests:{},tracked:typeof old.tracked==='string'?old.tracked:'',suppliesRecovered:!!old.suppliesRecovered};
+    for(const q of questDefinitions){const p=old.quests?.[q.id];data.quests[q.id]={status:['available','active','claimed'].includes(p?.status)?p.status:'available',count:Number.isFinite(p?.count)?Math.max(0,Math.min(q.goal,p.count)):0}}
+    vendor=null;
+  }
+  restore(null);
   function serialize(){return data}
-  return {interact,hint,update,restore,serialize,purchase,sell,upgrade,upgradeCost,shop,dialogue,npcs,buildings,quantity};
+  return {interact,hint,update,restore,serialize,onKill,updateQuestHUD,journal,worldMap,acceptQuest,claimQuest,questDialogue,questDefinitions,progress,purchase,sell,upgrade,upgradeCost,shop,dialogue,npcs,buildings,quantity};
 }
