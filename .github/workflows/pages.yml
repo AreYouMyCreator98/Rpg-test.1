@@ -1,0 +1,44 @@
+name: Publish Realm of the Fallen
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - living-world.js
+      - .github/workflows/pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: realm-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out tested game files
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Read Pages configuration
+        uses: actions/configure-pages@v5
+      - name: Stage the static game
+        run: |
+          mkdir -p _site
+          cp index.html living-world.js _site/
+      - name: Upload game files
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Publish
+        id: deployment
+        uses: actions/deploy-pages@v4
