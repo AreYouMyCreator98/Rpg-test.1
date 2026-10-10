@@ -30,3 +30,7 @@ The contextual action appears only for the existing valid interaction. Nameplate
 GitHub Pages can retain HTML and modules independently for ten minutes. Keep every local import and stylesheet URL versioned. `scripts/stage-pages.py` validates the shared release identity and copies the nine runtime files unchanged. The Pages setting publishes `main` directly; the custom workflow validates only, avoiding two competing publishers. The source files run directly without staging. Before each runtime update, rotate the release string consistently in `index.html`, `frontier.js` and `multiplayer.js`; the validator rejects missing or inconsistent local dependency versions.
 
 Do not remove the legacy-HUD check at the top of `frontier.js` while old entry pages may remain in browser caches. It recovers old HTML via a versioned navigation before creating the map, preserving LocalStorage. The startup CSS check prevents exposing a playable, unstyled HUD when styling fails. `tests/ui-cache-upgrade.cjs` covers stale-entry recovery and failed CSS with a saved character.
+
+## Character builds and camera
+
+Journey adds Attributes and Skill trees; camera controls remain under Settings. Attribute upgrades show current → proposed values and require confirmation. Skill branches use the existing gold/mint tokens and the shared `--ui-skill-unlocked` surface. Mobile stacks branches inside the scrolling modal; desktop shows three columns. Neither system adds always-visible HUD panels.

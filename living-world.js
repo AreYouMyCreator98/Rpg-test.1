@@ -1,8 +1,8 @@
 // Realm of the Fallen V2. Local ES module; no build or new external assets.
 export function migrateSave(data) {
-  if (!data || ![1, 2].includes(data.version)) return null;
-  const living = data.version === 2 && data.living && typeof data.living === 'object' ? data.living : {};
-  return {...data, version: 2, living};
+  if (!data || ![1, 2, 3].includes(data.version)) return null;
+  const living = data.version >= 2 && data.living && typeof data.living === 'object' ? data.living : {};
+  return {...data, living};
 }
 
 export function installLivingWorld(api) {

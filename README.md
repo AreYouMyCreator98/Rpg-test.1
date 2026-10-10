@@ -2,11 +2,11 @@
 
 A procedural 3D browser action RPG with a continuous expanded overworld, five settlements, sixteen quests, seven bosses, a cave dungeon and optional four-player Supabase co-op. The original forest, hero, equipment, goblins, village and Goblin Chief remain playable.
 
-**Game files:** `adventure-motion.js`, `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
+**Game files:** `progression.js`, `adventure-motion.js`, `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
 
 ## GitHub Pages
 
-Upload **all ten game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
+Upload **all eleven game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
@@ -184,3 +184,11 @@ normal browser connection.
 The shared hero rig now has articulated knees and a forward shoulder roll with anticipation, tuck and recovery; core-mesh ground contact is maintained while the existing collision movement and invulnerability remain active. Remote party members use the same pose. Base stamina is 150, regeneration is 18/second after the existing recovery delay, and dodging costs 25. Old saves preserve their stamina percentage; rest points refill the new maximum.
 
 Open **Menu → Settings → Camera & accessibility** for live FOV (45–100°, default 70°), classic/shoulder/first-person view, shoulder side, sensitivity and vertical inversion. Preferences stay on this device. First-person hides the local head, torso and cape while retaining the existing weapon rig and combat. Mobile orbit uses the same preferences. Mount-specific camera validation will follow the mount stage; mounts do not exist yet.
+
+## Expansion Stage 2 — character builds
+
+**Journey → Attributes / Skill trees** adds five attributes (30 allocated points maximum each), preview-and-confirm spending, and three connected six-node skill paths. Each level grants three attribute points and one skill point. Returning characters receive the points earned by their existing levels. The cap is now 40; the original XP curve through level 20 remains intact, then grows more steeply. Beyond level 20, enemy health/damage/XP scale on starting a world or respawning, without changing an ongoing fight.
+
+All 18 nodes change combat calculations. Whirlwind Slash changes the third attack in the existing combo into a circular sweep, so it uses the same desktop/touch attack control. Other nodes improve damage, criticals, stagger, defence, potion healing, stamina, movement, dodge or blocking. Skills can be reset for 50 + 10 × level gold. Resetting does not refill health or stamina. Attribute allocation is permanent for this stage.
+
+Saves use schema 3 under the original storage key. Before continuing an older save, the exact original is retained under `realm-fallen-save-v1-pre-progression`; if that backup cannot be written, migration stops instead of overwriting it. Original quest/boss state and equipment remain separate from character attributes. Co-op still uses session-only heroes; their earned levels/builds work within the room, but account-backed character transfer is not enabled yet.

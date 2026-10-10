@@ -7,6 +7,7 @@
  --ui-ivory:#f3e8d1;--ui-sage:#b7c9bd;--ui-steel:#aababe;--ui-steel-edge:#dce1d9;--ui-leather:#956c38;
  --ui-border:rgba(190,193,173,.25);--ui-border-gold:rgba(183,164,119,.45);
  --ui-glass:linear-gradient(145deg,rgba(34,38,35,.93),rgba(16,19,18,.94));
+ --ui-skill-unlocked:linear-gradient(135deg,#244536,#1b2520);
  --ui-shadow:0 8px 24px #0005,inset 0 1px 0 #e2d9bb0d;
  --ui-health:linear-gradient(90deg,#bc3e51,#f3a078);--ui-xp:linear-gradient(90deg,#639cda,#5bbdcc);--ui-stamina:linear-gradient(90deg,#24b18b,#99e58f);
  --ui-serif:Georgia,'Times New Roman',serif;--ui-sans:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
@@ -92,3 +93,14 @@
 .journey-summary{font:12px/1.6 var(--ui-sans);color:var(--ui-sage)}.journey-gear{font:15px var(--ui-serif);color:var(--ui-ivory);margin:8px 0 0}.journey-objective{margin:20px 0;padding:14px 0;border-block:1px solid var(--ui-border)}.journey-objective p{font:14px/1.5 var(--ui-serif);margin:6px 0 0;color:var(--ui-ivory)}.journey-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.journey-grid button{display:flex;align-items:center;gap:10px;text-align:left;padding:12px;font-size:14px;border-radius:4px}.journey-grid .ui-icon{width:19px;height:19px;color:var(--ui-gold)}.hud-preference,.journey-resume{width:100%;margin-top:12px;border-radius:4px;font-size:13px}.quiet-hud .modal{border-radius:6px;max-height:90dvh}.quiet-hud .modal h2{font-size:25px;letter-spacing:.03em}
 @media(orientation:landscape) and (max-height:600px){.quiet-hud .hero-card{width:210px;top:max(12px,var(--safe-top))}.quiet-hud #frontier-mini{top:90px;width:86px;height:86px}.quiet-hud .context-action{bottom:max(32px,var(--safe-bottom));max-width:36vw}.quiet-hud .boss{bottom:100px;width:36vw}.quiet-hud #toasts{top:90px;max-width:33vw}.quiet-hud .journey-grid{grid-template-columns:repeat(3,1fr)}}
 @media(pointer:fine){.quiet-hud .context-action{bottom:42px}.quiet-hud .boss{bottom:100px}}
+/* Progression uses the shared Journey surfaces; no additional gameplay HUD. */
+.stat-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:16px 0;border-block:1px solid var(--ui-border);font-family:var(--ui-sans);font-size:14px}
+.stat-grid strong{color:var(--ui-gold);text-align:right}
+.attribute-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;padding:12px;background:var(--ui-glass);border:1px solid var(--ui-border);border-radius:var(--ui-radius)}
+.attribute-row small,.skill-node small{display:block;font-family:var(--ui-sans);color:var(--ui-sage);font-size:12px;margin-top:6px}
+.attribute-row button{min-width:44px;min-height:44px;flex-shrink:0}
+.skill-trees{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.skill-branch{position:relative}.skill-branch h3{text-align:center}.skill-node{position:relative;display:block;width:100%;min-height:84px;margin:16px 0;text-align:center;background:var(--ui-glass)}
+.skill-node:not(:last-child)::after{content:'';position:absolute;height:17px;width:1px;left:50%;top:100%;background:var(--ui-gold)}
+.skill-node.unlocked{border-color:var(--ui-mint);background:var(--ui-skill-unlocked)}.skill-node.available{border-color:var(--ui-gold)}.skill-node.locked{opacity:.65}
+@media(max-width:540px){.skill-trees{grid-template-columns:1fr}.skill-node{min-height:60px}.stat-grid{font-size:12px}}

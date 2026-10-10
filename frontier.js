@@ -1,7 +1,7 @@
 // Recover older cached HTML before it can pair its obsolete HUD with this module.
 // This module must retain this guard while pre-design-system pages remain cached.
-if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-motion-20261010-1"]')){
- const fresh=new URL(location.href),release='realm-motion-20261010-1';
+if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-progression-20261010-1"]')){
+ const fresh=new URL(location.href),release='realm-progression-20261010-1';
  if(fresh.searchParams.get('v')!==release){fresh.searchParams.set('v',release);location.replace(fresh.href)}
  else{document.body.textContent='The game update could not load. Reopen the game to retry. Your saved journey is safe.'}
  await new Promise(()=>{}); // Navigation replaces this document; never initialize mixed UI.

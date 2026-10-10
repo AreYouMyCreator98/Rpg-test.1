@@ -37,7 +37,7 @@ const {chromium} = require(process.env.PLAYWRIGHT_PATH || 'playwright');
  console.log('PASS village dialogues, shop debits, upgrade identity, duplicate purchase/sale protection, equipped-sale protection');
  await page.evaluate(()=>__realm.save());await page.reload();await page.waitForFunction(()=>window.__realm);await page.click('#continue');
  assert.equal(await page.evaluate(()=>__realm.player.weapon),'w1~1');
- assert.equal(await page.evaluate(()=>__realm.readSave().version),2);
+ assert.equal(await page.evaluate(()=>__realm.readSave().version),3);
  console.log('PASS V2 inventory save/load');
  await page.evaluate(()=>{__realm.closeModal();__realm.setPosition(-7,57);__realm.living.questDialogue(__realm.living.npcs[0])});
  assert(await page.evaluate(()=>__realm.living.acceptQuest('scouts')));
