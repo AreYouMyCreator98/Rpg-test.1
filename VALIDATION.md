@@ -285,3 +285,5 @@ A mobile Chromium smoke check then loaded the actual Pages URL and pinned CDN ov
 
 - Final reruns: prologue passed after moving the warning into starting interaction range; map controls passed terrain recovery, +/- zoom, centering, drag, pinch, waypoint transforms, dungeon maps and wheel zoom. The map drag fixture now begins at the village so its southward pan is not already clamped by the new graveyard spawn at the map edge. Mobile viewport tests passed attack-icon/label double taps, simultaneous joystick/combo, default-touch cancellation, healing, account input sizing and invalid-Continue preservation.
 - Stairwell rules were exercised in both SQL and browser tests. Actual movement steps climbed the stairs to an adjacent upper floor; restoring that local snapshot retained height 3.6. The final hosted construction functions include those same tested support rules.
+
+- Release review aligned prologue enemy scaling with the existing trusted encounter formula for level-21+ visitors. The level-26 legacy regression now asserts the expected scaled enemy HP as well as preserving player progression; it passed. Fresh level-1 difficulty is unchanged.

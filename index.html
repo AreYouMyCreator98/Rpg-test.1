@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><link rel="icon" href="data:,"><meta name="theme-color" content="#102f29"><title>Realm of the Fallen</title>
-<link rel="stylesheet" href="./ui.css?v=realm-hearth-20261010-1"></head><body>
+<link rel="stylesheet" href="./ui.css?v=realm-hearth-20261010-2"></head><body>
 <div id="shade"></div><section id="title"><div class="eyebrow">The Shattered Marches · World expansion</div><h1>Realm of<br>the <span>Fallen</span></h1><div class="rule"></div><p>Beyond the old forest, a kingdom awaits. Explore mountain villages, reclaim the roads, and challenge fourteen bosses, descend into ancient dungeons and ride with your companions.</p><div class="buttons"><button class="primary" id="play" disabled>Begin your journey &nbsp; →</button><button id="continue" class="hidden">Continue</button></div><div class="small-buttons"><button id="title-controls">Controls</button><button id="title-settings">Settings</button></div><div id="loading">Awakening the forest…</div></section><div id="brand">REALM OF THE FALLEN &nbsp; / &nbsp; THE SHATTERED MARCHES</div>
 <div id="hud" class="hidden">
  <section class="hero-card panel" aria-label="Character status"><span class="hero-emblem" data-icon="hero"></span><div class="hero-top"><span class="hero-name">The Wanderer</span><span class="level" id="level">Lv 1</span></div><div class="status-row health"><div class="bar"><i id="hpbar"></i></div><span id="hptext"></span></div><div class="status-row experience"><div class="bar xp"><i id="xpbar"></i></div><span id="xptext"></span></div><div class="status-row stamina-row"><div class="bar stamina"><i id="staminabar"></i></div><span id="stamtext">Stamina 100 / 100</span></div></section>
@@ -39,21 +39,21 @@
 })();
 </script>
 <script type="module">
-let installLivingWorld,migrateSave;try{({installLivingWorld,migrateSave}=await import('./living-world.js?v=realm-hearth-20261010-1'))}catch(e){fatal('The Living World module could not load. Keep index.html and living-world.js together, then reload.');throw e}
-const {installFrontier,BOUNDS,roadDistance,terrainColor,extraHeight}=await import('./frontier.js?v=realm-hearth-20261010-1');
-import {installHomestead} from './homestead.js?v=realm-hearth-20261010-1';
-import {installAccounts} from './accounts.js?v=realm-hearth-20261010-1';
+let installLivingWorld,migrateSave;try{({installLivingWorld,migrateSave}=await import('./living-world.js?v=realm-hearth-20261010-2'))}catch(e){fatal('The Living World module could not load. Keep index.html and living-world.js together, then reload.');throw e}
+const {installFrontier,BOUNDS,roadDistance,terrainColor,extraHeight}=await import('./frontier.js?v=realm-hearth-20261010-2');
+import {installHomestead} from './homestead.js?v=realm-hearth-20261010-2';
+import {installAccounts} from './accounts.js?v=realm-hearth-20261010-2';
 let prologue=null,homestead=null,living=null,net=null,frontier=null,ui=null,visuals=null,progression=null,expansion=null,companions=null,accounts=null,accountActor=null,accountDrops=false,accountReward=null;
-const {installPrologue}=await import('./prologue.js?v=realm-hearth-20261010-1');
-const {installUI,icon}=await import('./ui.js?v=realm-hearth-20261010-1');
-let installVisualWorld;try{({installVisualWorld}=await import('./visual-world.js?v=realm-hearth-20261010-1'))}catch(e){fatal('The scenery module could not load. Reload to retry; keep visual-world.js with the other game files. Your saved journey is safe.');throw e}
-const {installExpansionWorld}=await import('./expansion-world.js?v=realm-hearth-20261010-1');
-const {installCompanions,normaliseCompanions}=await import('./companions.js?v=realm-hearth-20261010-1');
+const {installPrologue}=await import('./prologue.js?v=realm-hearth-20261010-2');
+const {installUI,icon}=await import('./ui.js?v=realm-hearth-20261010-2');
+let installVisualWorld;try{({installVisualWorld}=await import('./visual-world.js?v=realm-hearth-20261010-2'))}catch(e){fatal('The scenery module could not load. Reload to retry; keep visual-world.js with the other game files. Your saved journey is safe.');throw e}
+const {installExpansionWorld}=await import('./expansion-world.js?v=realm-hearth-20261010-2');
+const {installCompanions,normaliseCompanions}=await import('./companions.js?v=realm-hearth-20261010-2');
 const $=id=>document.getElementById(id);let THREE;
 try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js')}catch(e){fatal('The forest could not load. Check your internet connection and reload. The game needs access to cdn.jsdelivr.net.');throw e}
 function fatal(message){const el=document.createElement('div');el.id='fatal';el.style.cssText='position:fixed;inset:0;z-index:100;background:#102f29;color:#f3e8d1;display:grid;place-content:center;padding:24px';el.innerHTML='<h2>Journey interrupted</h2><p></p><button onclick="location.reload()">Try again</button>';el.querySelector('p').textContent=message;document.body.append(el)}
-import {prepareRollRig,groundedRoll,resetRoll,normaliseCamera} from './adventure-motion.js?v=realm-hearth-20261010-1';
-import {normaliseProgression,characterStats,refreshVitals,xpForLevel,installProgression} from './progression.js?v=realm-hearth-20261010-1';
+import {prepareRollRig,groundedRoll,resetRoll,normaliseCamera} from './adventure-motion.js?v=realm-hearth-20261010-2';
+import {normaliseProgression,characterStats,refreshVitals,xpForLevel,installProgression} from './progression.js?v=realm-hearth-20261010-2';
 const TAU=Math.PI*2,clamp=THREE.MathUtils.clamp,lerp=THREE.MathUtils.lerp,rand=(a,b)=>a+Math.random()*(b-a),V=THREE.Vector3;
 const mobile=matchMedia('(pointer:coarse)').matches;if(mobile)document.body.classList.add('touch');
 let renderer;try{renderer=new THREE.WebGLRenderer({antialias:!mobile,powerPreference:'high-performance'});}catch(e){fatal('WebGL is unavailable. Please enable hardware acceleration or try another modern browser.');throw e}
@@ -121,7 +121,7 @@ function equipVisual(){const a=items[player.armour];hero.bodyMat.color.setHex(a?
 let audio;function sound(kind){if(!settings.sound)return;try{audio??=new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();const t=audio.currentTime;const tones={swing:[170,65,.13],heavy:[105,35,.22],hit:[260,75,.13],heavyHit:[110,38,.24],block:[580,160,.18],hurt:[140,50,.24],death:[95,30,.35],coin:[920,1500,.17],loot:[510,900,.25],ui:[380,480,.08],level:[440,880,.6],victory:[330,1320,1]};const [a,b,d]=tones[kind]||tones.ui;for(let n=0;n<(kind==='level'||kind==='victory'?3:1);n++){const o=audio.createOscillator(),g=audio.createGain();o.type=['hit','hurt','heavy'].includes(kind)?'triangle':'sine';o.frequency.setValueAtTime(a*(1+n*.25),t+n*.12);o.frequency.exponentialRampToValueAtTime(b*(1+n*.25),t+d+n*.12);g.gain.setValueAtTime(.0001,t+n*.12);g.gain.exponentialRampToValueAtTime(.09,t+.012+n*.12);g.gain.exponentialRampToValueAtTime(.0001,t+d+n*.12);o.connect(g).connect(audio.destination);o.start(t+n*.12);o.stop(t+d+n*.12+.02)}}catch{}}
 function toast(text,color){const el=document.createElement('div');el.className='toast';el.textContent=text;if(color)el.style.borderColor=color;$('toasts').append(el);setTimeout(()=>el.remove(),3800)}
 const enemies=[];const enemyTypes=[{name:'Scout',hp:30,speed:3.1,dmg:8,xp:18},{name:'Warrior',hp:60,speed:2.5,dmg:13,xp:30},{name:'Brute',hp:120,speed:1.9,dmg:20,xp:50},{name:'Gruk',hp:350,speed:2.15,dmg:27,xp:180}];
-function scaleEnemy(e){e.baseMaxHp??=e.maxHp;e.baseDamage??=e.dmg;e.baseXP??=e.xp;const extra=e.prologue!==undefined?0:Math.max(0,player.level-20);e.maxHp=Math.round(e.baseMaxHp*(1+extra*.035));e.dmg=Math.round(e.baseDamage*(1+extra*.025));e.xp=Math.round(e.baseXP*(1+extra*.025));}
+function scaleEnemy(e){e.baseMaxHp??=e.maxHp;e.baseDamage??=e.dmg;e.baseXP??=e.xp;const extra=Math.max(0,player.level-20);e.maxHp=Math.round(e.baseMaxHp*(1+extra*.035));e.dmg=Math.round(e.baseDamage*(1+extra*.025));e.xp=Math.round(e.baseXP*(1+extra*.025));}
 function spawnEnemy(x,z,type){const ch=character(true,type),info=enemyTypes[type],label=document.createElement('div');label.className='enemy-label';label.innerHTML=info.name+'<div class="bar"><i></i></div>';label.style.display='none';$('world-ui').append(label);ch.root.position.set(x,surface(x,z),z);let e={...ch,...info,type,order:enemies.length,recoil:0,maxHp:info.hp,home:new V(x,0,z),state:'patrol',timer:rand(0,3),cooldown:rand(0,1),stagger:0,dead:0,respawn:0,label,hit:false,pattern:0};enemies.push(e);return e}
 const spawns=[[-21,39,0],[-28,31,0],[-18,29,0],[-12,17,1],[-17,-1,0],[31,21,0],[35,-3,1],[21,-20,1],[33,-19,1],[27,-27,2],[9,-44,2],[-3,-54,1],[-14,-57,1],[-8,-67,3]];spawns.forEach(s=>spawnEnemy(...s));
 const loot=[],particles=[],numbers=[];let hitStop=0,shake=0;
@@ -255,7 +255,7 @@ companions=installCompanions({THREE,scene,mesh,mat,hero,$,blocked,surface,face,t
 prologue=installPrologue({THREE,scene,mesh,mat,hero,living,$,ground,spawnEnemy,frontier,poi,drop,save,toast,modal,closeModal,get player(){return player},get panel(){return panel}});
 visuals=installVisualWorld({THREE,scene,renderer,camera,sun,hero,shield,geo,mat,ground,surface,pathDist,riverZ,obstacles,nearbyObstacles,living,frontier,enemies,terrain,water,get settings(){return settings},get active(){return state==='playing'&&!panel}});
 living.restore(null);
-try{const {installMultiplayer}=await import('./multiplayer.js?v=realm-hearth-20261010-1');net=installMultiplayer({$,THREE,scene,hero,enemies,loot,items,chests,living,frontier,expansion,companions,accountStructure,getAccounts(){return accounts},getHomestead(){return homestead},character,animate,groundedRoll,resetRoll,characterStats,normaliseProgression,face,project,drop,removeLoot,addItem,awardXP,burst,sound,toast,modal,closeModal,start,readSave,hurtPlayer,
+try{const {installMultiplayer}=await import('./multiplayer.js?v=realm-hearth-20261010-2');net=installMultiplayer({$,THREE,scene,hero,enemies,loot,items,chests,living,frontier,expansion,companions,accountStructure,getAccounts(){return accounts},getHomestead(){return homestead},character,animate,groundedRoll,resetRoll,characterStats,normaliseProgression,face,project,drop,removeLoot,addItem,awardXP,burst,sound,toast,modal,closeModal,start,readSave,hurtPlayer,
 get player(){return player},get panel(){return panel},get state(){return state},get attack(){return attack},get dodge(){return dodge},get blocking(){return blocking},get bossDead(){return bossDead},setBossDead(value){bossDead=value},
 structureFrom(uid,fn){accountActor=uid===net?.id?null:uid;try{return fn()}finally{accountActor=null}},
 hitFrom(e,amount,heavy,ch,combatStats){const original=hero.root.position.clone();try{accountActor=ch.netId;hero.root.position.copy(ch.root.position);hurtEnemy(e,amount,heavy,combatStats)}finally{accountActor=null;hero.root.position.copy(original)}}

@@ -1,5 +1,5 @@
-import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-hearth-20261010-1';
-import {connectSupabase} from './supabase-rooms.js?v=realm-hearth-20261010-1';
+import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-hearth-20261010-2';
+import {connectSupabase} from './supabase-rooms.js?v=realm-hearth-20261010-2';
 
 export function installMultiplayer(api) {
   const {$,THREE,hero,enemies,loot,items,living}=api;
