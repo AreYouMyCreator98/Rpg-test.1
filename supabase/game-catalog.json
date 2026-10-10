@@ -1,0 +1,5037 @@
+{
+  "version": 1,
+  "chests": [
+    false,
+    false
+  ],
+  "items": {
+    "w0": {
+      "type": "weapon",
+      "damage": 6,
+      "defence": 0,
+      "rarity": 0,
+      "base": "w0",
+      "rank": 0
+    },
+    "a0": {
+      "type": "armour",
+      "damage": 0,
+      "defence": 0,
+      "rarity": 0,
+      "base": "a0",
+      "rank": 0
+    },
+    "w1": {
+      "type": "weapon",
+      "damage": 10,
+      "defence": 0,
+      "rarity": 0,
+      "base": "w1",
+      "rank": 0
+    },
+    "a1": {
+      "type": "armour",
+      "damage": 0,
+      "defence": 2,
+      "rarity": 0,
+      "base": "a1",
+      "rank": 0
+    },
+    "w2": {
+      "type": "weapon",
+      "damage": 15,
+      "defence": 0,
+      "rarity": 1,
+      "base": "w2",
+      "rank": 0
+    },
+    "a2": {
+      "type": "armour",
+      "damage": 0,
+      "defence": 4,
+      "rarity": 1,
+      "base": "a2",
+      "rank": 0
+    },
+    "w3": {
+      "type": "weapon",
+      "damage": 21,
+      "defence": 0,
+      "rarity": 2,
+      "base": "w3",
+      "rank": 0
+    },
+    "a3": {
+      "type": "armour",
+      "damage": 0,
+      "defence": 7,
+      "rarity": 2,
+      "base": "a3",
+      "rank": 0
+    },
+    "w4": {
+      "type": "weapon",
+      "damage": 28,
+      "defence": 0,
+      "rarity": 3,
+      "base": "w4",
+      "rank": 0
+    },
+    "a4": {
+      "type": "armour",
+      "damage": 0,
+      "defence": 10,
+      "rarity": 3,
+      "base": "a4",
+      "rank": 0
+    },
+    "w5": {
+      "type": "weapon",
+      "damage": 38,
+      "defence": 0,
+      "rarity": 4,
+      "base": "w5",
+      "rank": 0
+    },
+    "a5": {
+      "type": "armour",
+      "damage": 0,
+      "defence": 15,
+      "rarity": 4,
+      "base": "a5",
+      "rank": 0
+    },
+    "potion": {
+      "type": "consumable",
+      "damage": 0,
+      "defence": 0,
+      "rarity": 1,
+      "base": "potion",
+      "rank": 0
+    },
+    "tooth": {
+      "type": "material",
+      "damage": 0,
+      "defence": 0,
+      "rarity": 0,
+      "base": "tooth",
+      "rank": 0
+    },
+    "gem": {
+      "type": "material",
+      "damage": 0,
+      "defence": 0,
+      "rarity": 2,
+      "base": "gem",
+      "rank": 0
+    },
+    "caveblade": {
+      "type": "weapon",
+      "damage": 24,
+      "defence": 0,
+      "rarity": 2,
+      "base": "caveblade",
+      "rank": 0
+    },
+    "w0~1": {
+      "type": "weapon",
+      "damage": 10,
+      "defence": 0,
+      "rarity": 0,
+      "base": "w0",
+      "rank": 1
+    },
+    "w0~2": {
+      "type": "weapon",
+      "damage": 14,
+      "defence": 0,
+      "rarity": 0,
+      "base": "w0",
+      "rank": 2
+    },
+    "w0~3": {
+      "type": "weapon",
+      "damage": 18,
+      "defence": 0,
+      "rarity": 0,
+      "base": "w0",
+      "rank": 3
+    },
+    "w1~1": {
+      "type": "weapon",
+      "damage": 14,
+      "defence": 0,
+      "rarity": 0,
+      "base": "w1",
+      "rank": 1
+    },
+    "w1~2": {
+      "type": "weapon",
+      "damage": 18,
+      "defence": 0,
+      "rarity": 0,
+      "base": "w1",
+      "rank": 2
+    },
+    "w1~3": {
+      "type": "weapon",
+      "damage": 22,
+      "defence": 0,
+      "rarity": 0,
+      "base": "w1",
+      "rank": 3
+    },
+    "w2~1": {
+      "type": "weapon",
+      "damage": 19,
+      "defence": 0,
+      "rarity": 1,
+      "base": "w2",
+      "rank": 1
+    },
+    "w2~2": {
+      "type": "weapon",
+      "damage": 23,
+      "defence": 0,
+      "rarity": 1,
+      "base": "w2",
+      "rank": 2
+    },
+    "w2~3": {
+      "type": "weapon",
+      "damage": 27,
+      "defence": 0,
+      "rarity": 1,
+      "base": "w2",
+      "rank": 3
+    },
+    "w3~1": {
+      "type": "weapon",
+      "damage": 25,
+      "defence": 0,
+      "rarity": 2,
+      "base": "w3",
+      "rank": 1
+    },
+    "w3~2": {
+      "type": "weapon",
+      "damage": 29,
+      "defence": 0,
+      "rarity": 2,
+      "base": "w3",
+      "rank": 2
+    },
+    "w3~3": {
+      "type": "weapon",
+      "damage": 33,
+      "defence": 0,
+      "rarity": 2,
+      "base": "w3",
+      "rank": 3
+    },
+    "w4~1": {
+      "type": "weapon",
+      "damage": 32,
+      "defence": 0,
+      "rarity": 3,
+      "base": "w4",
+      "rank": 1
+    },
+    "w4~2": {
+      "type": "weapon",
+      "damage": 36,
+      "defence": 0,
+      "rarity": 3,
+      "base": "w4",
+      "rank": 2
+    },
+    "w4~3": {
+      "type": "weapon",
+      "damage": 40,
+      "defence": 0,
+      "rarity": 3,
+      "base": "w4",
+      "rank": 3
+    },
+    "w5~1": {
+      "type": "weapon",
+      "damage": 42,
+      "defence": 0,
+      "rarity": 4,
+      "base": "w5",
+      "rank": 1
+    },
+    "w5~2": {
+      "type": "weapon",
+      "damage": 46,
+      "defence": 0,
+      "rarity": 4,
+      "base": "w5",
+      "rank": 2
+    },
+    "w5~3": {
+      "type": "weapon",
+      "damage": 50,
+      "defence": 0,
+      "rarity": 4,
+      "base": "w5",
+      "rank": 3
+    },
+    "caveblade~1": {
+      "type": "weapon",
+      "damage": 28,
+      "defence": 0,
+      "rarity": 2,
+      "base": "caveblade",
+      "rank": 1
+    },
+    "caveblade~2": {
+      "type": "weapon",
+      "damage": 32,
+      "defence": 0,
+      "rarity": 2,
+      "base": "caveblade",
+      "rank": 2
+    },
+    "caveblade~3": {
+      "type": "weapon",
+      "damage": 36,
+      "defence": 0,
+      "rarity": 2,
+      "base": "caveblade",
+      "rank": 3
+    },
+    "supplies": {
+      "type": "quest",
+      "damage": 0,
+      "defence": 0,
+      "rarity": 1,
+      "base": "supplies",
+      "rank": 0
+    },
+    "cavekey": {
+      "type": "quest",
+      "damage": 0,
+      "defence": 0,
+      "rarity": 2,
+      "base": "cavekey",
+      "rank": 0
+    },
+    "relic": {
+      "type": "quest",
+      "damage": 0,
+      "defence": 0,
+      "rarity": 3,
+      "base": "relic",
+      "rank": 0
+    },
+    "frontier_wolf": {
+      "type": "weapon",
+      "damage": 20,
+      "defence": 0,
+      "rarity": 2,
+      "base": "frontier_wolf",
+      "rank": 0
+    },
+    "frontier_wolf~1": {
+      "type": "weapon",
+      "damage": 24,
+      "defence": 0,
+      "rarity": 2,
+      "base": "frontier_wolf",
+      "rank": 1
+    },
+    "frontier_wolf~2": {
+      "type": "weapon",
+      "damage": 28,
+      "defence": 0,
+      "rarity": 2,
+      "base": "frontier_wolf",
+      "rank": 2
+    },
+    "frontier_wolf~3": {
+      "type": "weapon",
+      "damage": 32,
+      "defence": 0,
+      "rarity": 2,
+      "base": "frontier_wolf",
+      "rank": 3
+    },
+    "trophy_wolf": {
+      "type": "material",
+      "damage": 0,
+      "defence": 0,
+      "rarity": 1,
+      "base": "trophy_wolf",
+      "rank": 0
+    },
+    "frontier_skeleton": {
+      "type": "weapon",
+      "damage": 27,
+      "defence": 0,
+      "rarity": 2,
+      "base": "frontier_skeleton",
+      "rank": 0
+    },
+    "frontier_skeleton~1": {
+      "type": "weapon",
+      "damage": 31,
+      "defence": 0,
+      "rarity": 2,
+      "base": "frontier_skeleton",
+      "rank": 1
+    },
+    "frontier_skeleton~2": {
+      "type": "weapon",
+      "damage": 35,
+      "defence": 0,
+      "rarity": 2,
+      "base": "frontier_skeleton",
+      "rank": 2
+    },
+    "frontier_skeleton~3": {
+      "type": "weapon",
+      "damage": 39,
+      "defence": 0,
+      "rarity": 2,
+      "base": "frontier_skeleton",
+      "rank": 3
+    },
+    "trophy_skeleton": {
+      "type": "material",
+      "damage": 0,
+      "defence": 0,
+      "rarity": 1,
+      "base": "trophy_skeleton",
+      "rank": 0
+    },
+    "frontier_bandit": {
+      "type": "weapon",
+      "damage": 34,
+      "defence": 0,
+      "rarity": 3,
+      "base": "frontier_bandit",
+      "rank": 0
+    },
+    "frontier_bandit~1": {
+      "type": "weapon",
+      "damage": 38,
+      "defence": 0,
+      "rarity": 3,
+      "base": "frontier_bandit",
+      "rank": 1
+    },
+    "frontier_bandit~2": {
+      "type": "weapon",
+      "damage": 42,
+      "defence": 0,
+      "rarity": 3,
+      "base": "frontier_bandit",
+      "rank": 2
+    },
+    "frontier_bandit~3": {
+      "type": "weapon",
+      "damage": 46,
+      "defence": 0,
+      "rarity": 3,
+      "base": "frontier_bandit",
+      "rank": 3
+    },
+    "trophy_bandit": {
+      "type": "material",
+      "damage": 0,
+      "defence": 0,
+      "rarity": 2,
+      "base": "trophy_bandit",
+      "rank": 0
+    },
+    "frontier_spider": {
+      "type": "weapon",
+      "damage": 41,
+      "defence": 0,
+      "rarity": 3,
+      "base": "frontier_spider",
+      "rank": 0
+    },
+    "frontier_spider~1": {
+      "type": "weapon",
+      "damage": 45,
+      "defence": 0,
+      "rarity": 3,
+      "base": "frontier_spider",
+      "rank": 1
+    },
+    "frontier_spider~2": {
+      "type": "weapon",
+      "damage": 49,
+      "defence": 0,
+      "rarity": 3,
+      "base": "frontier_spider",
+      "rank": 2
+    },
+    "frontier_spider~3": {
+      "type": "weapon",
+      "damage": 53,
+      "defence": 0,
+      "rarity": 3,
+      "base": "frontier_spider",
+      "rank": 3
+    },
+    "trophy_spider": {
+      "type": "material",
+      "damage": 0,
+      "defence": 0,
+      "rarity": 2,
+      "base": "trophy_spider",
+      "rank": 0
+    },
+    "frontier_elemental": {
+      "type": "weapon",
+      "damage": 49,
+      "defence": 0,
+      "rarity": 4,
+      "base": "frontier_elemental",
+      "rank": 0
+    },
+    "frontier_elemental~1": {
+      "type": "weapon",
+      "damage": 53,
+      "defence": 0,
+      "rarity": 4,
+      "base": "frontier_elemental",
+      "rank": 1
+    },
+    "frontier_elemental~2": {
+      "type": "weapon",
+      "damage": 57,
+      "defence": 0,
+      "rarity": 4,
+      "base": "frontier_elemental",
+      "rank": 2
+    },
+    "frontier_elemental~3": {
+      "type": "weapon",
+      "damage": 61,
+      "defence": 0,
+      "rarity": 4,
+      "base": "frontier_elemental",
+      "rank": 3
+    },
+    "trophy_elemental": {
+      "type": "material",
+      "damage": 0,
+      "defence": 0,
+      "rarity": 2,
+      "base": "trophy_elemental",
+      "rank": 0
+    },
+    "exp_warden": {
+      "type": "weapon",
+      "damage": 30,
+      "defence": 0,
+      "rarity": 3,
+      "base": "exp_warden",
+      "rank": 0
+    },
+    "exp_warden~1": {
+      "type": "weapon",
+      "damage": 34,
+      "defence": 0,
+      "rarity": 3,
+      "base": "exp_warden",
+      "rank": 1
+    },
+    "exp_warden~2": {
+      "type": "weapon",
+      "damage": 38,
+      "defence": 0,
+      "rarity": 3,
+      "base": "exp_warden",
+      "rank": 2
+    },
+    "exp_warden~3": {
+      "type": "weapon",
+      "damage": 42,
+      "defence": 0,
+      "rarity": 3,
+      "base": "exp_warden",
+      "rank": 3
+    },
+    "exp_serpent": {
+      "type": "weapon",
+      "damage": 38,
+      "defence": 0,
+      "rarity": 3,
+      "base": "exp_serpent",
+      "rank": 0
+    },
+    "exp_serpent~1": {
+      "type": "weapon",
+      "damage": 42,
+      "defence": 0,
+      "rarity": 3,
+      "base": "exp_serpent",
+      "rank": 1
+    },
+    "exp_serpent~2": {
+      "type": "weapon",
+      "damage": 46,
+      "defence": 0,
+      "rarity": 3,
+      "base": "exp_serpent",
+      "rank": 2
+    },
+    "exp_serpent~3": {
+      "type": "weapon",
+      "damage": 50,
+      "defence": 0,
+      "rarity": 3,
+      "base": "exp_serpent",
+      "rank": 3
+    },
+    "exp_knight": {
+      "type": "weapon",
+      "damage": 43,
+      "defence": 0,
+      "rarity": 3,
+      "base": "exp_knight",
+      "rank": 0
+    },
+    "exp_knight~1": {
+      "type": "weapon",
+      "damage": 47,
+      "defence": 0,
+      "rarity": 3,
+      "base": "exp_knight",
+      "rank": 1
+    },
+    "exp_knight~2": {
+      "type": "weapon",
+      "damage": 51,
+      "defence": 0,
+      "rarity": 3,
+      "base": "exp_knight",
+      "rank": 2
+    },
+    "exp_knight~3": {
+      "type": "weapon",
+      "damage": 55,
+      "defence": 0,
+      "rarity": 3,
+      "base": "exp_knight",
+      "rank": 3
+    },
+    "exp_wyrm": {
+      "type": "weapon",
+      "damage": 49,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_wyrm",
+      "rank": 0
+    },
+    "exp_wyrm~1": {
+      "type": "weapon",
+      "damage": 53,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_wyrm",
+      "rank": 1
+    },
+    "exp_wyrm~2": {
+      "type": "weapon",
+      "damage": 57,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_wyrm",
+      "rank": 2
+    },
+    "exp_wyrm~3": {
+      "type": "weapon",
+      "damage": 61,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_wyrm",
+      "rank": 3
+    },
+    "exp_titan": {
+      "type": "weapon",
+      "damage": 56,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_titan",
+      "rank": 0
+    },
+    "exp_titan~1": {
+      "type": "weapon",
+      "damage": 60,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_titan",
+      "rank": 1
+    },
+    "exp_titan~2": {
+      "type": "weapon",
+      "damage": 64,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_titan",
+      "rank": 2
+    },
+    "exp_titan~3": {
+      "type": "weapon",
+      "damage": 68,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_titan",
+      "rank": 3
+    },
+    "exp_priestess": {
+      "type": "weapon",
+      "damage": 54,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_priestess",
+      "rank": 0
+    },
+    "exp_priestess~1": {
+      "type": "weapon",
+      "damage": 58,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_priestess",
+      "rank": 1
+    },
+    "exp_priestess~2": {
+      "type": "weapon",
+      "damage": 62,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_priestess",
+      "rank": 2
+    },
+    "exp_priestess~3": {
+      "type": "weapon",
+      "damage": 66,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_priestess",
+      "rank": 3
+    },
+    "exp_king": {
+      "type": "weapon",
+      "damage": 64,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_king",
+      "rank": 0
+    },
+    "exp_king~1": {
+      "type": "weapon",
+      "damage": 68,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_king",
+      "rank": 1
+    },
+    "exp_king~2": {
+      "type": "weapon",
+      "damage": 72,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_king",
+      "rank": 2
+    },
+    "exp_king~3": {
+      "type": "weapon",
+      "damage": 76,
+      "defence": 0,
+      "rarity": 4,
+      "base": "exp_king",
+      "rank": 3
+    }
+  },
+  "enemies": [
+    {
+      "id": "0",
+      "name": "Scout",
+      "x": -21,
+      "z": 39,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "Scout",
+      "x": -28,
+      "z": 31,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Scout",
+      "x": -18,
+      "z": 29,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Warrior",
+      "x": -12,
+      "z": 17,
+      "hp": 60,
+      "xp": 30,
+      "damage": 13,
+      "speed": 2.5,
+      "type": 1,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 8,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Scout",
+      "x": -17,
+      "z": -1,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "Scout",
+      "x": 31,
+      "z": 21,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "name": "Warrior",
+      "x": 35,
+      "z": -3,
+      "hp": 60,
+      "xp": 30,
+      "damage": 13,
+      "speed": 2.5,
+      "type": 1,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 8,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "name": "Warrior",
+      "x": 21,
+      "z": -20,
+      "hp": 60,
+      "xp": 30,
+      "damage": 13,
+      "speed": 2.5,
+      "type": 1,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 8,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "name": "Warrior",
+      "x": 33,
+      "z": -19,
+      "hp": 60,
+      "xp": 30,
+      "damage": 13,
+      "speed": 2.5,
+      "type": 1,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 8,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "name": "Brute",
+      "x": 27,
+      "z": -27,
+      "hp": 120,
+      "xp": 50,
+      "damage": 20,
+      "speed": 1.9,
+      "type": 2,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 12,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "name": "Brute",
+      "x": 9,
+      "z": -44,
+      "hp": 120,
+      "xp": 50,
+      "damage": 20,
+      "speed": 1.9,
+      "type": 2,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 12,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "11",
+      "name": "Warrior",
+      "x": -3,
+      "z": -54,
+      "hp": 60,
+      "xp": 30,
+      "damage": 13,
+      "speed": 2.5,
+      "type": 1,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 8,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "12",
+      "name": "Warrior",
+      "x": -14,
+      "z": -57,
+      "hp": 60,
+      "xp": 30,
+      "damage": 13,
+      "speed": 2.5,
+      "type": 1,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 8,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "13",
+      "name": "Gruk",
+      "x": -8,
+      "z": -67,
+      "hp": 350,
+      "xp": 180,
+      "damage": 27,
+      "speed": 2.15,
+      "type": 3,
+      "family": null,
+      "expansion": null,
+      "boss": true,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 100,
+          "unique": false
+        },
+        {
+          "id": "w5",
+          "qty": 1,
+          "unique": true
+        },
+        {
+          "id": "a5",
+          "qty": 1,
+          "unique": true
+        }
+      ]
+    },
+    {
+      "id": "14",
+      "name": "Scout",
+      "x": 300,
+      "z": -8,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "15",
+      "name": "Warrior",
+      "x": 301,
+      "z": -20,
+      "hp": 60,
+      "xp": 30,
+      "damage": 13,
+      "speed": 2.5,
+      "type": 1,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 8,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "16",
+      "name": "Scout",
+      "x": 309,
+      "z": -19,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "17",
+      "name": "Warrior",
+      "x": 298,
+      "z": -37,
+      "hp": 60,
+      "xp": 30,
+      "damage": 13,
+      "speed": 2.5,
+      "type": 1,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 8,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "18",
+      "name": "Varg",
+      "x": 299,
+      "z": -51,
+      "hp": 260,
+      "xp": 110,
+      "damage": 22,
+      "speed": 2,
+      "type": 3,
+      "family": null,
+      "expansion": null,
+      "boss": true,
+      "guardian": true,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 65,
+          "unique": false
+        },
+        {
+          "id": "caveblade",
+          "qty": 1,
+          "unique": true
+        },
+        {
+          "id": "relic",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "19",
+      "name": "Greyfang Wolf",
+      "x": -245,
+      "z": 127,
+      "hp": 45,
+      "xp": 25,
+      "damage": 10,
+      "speed": 3.8,
+      "type": 4,
+      "family": "wolf",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 16,
+          "unique": false
+        },
+        {
+          "id": "trophy_wolf",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "20",
+      "name": "Greyfang Wolf",
+      "x": -238.91419787228992,
+      "z": 111.369539046012,
+      "hp": 45,
+      "xp": 25,
+      "damage": 10,
+      "speed": 3.8,
+      "type": 4,
+      "family": "wolf",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 16,
+          "unique": false
+        },
+        {
+          "id": "trophy_wolf",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "21",
+      "name": "Greyfang Wolf",
+      "x": -253.96703852921752,
+      "z": 118.76955832496877,
+      "hp": 45,
+      "xp": 25,
+      "damage": 10,
+      "speed": 3.8,
+      "type": 4,
+      "family": "wolf",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 16,
+          "unique": false
+        },
+        {
+          "id": "trophy_wolf",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "22",
+      "name": "Greyfang Wolf",
+      "x": -237.87344682973617,
+      "z": 123.49656619276092,
+      "hp": 45,
+      "xp": 25,
+      "damage": 10,
+      "speed": 3.8,
+      "type": 4,
+      "family": "wolf",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 16,
+          "unique": false
+        },
+        {
+          "id": "trophy_wolf",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "23",
+      "name": "Greyfang Wolf",
+      "x": -246.53347981121667,
+      "z": 109.13160444789527,
+      "hp": 45,
+      "xp": 25,
+      "damage": 10,
+      "speed": 3.8,
+      "type": 4,
+      "family": "wolf",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 16,
+          "unique": false
+        },
+        {
+          "id": "trophy_wolf",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "24",
+      "name": "Fenrir · The Moonfang",
+      "x": -286,
+      "z": 135,
+      "hp": 220,
+      "xp": 160,
+      "damage": 15,
+      "speed": 3.8,
+      "type": 4,
+      "family": "wolf",
+      "expansion": null,
+      "boss": true,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 148,
+          "unique": false
+        },
+        {
+          "id": "trophy_wolf",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "frontier_wolf",
+          "qty": 1,
+          "unique": true
+        }
+      ]
+    },
+    {
+      "id": "25",
+      "name": "Restless Skeleton",
+      "x": -255,
+      "z": -71,
+      "hp": 75,
+      "xp": 37,
+      "damage": 14,
+      "speed": 2.4,
+      "type": 5,
+      "family": "skeleton",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 18,
+          "unique": false
+        },
+        {
+          "id": "trophy_skeleton",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "26",
+      "name": "Restless Skeleton",
+      "x": -248.91419787228992,
+      "z": -86.630460953988,
+      "hp": 75,
+      "xp": 37,
+      "damage": 14,
+      "speed": 2.4,
+      "type": 5,
+      "family": "skeleton",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 18,
+          "unique": false
+        },
+        {
+          "id": "trophy_skeleton",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "27",
+      "name": "Restless Skeleton",
+      "x": -263.9670385292175,
+      "z": -79.23044167503123,
+      "hp": 75,
+      "xp": 37,
+      "damage": 14,
+      "speed": 2.4,
+      "type": 5,
+      "family": "skeleton",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 18,
+          "unique": false
+        },
+        {
+          "id": "trophy_skeleton",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "28",
+      "name": "Restless Skeleton",
+      "x": -247.87344682973617,
+      "z": -74.50343380723908,
+      "hp": 75,
+      "xp": 37,
+      "damage": 14,
+      "speed": 2.4,
+      "type": 5,
+      "family": "skeleton",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 18,
+          "unique": false
+        },
+        {
+          "id": "trophy_skeleton",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "29",
+      "name": "Restless Skeleton",
+      "x": -256.5334798112167,
+      "z": -88.86839555210473,
+      "hp": 75,
+      "xp": 37,
+      "damage": 14,
+      "speed": 2.4,
+      "type": 5,
+      "family": "skeleton",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 18,
+          "unique": false
+        },
+        {
+          "id": "trophy_skeleton",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "30",
+      "name": "Morvain · The Bone Regent",
+      "x": -288,
+      "z": -106,
+      "hp": 320,
+      "xp": 230,
+      "damage": 21,
+      "speed": 2.4,
+      "type": 5,
+      "family": "skeleton",
+      "expansion": null,
+      "boss": true,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 160,
+          "unique": false
+        },
+        {
+          "id": "trophy_skeleton",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "frontier_skeleton",
+          "qty": 1,
+          "unique": true
+        }
+      ]
+    },
+    {
+      "id": "31",
+      "name": "Ashroad Brigand",
+      "x": -125,
+      "z": -131,
+      "hp": 95,
+      "xp": 49,
+      "damage": 16,
+      "speed": 3,
+      "type": 6,
+      "family": "bandit",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 20,
+          "unique": false
+        },
+        {
+          "id": "trophy_bandit",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "32",
+      "name": "Ashroad Brigand",
+      "x": -118.91419787228992,
+      "z": -146.630460953988,
+      "hp": 95,
+      "xp": 49,
+      "damage": 16,
+      "speed": 3,
+      "type": 6,
+      "family": "bandit",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 20,
+          "unique": false
+        },
+        {
+          "id": "trophy_bandit",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "33",
+      "name": "Ashroad Brigand",
+      "x": -133.96703852921752,
+      "z": -139.23044167503122,
+      "hp": 95,
+      "xp": 49,
+      "damage": 16,
+      "speed": 3,
+      "type": 6,
+      "family": "bandit",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 20,
+          "unique": false
+        },
+        {
+          "id": "trophy_bandit",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "34",
+      "name": "Ashroad Brigand",
+      "x": -117.87344682973615,
+      "z": -134.50343380723908,
+      "hp": 95,
+      "xp": 49,
+      "damage": 16,
+      "speed": 3,
+      "type": 6,
+      "family": "bandit",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 20,
+          "unique": false
+        },
+        {
+          "id": "trophy_bandit",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "35",
+      "name": "Ashroad Brigand",
+      "x": -126.53347981121668,
+      "z": -148.86839555210472,
+      "hp": 95,
+      "xp": 49,
+      "damage": 16,
+      "speed": 3,
+      "type": 6,
+      "family": "bandit",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 20,
+          "unique": false
+        },
+        {
+          "id": "trophy_bandit",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "36",
+      "name": "Captain Rook · The Oathbreaker",
+      "x": -159,
+      "z": -158,
+      "hp": 380,
+      "xp": 300,
+      "damage": 24,
+      "speed": 3,
+      "type": 6,
+      "family": "bandit",
+      "expansion": null,
+      "boss": true,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 172,
+          "unique": false
+        },
+        {
+          "id": "trophy_bandit",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "frontier_bandit",
+          "qty": 1,
+          "unique": true
+        }
+      ]
+    },
+    {
+      "id": "37",
+      "name": "Mirefang Spider",
+      "x": 113,
+      "z": -201,
+      "hp": 110,
+      "xp": 61,
+      "damage": 20,
+      "speed": 3.2,
+      "type": 7,
+      "family": "spider",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 22,
+          "unique": false
+        },
+        {
+          "id": "trophy_spider",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "38",
+      "name": "Mirefang Spider",
+      "x": 119.08580212771008,
+      "z": -216.630460953988,
+      "hp": 110,
+      "xp": 61,
+      "damage": 20,
+      "speed": 3.2,
+      "type": 7,
+      "family": "spider",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 22,
+          "unique": false
+        },
+        {
+          "id": "trophy_spider",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "39",
+      "name": "Mirefang Spider",
+      "x": 104.0329614707825,
+      "z": -209.23044167503122,
+      "hp": 110,
+      "xp": 61,
+      "damage": 20,
+      "speed": 3.2,
+      "type": 7,
+      "family": "spider",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 22,
+          "unique": false
+        },
+        {
+          "id": "trophy_spider",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "40",
+      "name": "Mirefang Spider",
+      "x": 120.12655317026385,
+      "z": -204.50343380723908,
+      "hp": 110,
+      "xp": 61,
+      "damage": 20,
+      "speed": 3.2,
+      "type": 7,
+      "family": "spider",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 22,
+          "unique": false
+        },
+        {
+          "id": "trophy_spider",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "41",
+      "name": "Mirefang Spider",
+      "x": 111.46652018878332,
+      "z": -218.86839555210472,
+      "hp": 110,
+      "xp": 61,
+      "damage": 20,
+      "speed": 3.2,
+      "type": 7,
+      "family": "spider",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 22,
+          "unique": false
+        },
+        {
+          "id": "trophy_spider",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "42",
+      "name": "Silkmaw · Brood Mother",
+      "x": 143,
+      "z": -233,
+      "hp": 450,
+      "xp": 370,
+      "damage": 30,
+      "speed": 3.2,
+      "type": 7,
+      "family": "spider",
+      "expansion": null,
+      "boss": true,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 184,
+          "unique": false
+        },
+        {
+          "id": "trophy_spider",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "frontier_spider",
+          "qty": 1,
+          "unique": true
+        }
+      ]
+    },
+    {
+      "id": "43",
+      "name": "Stormbound Elemental",
+      "x": -40,
+      "z": -282,
+      "hp": 155,
+      "xp": 73,
+      "damage": 25,
+      "speed": 2,
+      "type": 8,
+      "family": "elemental",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "trophy_elemental",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "44",
+      "name": "Stormbound Elemental",
+      "x": -33.91419787228992,
+      "z": -297.630460953988,
+      "hp": 155,
+      "xp": 73,
+      "damage": 25,
+      "speed": 2,
+      "type": 8,
+      "family": "elemental",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "trophy_elemental",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "45",
+      "name": "Stormbound Elemental",
+      "x": -48.967038529217504,
+      "z": -290.2304416750312,
+      "hp": 155,
+      "xp": 73,
+      "damage": 25,
+      "speed": 2,
+      "type": 8,
+      "family": "elemental",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "trophy_elemental",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "46",
+      "name": "Stormbound Elemental",
+      "x": -32.87344682973615,
+      "z": -285.50343380723905,
+      "hp": 155,
+      "xp": 73,
+      "damage": 25,
+      "speed": 2,
+      "type": 8,
+      "family": "elemental",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "trophy_elemental",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "47",
+      "name": "Stormbound Elemental",
+      "x": -41.53347981121668,
+      "z": -299.86839555210474,
+      "hp": 155,
+      "xp": 73,
+      "damage": 25,
+      "speed": 2,
+      "type": 8,
+      "family": "elemental",
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "trophy_elemental",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "48",
+      "name": "Astrax · The Stormheart",
+      "x": -69,
+      "z": -312,
+      "hp": 600,
+      "xp": 440,
+      "damage": 37.5,
+      "speed": 2,
+      "type": 8,
+      "family": "elemental",
+      "expansion": null,
+      "boss": true,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 196,
+          "unique": false
+        },
+        {
+          "id": "trophy_elemental",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "frontier_elemental",
+          "qty": 1,
+          "unique": true
+        }
+      ]
+    },
+    {
+      "id": "49",
+      "name": "Mossback Boar",
+      "x": -65,
+      "z": 72,
+      "hp": 90,
+      "xp": 38,
+      "damage": 13,
+      "speed": 3.3,
+      "type": 20,
+      "family": null,
+      "expansion": "boar",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 3,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 15,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "50",
+      "name": "Mossback Boar",
+      "x": -60.27175773614194,
+      "z": 59.838243991211286,
+      "hp": 90,
+      "xp": 38,
+      "damage": 13,
+      "speed": 3.3,
+      "type": 20,
+      "family": null,
+      "expansion": "boar",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 3,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 15,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "51",
+      "name": "Mossback Boar",
+      "x": -71.97315226185088,
+      "z": 65.61249288407612,
+      "hp": 90,
+      "xp": 38,
+      "damage": 13,
+      "speed": 3.3,
+      "type": 20,
+      "family": null,
+      "expansion": "boar",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 3,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 15,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "52",
+      "name": "Thornling",
+      "x": -72.12132034355965,
+      "z": 8.878679656440358,
+      "hp": 75,
+      "xp": 42,
+      "damage": 12,
+      "speed": 2,
+      "type": 21,
+      "family": null,
+      "expansion": "thornling",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 4,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 16,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "53",
+      "name": "Thornling",
+      "x": -65.27175773614195,
+      "z": -1.1617560087887178,
+      "hp": 75,
+      "xp": 42,
+      "damage": 12,
+      "speed": 2,
+      "type": 21,
+      "family": null,
+      "expansion": "thornling",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 4,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 16,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "54",
+      "name": "Thornling",
+      "x": -76.97315226185088,
+      "z": 4.612492884076125,
+      "hp": 75,
+      "xp": 42,
+      "damage": 12,
+      "speed": 2,
+      "type": 21,
+      "family": null,
+      "expansion": "thornling",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 4,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 16,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "55",
+      "name": "Dire Bear",
+      "x": -106,
+      "z": 95,
+      "hp": 190,
+      "xp": 75,
+      "damage": 24,
+      "speed": 2.8,
+      "type": 22,
+      "family": null,
+      "expansion": "bear",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 6,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 18,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "56",
+      "name": "Dire Bear",
+      "x": -101.27175773614195,
+      "z": 82.83824399121129,
+      "hp": 190,
+      "xp": 75,
+      "damage": 24,
+      "speed": 2.8,
+      "type": 22,
+      "family": null,
+      "expansion": "bear",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 6,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 18,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "57",
+      "name": "Dire Bear",
+      "x": -112.97315226185088,
+      "z": 88.61249288407612,
+      "hp": 190,
+      "xp": 75,
+      "damage": 24,
+      "speed": 2.8,
+      "type": 22,
+      "family": null,
+      "expansion": "bear",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 6,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 18,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "58",
+      "name": "Mire Slime",
+      "x": 85,
+      "z": -93,
+      "hp": 95,
+      "xp": 48,
+      "damage": 13,
+      "speed": 1.9,
+      "type": 23,
+      "family": null,
+      "expansion": "slime",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 7,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 19,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "59",
+      "name": "Mire Slime",
+      "x": 89.72824226385805,
+      "z": -105.16175600878871,
+      "hp": 95,
+      "xp": 48,
+      "damage": 13,
+      "speed": 1.9,
+      "type": 23,
+      "family": null,
+      "expansion": "slime",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 7,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 19,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "60",
+      "name": "Mire Slime",
+      "x": 78.02684773814912,
+      "z": -99.38750711592388,
+      "hp": 95,
+      "xp": 48,
+      "damage": 13,
+      "speed": 1.9,
+      "type": 23,
+      "family": null,
+      "expansion": "slime",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 7,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 19,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "61",
+      "name": "Bog Witch",
+      "x": 137,
+      "z": -155,
+      "hp": 110,
+      "xp": 65,
+      "damage": 19,
+      "speed": 2.3,
+      "type": 24,
+      "family": null,
+      "expansion": "witch",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 9,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 21,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "62",
+      "name": "Bog Witch",
+      "x": 140.72824226385805,
+      "z": -167.16175600878873,
+      "hp": 110,
+      "xp": 65,
+      "damage": 19,
+      "speed": 2.3,
+      "type": 24,
+      "family": null,
+      "expansion": "witch",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 9,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 21,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "63",
+      "name": "Bog Witch",
+      "x": 130.02684773814912,
+      "z": -161.38750711592388,
+      "hp": 110,
+      "xp": 65,
+      "damage": 19,
+      "speed": 2.3,
+      "type": 24,
+      "family": null,
+      "expansion": "witch",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 9,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 21,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "64",
+      "name": "Marsh Basilisk",
+      "x": 63,
+      "z": -178,
+      "hp": 170,
+      "xp": 78,
+      "damage": 22,
+      "speed": 3.1,
+      "type": 25,
+      "family": null,
+      "expansion": "basilisk",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 10,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 22,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "65",
+      "name": "Marsh Basilisk",
+      "x": 67.72824226385805,
+      "z": -190.16175600878873,
+      "hp": 170,
+      "xp": 78,
+      "damage": 22,
+      "speed": 3.1,
+      "type": 25,
+      "family": null,
+      "expansion": "basilisk",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 10,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 22,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "66",
+      "name": "Marsh Basilisk",
+      "x": 56.026847738149115,
+      "z": -184.38750711592388,
+      "hp": 170,
+      "xp": 78,
+      "damage": 22,
+      "speed": 3.1,
+      "type": 25,
+      "family": null,
+      "expansion": "basilisk",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 10,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 22,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "67",
+      "name": "Frost Wraith",
+      "x": 36,
+      "z": -259,
+      "hp": 130,
+      "xp": 88,
+      "damage": 24,
+      "speed": 3.5,
+      "type": 26,
+      "family": null,
+      "expansion": "wraith",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 12,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "68",
+      "name": "Frost Wraith",
+      "x": 40.72824226385806,
+      "z": -271.1617560087887,
+      "hp": 130,
+      "xp": 88,
+      "damage": 24,
+      "speed": 3.5,
+      "type": 26,
+      "family": null,
+      "expansion": "wraith",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 12,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "69",
+      "name": "Frost Wraith",
+      "x": 29.026847738149115,
+      "z": -265.3875071159239,
+      "hp": 130,
+      "xp": 88,
+      "damage": 24,
+      "speed": 3.5,
+      "type": 26,
+      "family": null,
+      "expansion": "wraith",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 12,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "70",
+      "name": "Ice Troll",
+      "x": -104,
+      "z": -253,
+      "hp": 290,
+      "xp": 120,
+      "damage": 36,
+      "speed": 1.6,
+      "type": 27,
+      "family": null,
+      "expansion": "troll",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 14,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 26,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "71",
+      "name": "Ice Troll",
+      "x": -99.27175773614195,
+      "z": -265.1617560087887,
+      "hp": 290,
+      "xp": 120,
+      "damage": 36,
+      "speed": 1.6,
+      "type": 27,
+      "family": null,
+      "expansion": "troll",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 14,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 26,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "72",
+      "name": "Ice Troll",
+      "x": -110.97315226185088,
+      "z": -259.3875071159239,
+      "hp": 290,
+      "xp": 120,
+      "damage": 36,
+      "speed": 1.6,
+      "type": 27,
+      "family": null,
+      "expansion": "troll",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 14,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 26,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "73",
+      "name": "Mountain Harpy",
+      "x": 70,
+      "z": -233,
+      "hp": 125,
+      "xp": 92,
+      "damage": 23,
+      "speed": 4,
+      "type": 28,
+      "family": null,
+      "expansion": "harpy",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 12,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "74",
+      "name": "Mountain Harpy",
+      "x": 74.72824226385805,
+      "z": -245.16175600878873,
+      "hp": 125,
+      "xp": 92,
+      "damage": 23,
+      "speed": 4,
+      "type": 28,
+      "family": null,
+      "expansion": "harpy",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 12,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "75",
+      "name": "Mountain Harpy",
+      "x": 63.026847738149115,
+      "z": -239.38750711592388,
+      "hp": 125,
+      "xp": 92,
+      "damage": 23,
+      "speed": 4,
+      "type": 28,
+      "family": null,
+      "expansion": "harpy",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 12,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "76",
+      "name": "Ancient Sentinel",
+      "x": -205,
+      "z": -233,
+      "hp": 250,
+      "xp": 115,
+      "damage": 30,
+      "speed": 1.9,
+      "type": 29,
+      "family": null,
+      "expansion": "sentinel",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 16,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 28,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "77",
+      "name": "Ancient Sentinel",
+      "x": -200.27175773614195,
+      "z": -245.16175600878873,
+      "hp": 250,
+      "xp": 115,
+      "damage": 30,
+      "speed": 1.9,
+      "type": 29,
+      "family": null,
+      "expansion": "sentinel",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 16,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 28,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "78",
+      "name": "Ancient Sentinel",
+      "x": -211.97315226185088,
+      "z": -239.38750711592388,
+      "hp": 250,
+      "xp": 115,
+      "damage": 30,
+      "speed": 1.9,
+      "type": 29,
+      "family": null,
+      "expansion": "sentinel",
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 16,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 28,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "79",
+      "name": "The Hollow Knight",
+      "x": -70,
+      "z": -154,
+      "hp": 840,
+      "xp": 500,
+      "damage": 34,
+      "speed": 2.6,
+      "type": 32,
+      "family": null,
+      "expansion": "knight",
+      "boss": true,
+      "guardian": false,
+      "dungeon": null,
+      "level": 16,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 220,
+          "unique": false
+        },
+        {
+          "id": "gem",
+          "qty": 2,
+          "unique": false
+        },
+        {
+          "id": "exp_knight",
+          "qty": 1,
+          "unique": true
+        }
+      ]
+    },
+    {
+      "id": "80",
+      "name": "Selene, the Moon Priestess",
+      "x": 92,
+      "z": -300,
+      "hp": 1120,
+      "xp": 760,
+      "damage": 36,
+      "speed": 2.8,
+      "type": 35,
+      "family": null,
+      "expansion": "priestess",
+      "boss": true,
+      "guardian": false,
+      "dungeon": null,
+      "level": 25,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 265,
+          "unique": false
+        },
+        {
+          "id": "gem",
+          "qty": 2,
+          "unique": false
+        },
+        {
+          "id": "exp_priestess",
+          "qty": 1,
+          "unique": true
+        }
+      ]
+    },
+    {
+      "id": "81",
+      "name": "The Forgotten King",
+      "x": -284,
+      "z": -299,
+      "hp": 1750,
+      "xp": 1200,
+      "damage": 48,
+      "speed": 2.5,
+      "type": 36,
+      "family": null,
+      "expansion": "king",
+      "boss": true,
+      "guardian": false,
+      "dungeon": null,
+      "level": 32,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 300,
+          "unique": false
+        },
+        {
+          "id": "gem",
+          "qty": 2,
+          "unique": false
+        },
+        {
+          "id": "exp_king",
+          "qty": 1,
+          "unique": true
+        }
+      ]
+    },
+    {
+      "id": "82",
+      "name": "Thornling",
+      "x": 500,
+      "z": -8,
+      "hp": 75,
+      "xp": 42,
+      "damage": 12,
+      "speed": 2,
+      "type": 21,
+      "family": null,
+      "expansion": "thornling",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "roots",
+      "level": 4,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 16,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "83",
+      "name": "Rootbound Revenant",
+      "x": 487,
+      "z": -18,
+      "hp": 130,
+      "xp": 88,
+      "damage": 24,
+      "speed": 3.5,
+      "type": 26,
+      "family": null,
+      "expansion": "wraith",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "roots",
+      "level": 12,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "84",
+      "name": "Thornling",
+      "x": 513,
+      "z": -18,
+      "hp": 75,
+      "xp": 42,
+      "damage": 12,
+      "speed": 2,
+      "type": 21,
+      "family": null,
+      "expansion": "thornling",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "roots",
+      "level": 4,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 16,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "85",
+      "name": "Rootbound Revenant",
+      "x": 500,
+      "z": -27,
+      "hp": 130,
+      "xp": 88,
+      "damage": 24,
+      "speed": 3.5,
+      "type": 26,
+      "family": null,
+      "expansion": "wraith",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "roots",
+      "level": 12,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "86",
+      "name": "Thornling",
+      "x": 491,
+      "z": -40,
+      "hp": 75,
+      "xp": 42,
+      "damage": 12,
+      "speed": 2,
+      "type": 21,
+      "family": null,
+      "expansion": "thornling",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "roots",
+      "level": 4,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 16,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "87",
+      "name": "The Grove Warden",
+      "x": 500,
+      "z": -53,
+      "hp": 550,
+      "xp": 300,
+      "damage": 27,
+      "speed": 2,
+      "type": 30,
+      "family": null,
+      "expansion": "warden",
+      "boss": true,
+      "guardian": false,
+      "dungeon": "roots",
+      "level": 8,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 180,
+          "unique": false
+        },
+        {
+          "id": "gem",
+          "qty": 2,
+          "unique": false
+        },
+        {
+          "id": "exp_warden",
+          "qty": 1,
+          "unique": true
+        }
+      ]
+    },
+    {
+      "id": "88",
+      "name": "Mire Slime",
+      "x": 700,
+      "z": -8,
+      "hp": 95,
+      "xp": 48,
+      "damage": 13,
+      "speed": 1.9,
+      "type": 23,
+      "family": null,
+      "expansion": "slime",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "sunken",
+      "level": 7,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 19,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "89",
+      "name": "Bog Witch",
+      "x": 687,
+      "z": -18,
+      "hp": 110,
+      "xp": 65,
+      "damage": 19,
+      "speed": 2.3,
+      "type": 24,
+      "family": null,
+      "expansion": "witch",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "sunken",
+      "level": 9,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 21,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "90",
+      "name": "Marsh Basilisk",
+      "x": 713,
+      "z": -18,
+      "hp": 170,
+      "xp": 78,
+      "damage": 22,
+      "speed": 3.1,
+      "type": 25,
+      "family": null,
+      "expansion": "basilisk",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "sunken",
+      "level": 10,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 22,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "91",
+      "name": "Mire Slime",
+      "x": 700,
+      "z": -27,
+      "hp": 95,
+      "xp": 48,
+      "damage": 13,
+      "speed": 1.9,
+      "type": 23,
+      "family": null,
+      "expansion": "slime",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "sunken",
+      "level": 7,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 19,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "92",
+      "name": "Bog Witch",
+      "x": 691,
+      "z": -40,
+      "hp": 110,
+      "xp": 65,
+      "damage": 19,
+      "speed": 2.3,
+      "type": 24,
+      "family": null,
+      "expansion": "witch",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "sunken",
+      "level": 9,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 21,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "93",
+      "name": "Nythra, the Bog Serpent",
+      "x": 700,
+      "z": -53,
+      "hp": 760,
+      "xp": 430,
+      "damage": 32,
+      "speed": 3,
+      "type": 31,
+      "family": null,
+      "expansion": "serpent",
+      "boss": true,
+      "guardian": false,
+      "dungeon": "sunken",
+      "level": 13,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 205,
+          "unique": false
+        },
+        {
+          "id": "gem",
+          "qty": 2,
+          "unique": false
+        },
+        {
+          "id": "exp_serpent",
+          "qty": 1,
+          "unique": true
+        }
+      ]
+    },
+    {
+      "id": "94",
+      "name": "Frost Wraith",
+      "x": 900,
+      "z": -8,
+      "hp": 130,
+      "xp": 88,
+      "damage": 24,
+      "speed": 3.5,
+      "type": 26,
+      "family": null,
+      "expansion": "wraith",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "frost",
+      "level": 12,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "95",
+      "name": "Ice Troll",
+      "x": 887,
+      "z": -18,
+      "hp": 290,
+      "xp": 120,
+      "damage": 36,
+      "speed": 1.6,
+      "type": 27,
+      "family": null,
+      "expansion": "troll",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "frost",
+      "level": 14,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 26,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "96",
+      "name": "Mountain Harpy",
+      "x": 913,
+      "z": -18,
+      "hp": 125,
+      "xp": 92,
+      "damage": 23,
+      "speed": 4,
+      "type": 28,
+      "family": null,
+      "expansion": "harpy",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "frost",
+      "level": 12,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "97",
+      "name": "Frost Wraith",
+      "x": 900,
+      "z": -27,
+      "hp": 130,
+      "xp": 88,
+      "damage": 24,
+      "speed": 3.5,
+      "type": 26,
+      "family": null,
+      "expansion": "wraith",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "frost",
+      "level": 12,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 24,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "98",
+      "name": "Ice Troll",
+      "x": 891,
+      "z": -40,
+      "hp": 290,
+      "xp": 120,
+      "damage": 36,
+      "speed": 1.6,
+      "type": 27,
+      "family": null,
+      "expansion": "troll",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "frost",
+      "level": 14,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 26,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "99",
+      "name": "Skarveth, the Frost Wyrm",
+      "x": 900,
+      "z": -53,
+      "hp": 1080,
+      "xp": 650,
+      "damage": 38,
+      "speed": 3,
+      "type": 33,
+      "family": null,
+      "expansion": "wyrm",
+      "boss": true,
+      "guardian": false,
+      "dungeon": "frost",
+      "level": 21,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 245,
+          "unique": false
+        },
+        {
+          "id": "gem",
+          "qty": 2,
+          "unique": false
+        },
+        {
+          "id": "exp_wyrm",
+          "qty": 1,
+          "unique": true
+        }
+      ]
+    },
+    {
+      "id": "100",
+      "name": "Ancient Sentinel",
+      "x": 1100,
+      "z": -8,
+      "hp": 250,
+      "xp": 115,
+      "damage": 30,
+      "speed": 1.9,
+      "type": 29,
+      "family": null,
+      "expansion": "sentinel",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "forge",
+      "level": 16,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 28,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "101",
+      "name": "Ice Troll",
+      "x": 1087,
+      "z": -18,
+      "hp": 290,
+      "xp": 120,
+      "damage": 36,
+      "speed": 1.6,
+      "type": 27,
+      "family": null,
+      "expansion": "troll",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "forge",
+      "level": 14,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 26,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "102",
+      "name": "Ancient Sentinel",
+      "x": 1113,
+      "z": -18,
+      "hp": 250,
+      "xp": 115,
+      "damage": 30,
+      "speed": 1.9,
+      "type": 29,
+      "family": null,
+      "expansion": "sentinel",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "forge",
+      "level": 16,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 28,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "103",
+      "name": "Ice Troll",
+      "x": 1100,
+      "z": -27,
+      "hp": 290,
+      "xp": 120,
+      "damage": 36,
+      "speed": 1.6,
+      "type": 27,
+      "family": null,
+      "expansion": "troll",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "forge",
+      "level": 14,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 26,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "104",
+      "name": "Ancient Sentinel",
+      "x": 1091,
+      "z": -40,
+      "hp": 250,
+      "xp": 115,
+      "damage": 30,
+      "speed": 1.9,
+      "type": 29,
+      "family": null,
+      "expansion": "sentinel",
+      "boss": false,
+      "guardian": false,
+      "dungeon": "forge",
+      "level": 16,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 28,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "105",
+      "name": "The Ash Titan",
+      "x": 1100,
+      "z": -53,
+      "hp": 1300,
+      "xp": 820,
+      "damage": 44,
+      "speed": 1.7,
+      "type": 34,
+      "family": null,
+      "expansion": "titan",
+      "boss": true,
+      "guardian": false,
+      "dungeon": "forge",
+      "level": 26,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 270,
+          "unique": false
+        },
+        {
+          "id": "gem",
+          "qty": 2,
+          "unique": false
+        },
+        {
+          "id": "exp_titan",
+          "qty": 1,
+          "unique": true
+        }
+      ]
+    }
+  ],
+  "quests": [
+    {
+      "id": "scouts",
+      "name": "A quieter forest",
+      "kind": "Side",
+      "giver": "smith",
+      "description": "Defeat five goblin scouts after accepting this task.",
+      "goal": 5,
+      "gold": 45,
+      "xp": 40,
+      "target": [
+        -23,
+        36
+      ]
+    },
+    {
+      "id": "teeth",
+      "name": "Teeth for the forge",
+      "kind": "Side",
+      "giver": "smith",
+      "description": "Bring Bram ten goblin teeth. Turning them in consumes them.",
+      "goal": 10,
+      "gold": 60,
+      "xp": 55,
+      "target": [
+        -23,
+        36
+      ]
+    },
+    {
+      "id": "supplies",
+      "name": "The missing caravan",
+      "kind": "Side",
+      "giver": "merchant",
+      "description": "Clear the goblin encampment and recover the marked supply crate.",
+      "goal": 1,
+      "gold": 75,
+      "xp": 65,
+      "target": [
+        24,
+        -29
+      ]
+    },
+    {
+      "id": "trail",
+      "name": "Beyond Stonebridge",
+      "kind": "Main",
+      "giver": "elder",
+      "description": "Discover Stonebridge River and investigate the Mountain Ruins.",
+      "goal": 2,
+      "gold": 60,
+      "xp": 70,
+      "target": [
+        -14,
+        9
+      ]
+    },
+    {
+      "id": "guardian",
+      "name": "Beneath the roots",
+      "kind": "Main",
+      "giver": "elder",
+      "description": "Enter Hollowroot Cave, find the gate key and defeat its Guardian.",
+      "goal": 1,
+      "gold": 130,
+      "xp": 120,
+      "target": [
+        -46,
+        36
+      ]
+    },
+    {
+      "id": "relic",
+      "name": "A light brought home",
+      "kind": "Main",
+      "giver": "elder",
+      "description": "Recover the ancient relic from the Guardian and bring it to Elowen.",
+      "goal": 1,
+      "gold": 180,
+      "xp": 140,
+      "target": [
+        -46,
+        36
+      ]
+    },
+    {
+      "id": "hunt_wolf",
+      "name": "Fangs in the wheat",
+      "kind": "Side",
+      "giver": "ranger",
+      "enemyFamily": "wolf",
+      "description": "Defeat four Greyfang Wolfs in their territory, then return to Warden Rowan.",
+      "goal": 4,
+      "gold": 90,
+      "xp": 80,
+      "target": [
+        -245,
+        118
+      ]
+    },
+    {
+      "id": "boss_wolf",
+      "name": "Silence the Moonfang",
+      "kind": "Main",
+      "giver": "ranger",
+      "bossFamily": "wolf",
+      "description": "Defeat Fenrir · The Moonfang and report to Warden Rowan. A unique weapon awaits in the boss's loot.",
+      "goal": 1,
+      "gold": 160,
+      "xp": 140,
+      "target": [
+        -286,
+        135
+      ]
+    },
+    {
+      "id": "hunt_skeleton",
+      "name": "Unquiet graves",
+      "kind": "Side",
+      "giver": "priest",
+      "enemyFamily": "skeleton",
+      "description": "Defeat four Restless Skeletons in their territory, then return to Sister Aveline.",
+      "goal": 4,
+      "gold": 135,
+      "xp": 115,
+      "target": [
+        -255,
+        -80
+      ]
+    },
+    {
+      "id": "boss_skeleton",
+      "name": "The last regent",
+      "kind": "Main",
+      "giver": "priest",
+      "bossFamily": "skeleton",
+      "description": "Defeat Morvain · The Bone Regent and report to Sister Aveline. A unique weapon awaits in the boss's loot.",
+      "goal": 1,
+      "gold": 220,
+      "xp": 200,
+      "target": [
+        -288,
+        -106
+      ]
+    },
+    {
+      "id": "hunt_bandit",
+      "name": "The broken trade road",
+      "kind": "Side",
+      "giver": "marshal",
+      "enemyFamily": "bandit",
+      "description": "Defeat four Ashroad Brigands in their territory, then return to Marshal Cera.",
+      "goal": 4,
+      "gold": 180,
+      "xp": 150,
+      "target": [
+        -125,
+        -140
+      ]
+    },
+    {
+      "id": "boss_bandit",
+      "name": "An oath in ashes",
+      "kind": "Main",
+      "giver": "marshal",
+      "bossFamily": "bandit",
+      "description": "Defeat Captain Rook · The Oathbreaker and report to Marshal Cera. A unique weapon awaits in the boss's loot.",
+      "goal": 1,
+      "gold": 280,
+      "xp": 260,
+      "target": [
+        -159,
+        -158
+      ]
+    },
+    {
+      "id": "hunt_spider",
+      "name": "Silk over the waterways",
+      "kind": "Side",
+      "giver": "herbalist",
+      "enemyFamily": "spider",
+      "description": "Defeat four Mirefang Spiders in their territory, then return to Herbalist Nessa.",
+      "goal": 4,
+      "gold": 225,
+      "xp": 185,
+      "target": [
+        113,
+        -210
+      ]
+    },
+    {
+      "id": "boss_spider",
+      "name": "The heart of the web",
+      "kind": "Main",
+      "giver": "herbalist",
+      "bossFamily": "spider",
+      "description": "Defeat Silkmaw · Brood Mother and report to Herbalist Nessa. A unique weapon awaits in the boss's loot.",
+      "goal": 1,
+      "gold": 340,
+      "xp": 320,
+      "target": [
+        143,
+        -233
+      ]
+    },
+    {
+      "id": "hunt_elemental",
+      "name": "Stones that walk",
+      "kind": "Side",
+      "giver": "sage",
+      "enemyFamily": "elemental",
+      "description": "Defeat four Stormbound Elementals in their territory, then return to Sage Orin.",
+      "goal": 4,
+      "gold": 270,
+      "xp": 220,
+      "target": [
+        -40,
+        -291
+      ]
+    },
+    {
+      "id": "boss_elemental",
+      "name": "Break the stormheart",
+      "kind": "Main",
+      "giver": "sage",
+      "bossFamily": "elemental",
+      "description": "Defeat Astrax · The Stormheart and report to Sage Orin. A unique weapon awaits in the boss's loot.",
+      "goal": 1,
+      "gold": 400,
+      "xp": 380,
+      "target": [
+        -69,
+        -312
+      ]
+    },
+    {
+      "id": "exp_hunt_boar",
+      "name": "Hunt: Mossback Boar",
+      "kind": "Side",
+      "giver": "elder",
+      "expansionEnemy": "boar",
+      "description": "Defeat three Mossback Boars after accepting this hunt, then return to Elowen.",
+      "goal": 3,
+      "gold": 89,
+      "xp": 76,
+      "target": [
+        -65,
+        65
+      ]
+    },
+    {
+      "id": "exp_hunt_thornling",
+      "name": "Hunt: Thornling",
+      "kind": "Side",
+      "giver": "elder",
+      "expansionEnemy": "thornling",
+      "description": "Defeat three Thornlings after accepting this hunt, then return to Elowen.",
+      "goal": 3,
+      "gold": 97,
+      "xp": 83,
+      "target": [
+        -70,
+        4
+      ]
+    },
+    {
+      "id": "exp_hunt_bear",
+      "name": "Hunt: Dire Bear",
+      "kind": "Side",
+      "giver": "elder",
+      "expansionEnemy": "bear",
+      "description": "Defeat three Dire Bears after accepting this hunt, then return to Elowen.",
+      "goal": 3,
+      "gold": 113,
+      "xp": 97,
+      "target": [
+        -106,
+        88
+      ]
+    },
+    {
+      "id": "exp_hunt_slime",
+      "name": "Hunt: Mire Slime",
+      "kind": "Side",
+      "giver": "elder",
+      "expansionEnemy": "slime",
+      "description": "Defeat three Mire Slimes after accepting this hunt, then return to Elowen.",
+      "goal": 3,
+      "gold": 121,
+      "xp": 104,
+      "target": [
+        85,
+        -100
+      ]
+    },
+    {
+      "id": "exp_hunt_witch",
+      "name": "Hunt: Bog Witch",
+      "kind": "Side",
+      "giver": "elder",
+      "expansionEnemy": "witch",
+      "description": "Defeat three Bog Witchs after accepting this hunt, then return to Elowen.",
+      "goal": 3,
+      "gold": 137,
+      "xp": 118,
+      "target": [
+        137,
+        -162
+      ]
+    },
+    {
+      "id": "exp_hunt_basilisk",
+      "name": "Hunt: Marsh Basilisk",
+      "kind": "Side",
+      "giver": "elder",
+      "expansionEnemy": "basilisk",
+      "description": "Defeat three Marsh Basilisks after accepting this hunt, then return to Elowen.",
+      "goal": 3,
+      "gold": 145,
+      "xp": 125,
+      "target": [
+        63,
+        -185
+      ]
+    },
+    {
+      "id": "exp_hunt_wraith",
+      "name": "Hunt: Frost Wraith",
+      "kind": "Side",
+      "giver": "elder",
+      "expansionEnemy": "wraith",
+      "description": "Defeat three Frost Wraiths after accepting this hunt, then return to Elowen.",
+      "goal": 3,
+      "gold": 161,
+      "xp": 139,
+      "target": [
+        36,
+        -266
+      ]
+    },
+    {
+      "id": "exp_hunt_troll",
+      "name": "Hunt: Ice Troll",
+      "kind": "Side",
+      "giver": "elder",
+      "expansionEnemy": "troll",
+      "description": "Defeat three Ice Trolls after accepting this hunt, then return to Elowen.",
+      "goal": 3,
+      "gold": 177,
+      "xp": 153,
+      "target": [
+        -104,
+        -260
+      ]
+    },
+    {
+      "id": "exp_hunt_harpy",
+      "name": "Hunt: Mountain Harpy",
+      "kind": "Side",
+      "giver": "elder",
+      "expansionEnemy": "harpy",
+      "description": "Defeat three Mountain Harpys after accepting this hunt, then return to Elowen.",
+      "goal": 3,
+      "gold": 161,
+      "xp": 139,
+      "target": [
+        70,
+        -240
+      ]
+    },
+    {
+      "id": "exp_hunt_sentinel",
+      "name": "Hunt: Ancient Sentinel",
+      "kind": "Side",
+      "giver": "elder",
+      "expansionEnemy": "sentinel",
+      "description": "Defeat three Ancient Sentinels after accepting this hunt, then return to Elowen.",
+      "goal": 3,
+      "gold": 193,
+      "xp": 167,
+      "target": [
+        -205,
+        -240
+      ]
+    },
+    {
+      "id": "exp_boss_warden",
+      "name": "The Grove Warden",
+      "kind": "Main",
+      "giver": "elder",
+      "expansionBoss": "warden",
+      "description": "Explore Rootbound Catacombs and defeat The Grove Warden, then report to Elowen.",
+      "goal": 1,
+      "gold": 236,
+      "xp": 270,
+      "target": [
+        -79,
+        32
+      ]
+    },
+    {
+      "id": "exp_boss_serpent",
+      "name": "Nythra, the Bog Serpent",
+      "kind": "Main",
+      "giver": "elder",
+      "expansionBoss": "serpent",
+      "description": "Explore The Sunken Temple and defeat Nythra, the Bog Serpent, then report to Elowen.",
+      "goal": 1,
+      "gold": 296,
+      "xp": 345,
+      "target": [
+        94,
+        -163
+      ]
+    },
+    {
+      "id": "exp_boss_knight",
+      "name": "The Hollow Knight",
+      "kind": "Main",
+      "giver": "elder",
+      "expansionBoss": "knight",
+      "description": "Find and defeat The Hollow Knight, then report to Elowen.",
+      "goal": 1,
+      "gold": 332,
+      "xp": 390,
+      "target": [
+        -70,
+        -154
+      ]
+    },
+    {
+      "id": "exp_boss_wyrm",
+      "name": "Skarveth, the Frost Wyrm",
+      "kind": "Main",
+      "giver": "elder",
+      "expansionBoss": "wyrm",
+      "description": "Explore Frostspire Crypt and defeat Skarveth, the Frost Wyrm, then report to Elowen.",
+      "goal": 1,
+      "gold": 392,
+      "xp": 465,
+      "target": [
+        -105,
+        -295
+      ]
+    },
+    {
+      "id": "exp_boss_titan",
+      "name": "The Ash Titan",
+      "kind": "Main",
+      "giver": "elder",
+      "expansionBoss": "titan",
+      "description": "Explore The Obsidian Forge and defeat The Ash Titan, then report to Elowen.",
+      "goal": 1,
+      "gold": 452,
+      "xp": 540,
+      "target": [
+        -240,
+        -207
+      ]
+    },
+    {
+      "id": "exp_boss_priestess",
+      "name": "Selene, the Moon Priestess",
+      "kind": "Main",
+      "giver": "elder",
+      "expansionBoss": "priestess",
+      "description": "Find and defeat Selene, the Moon Priestess, then report to Elowen.",
+      "goal": 1,
+      "gold": 440,
+      "xp": 525,
+      "target": [
+        92,
+        -300
+      ]
+    },
+    {
+      "id": "exp_boss_king",
+      "name": "The Forgotten King",
+      "kind": "Main",
+      "giver": "elder",
+      "expansionBoss": "king",
+      "description": "Find and defeat The Forgotten King, then report to Elowen.",
+      "goal": 1,
+      "gold": 524,
+      "xp": 630,
+      "target": [
+        -284,
+        -299
+      ]
+    }
+  ],
+  "npcs": [
+    {
+      "id": "smith",
+      "x": -7,
+      "z": 58
+    },
+    {
+      "id": "merchant",
+      "x": 7.821279392226411,
+      "z": 54
+    },
+    {
+      "id": "elder",
+      "x": -1,
+      "z": 70
+    },
+    {
+      "id": "ranger",
+      "x": -160,
+      "z": 139
+    },
+    {
+      "id": "priest",
+      "x": -185,
+      "z": 42
+    },
+    {
+      "id": "marshal",
+      "x": -175,
+      "z": 42
+    },
+    {
+      "id": "herbalist",
+      "x": 110,
+      "z": -121
+    },
+    {
+      "id": "sage",
+      "x": -25,
+      "z": -231
+    }
+  ],
+  "dungeons": [
+    {
+      "id": "roots",
+      "name": "Rootbound Catacombs",
+      "x": -79,
+      "z": 32,
+      "origin": 500,
+      "color": 4346696,
+      "light": 14269046,
+      "enemies": [
+        "thornling",
+        "wraith"
+      ],
+      "boss": "warden",
+      "hazard": "roots",
+      "entry": [
+        -79,
+        32
+      ]
+    },
+    {
+      "id": "sunken",
+      "name": "The Sunken Temple",
+      "x": 94,
+      "z": -163,
+      "origin": 700,
+      "color": 4811624,
+      "light": 9233101,
+      "enemies": [
+        "slime",
+        "witch",
+        "basilisk"
+      ],
+      "boss": "serpent",
+      "hazard": "water",
+      "entry": [
+        94,
+        -163
+      ]
+    },
+    {
+      "id": "frost",
+      "name": "Frostspire Crypt",
+      "x": -105,
+      "z": -295,
+      "origin": 900,
+      "color": 7967647,
+      "light": 11917818,
+      "enemies": [
+        "wraith",
+        "troll",
+        "harpy"
+      ],
+      "boss": "wyrm",
+      "hazard": "ice",
+      "entry": [
+        -105,
+        -295
+      ]
+    },
+    {
+      "id": "forge",
+      "name": "The Obsidian Forge",
+      "x": -240,
+      "z": -207,
+      "origin": 1100,
+      "color": 4145478,
+      "light": 16755045,
+      "enemies": [
+        "sentinel",
+        "troll"
+      ],
+      "boss": "titan",
+      "hazard": "lava",
+      "entry": [
+        -240,
+        -207
+      ]
+    }
+  ],
+  "pets": [
+    {
+      "id": "fox",
+      "name": "Forest Fox",
+      "description": "An inquisitive friend. +3% walking speed.",
+      "cost": 80,
+      "level": 1
+    },
+    {
+      "id": "wolf",
+      "name": "Wolf Pup",
+      "description": "A loyal hunter. +2 melee damage.",
+      "cost": 180,
+      "level": 4
+    },
+    {
+      "id": "owl",
+      "name": "Arcane Owl",
+      "description": "A watchful guide. +2% critical chance.",
+      "cost": 260,
+      "level": 7
+    },
+    {
+      "id": "dragon",
+      "name": "Baby Dragon",
+      "description": "A playful ember. +1.5 stamina regeneration.",
+      "cost": 440,
+      "level": 12
+    },
+    {
+      "id": "golem",
+      "name": "Miniature Stone Golem",
+      "description": "A patient guardian. +2 defence.",
+      "cost": 380,
+      "level": 10
+    }
+  ],
+  "mounts": [
+    {
+      "id": "horse",
+      "name": "Wayfarer Horse",
+      "cost": 220,
+      "level": 3,
+      "speed": 10,
+      "acceleration": 4,
+      "turn": 4,
+      "stamina": 130
+    },
+    {
+      "id": "wolf",
+      "name": "Dire Wolf",
+      "cost": 480,
+      "level": 8,
+      "speed": 11,
+      "acceleration": 6,
+      "turn": 6,
+      "stamina": 115
+    },
+    {
+      "id": "emberhorn",
+      "name": "Emberhorn",
+      "cost": 850,
+      "level": 16,
+      "speed": 12,
+      "acceleration": 3.5,
+      "turn": 3.5,
+      "stamina": 170
+    }
+  ],
+  "structures": [
+    {
+      "id": "overworld:0",
+      "x": 28,
+      "z": -29,
+      "guardRadius": 9,
+      "drops": [
+        {
+          "id": "w2",
+          "qty": 1
+        },
+        {
+          "id": "a2",
+          "qty": 1
+        },
+        {
+          "id": "coin",
+          "qty": 35
+        }
+      ]
+    },
+    {
+      "id": "overworld:1",
+      "x": -8,
+      "z": -73,
+      "guardRadius": 9,
+      "drops": [
+        {
+          "id": "w4",
+          "qty": 1
+        },
+        {
+          "id": "a4",
+          "qty": 1
+        },
+        {
+          "id": "coin",
+          "qty": 35
+        }
+      ]
+    },
+    {
+      "id": "supplies",
+      "x": 24,
+      "z": -29,
+      "guardRadius": 10,
+      "drops": [
+        {
+          "id": "supplies",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "hollow:keyChest",
+      "x": 313,
+      "z": -21,
+      "guardRadius": 7,
+      "drops": [
+        {
+          "id": "cavekey",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "hollow:hiddenChest",
+      "x": 290,
+      "z": -59,
+      "guardRadius": 7,
+      "drops": [
+        {
+          "id": "gem",
+          "qty": 2
+        },
+        {
+          "id": "coin",
+          "qty": 55
+        }
+      ]
+    },
+    {
+      "id": "hollow:gate",
+      "x": 300,
+      "z": -31,
+      "requires": [
+        "hollow:keyChest"
+      ],
+      "drops": []
+    },
+    {
+      "id": "roots:treasure",
+      "x": 485,
+      "z": -21,
+      "guardRadius": 6,
+      "drops": [
+        {
+          "id": "gem",
+          "qty": 2
+        },
+        {
+          "id": "coin",
+          "qty": 70
+        }
+      ]
+    },
+    {
+      "id": "roots:key",
+      "x": 515,
+      "z": -21,
+      "guardRadius": 6,
+      "drops": []
+    },
+    {
+      "id": "roots:gate",
+      "x": 500,
+      "z": -33,
+      "requires": [
+        "roots:rune0",
+        "roots:rune1",
+        "roots:rune2"
+      ],
+      "drops": []
+    },
+    {
+      "id": "roots:rune0",
+      "x": 487,
+      "z": -17,
+      "requires": [],
+      "drops": []
+    },
+    {
+      "id": "roots:rune1",
+      "x": 513,
+      "z": -17,
+      "requires": [
+        "roots:rune0"
+      ],
+      "drops": []
+    },
+    {
+      "id": "roots:rune2",
+      "x": 500,
+      "z": -25,
+      "requires": [
+        "roots:rune1"
+      ],
+      "drops": []
+    },
+    {
+      "id": "sunken:treasure",
+      "x": 685,
+      "z": -21,
+      "guardRadius": 6,
+      "drops": [
+        {
+          "id": "gem",
+          "qty": 2
+        },
+        {
+          "id": "coin",
+          "qty": 70
+        }
+      ]
+    },
+    {
+      "id": "sunken:key",
+      "x": 715,
+      "z": -21,
+      "guardRadius": 6,
+      "drops": []
+    },
+    {
+      "id": "sunken:gate",
+      "x": 700,
+      "z": -33,
+      "requires": [
+        "sunken:key"
+      ],
+      "drops": []
+    },
+    {
+      "id": "frost:treasure",
+      "x": 885,
+      "z": -21,
+      "guardRadius": 6,
+      "drops": [
+        {
+          "id": "gem",
+          "qty": 2
+        },
+        {
+          "id": "coin",
+          "qty": 70
+        }
+      ]
+    },
+    {
+      "id": "frost:key",
+      "x": 915,
+      "z": -21,
+      "guardRadius": 6,
+      "drops": []
+    },
+    {
+      "id": "frost:gate",
+      "x": 900,
+      "z": -33,
+      "requires": [
+        "frost:key"
+      ],
+      "drops": []
+    },
+    {
+      "id": "forge:treasure",
+      "x": 1085,
+      "z": -21,
+      "guardRadius": 6,
+      "drops": [
+        {
+          "id": "gem",
+          "qty": 2
+        },
+        {
+          "id": "coin",
+          "qty": 70
+        }
+      ]
+    },
+    {
+      "id": "forge:key",
+      "x": 1115,
+      "z": -21,
+      "guardRadius": 6,
+      "drops": []
+    },
+    {
+      "id": "forge:gate",
+      "x": 1100,
+      "z": -33,
+      "requires": [
+        "forge:key"
+      ],
+      "drops": []
+    }
+  ]
+}
