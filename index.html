@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><link rel="icon" href="data:,"><meta name="theme-color" content="#102f29"><title>Realm of the Fallen</title>
-<link rel="stylesheet" href="./ui.css?v=realm-wildlands-20261010-1"></head><body>
+<link rel="stylesheet" href="./ui.css?v=realm-emerald-20261010-1"></head><body>
 <div id="shade"></div><section id="title"><div class="eyebrow">The Shattered Marches · World expansion</div><h1>Realm of<br>the <span>Fallen</span></h1><div class="rule"></div><p>Beyond the old forest, a kingdom awaits. Explore mountain villages, reclaim the roads, and challenge fourteen bosses, descend into ancient dungeons and ride with your companions.</p><div class="buttons"><button class="primary" id="play" disabled>Begin your journey &nbsp; →</button><button id="continue" class="hidden">Continue</button></div><div class="small-buttons"><button id="title-controls">Controls</button><button id="title-settings">Settings</button></div><div id="loading">Awakening the forest…</div></section><div id="brand">REALM OF THE FALLEN &nbsp; / &nbsp; THE SHATTERED MARCHES</div>
 <div id="hud" class="hidden">
  <section class="hero-card panel" aria-label="Character status"><span class="hero-emblem" data-icon="hero"></span><div class="hero-top"><span class="hero-name">The Wanderer</span><span class="level" id="level">Lv 1</span></div><div class="status-row health"><div class="bar"><i id="hpbar"></i></div><span id="hptext"></span></div><div class="status-row experience"><div class="bar xp"><i id="xpbar"></i></div><span id="xptext"></span></div><div class="status-row stamina-row"><div class="bar stamina"><i id="staminabar"></i></div><span id="stamtext">Stamina 100 / 100</span></div></section>
@@ -40,25 +40,26 @@
 </script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js"}}</script>
 <script type="module">
-import {batchScenery} from './scene-batch.js?v=realm-wildlands-20261010-1';
-import {createForestArt} from './environment-art.js?v=realm-wildlands-20261010-1';
-import {loadScoutAsset,replaceScouts,animateScout} from './scout-model.js?v=realm-wildlands-20261010-1';
+import {batchScenery} from './scene-batch.js?v=realm-emerald-20261010-1';
+import {valeGroundColor,valeRiverProfile} from './emerald-vale.js?v=realm-emerald-20261010-1';
+import {createForestArt} from './environment-art.js?v=realm-emerald-20261010-1';
+import {loadScoutAsset,replaceScouts,animateScout} from './scout-model.js?v=realm-emerald-20261010-1';
 const scoutAssetPromise=loadScoutAsset();
-let installLivingWorld,migrateSave;try{({installLivingWorld,migrateSave}=await import('./living-world.js?v=realm-wildlands-20261010-1'))}catch(e){fatal('The Living World module could not load. Keep index.html and living-world.js together, then reload.');throw e}
-const {installFrontier,BOUNDS,WORLD_WIDTH,WORLD_DEPTH,roadDistance,terrainColor,extraHeight}=await import('./frontier.js?v=realm-wildlands-20261010-1');
-import {installHomestead} from './homestead.js?v=realm-wildlands-20261010-1';
-import {installAccounts} from './accounts.js?v=realm-wildlands-20261010-1';
+let installLivingWorld,migrateSave;try{({installLivingWorld,migrateSave}=await import('./living-world.js?v=realm-emerald-20261010-1'))}catch(e){fatal('The Living World module could not load. Keep index.html and living-world.js together, then reload.');throw e}
+const {installFrontier,BOUNDS,WORLD_WIDTH,WORLD_DEPTH,roadDistance,terrainColor,extraHeight}=await import('./frontier.js?v=realm-emerald-20261010-1');
+import {installHomestead} from './homestead.js?v=realm-emerald-20261010-1';
+import {installAccounts} from './accounts.js?v=realm-emerald-20261010-1';
 let prologue=null,homestead=null,living=null,net=null,frontier=null,ui=null,visuals=null,progression=null,expansion=null,companions=null,accounts=null,accountActor=null,accountDrops=false,accountReward=null;let lastTownCombat=-Infinity,townReturnBusy=false;
-const {installPrologue}=await import('./prologue.js?v=realm-wildlands-20261010-1');
-const {installUI,icon}=await import('./ui.js?v=realm-wildlands-20261010-1');
-let installVisualWorld;try{({installVisualWorld}=await import('./visual-world.js?v=realm-wildlands-20261010-1'))}catch(e){fatal('The scenery module could not load. Reload to retry; keep visual-world.js with the other game files. Your saved journey is safe.');throw e}
-const {installExpansionWorld}=await import('./expansion-world.js?v=realm-wildlands-20261010-1');
-const {installCompanions,normaliseCompanions}=await import('./companions.js?v=realm-wildlands-20261010-1');
+const {installPrologue}=await import('./prologue.js?v=realm-emerald-20261010-1');
+const {installUI,icon}=await import('./ui.js?v=realm-emerald-20261010-1');
+let installVisualWorld;try{({installVisualWorld}=await import('./visual-world.js?v=realm-emerald-20261010-1'))}catch(e){fatal('The scenery module could not load. Reload to retry; keep visual-world.js with the other game files. Your saved journey is safe.');throw e}
+const {installExpansionWorld}=await import('./expansion-world.js?v=realm-emerald-20261010-1');
+const {installCompanions,normaliseCompanions}=await import('./companions.js?v=realm-emerald-20261010-1');
 const $=id=>document.getElementById(id);let THREE;
 try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js')}catch(e){fatal('The forest could not load. Check your internet connection and reload. The game needs access to cdn.jsdelivr.net.');throw e}
 function fatal(message){const el=document.createElement('div');el.id='fatal';el.style.cssText='position:fixed;inset:0;z-index:100;background:#102f29;color:#f3e8d1;display:grid;place-content:center;padding:24px';el.innerHTML='<h2>Journey interrupted</h2><p></p><button onclick="location.reload()">Try again</button>';el.querySelector('p').textContent=message;document.body.append(el)}
-import {prepareRollRig,groundedRoll,resetRoll,normaliseCamera} from './adventure-motion.js?v=realm-wildlands-20261010-1';
-import {normaliseProgression,characterStats,refreshVitals,xpForLevel,installProgression} from './progression.js?v=realm-wildlands-20261010-1';
+import {prepareRollRig,groundedRoll,resetRoll,normaliseCamera} from './adventure-motion.js?v=realm-emerald-20261010-1';
+import {normaliseProgression,characterStats,refreshVitals,xpForLevel,installProgression} from './progression.js?v=realm-emerald-20261010-1';
 const forestArt=createForestArt(THREE);
 const TAU=Math.PI*2,clamp=THREE.MathUtils.clamp,lerp=THREE.MathUtils.lerp,rand=(a,b)=>a+Math.random()*(b-a),V=THREE.Vector3;
 const mobile=matchMedia('(pointer:coarse)').matches;if(mobile)document.body.classList.add('touch');
@@ -71,12 +72,12 @@ const geo={box:new THREE.BoxGeometry(1,1,1),orb:new THREE.IcosahedronGeometry(1,
 function mesh(shape,color,x=0,y=0,z=0,sx=1,sy=1,sz=1,parent=scene){let m=new THREE.Mesh(geo[shape],typeof color==='object'?color:mat(color));m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m}
 let seed=98421;function seeded(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}const sr=(a,b)=>a+seeded()*(b-a);
 const riverWidth=7.8,riverZ=x=>9+Math.sin(x*.052)*7;const bridges=[-14,35,-180,-430];
-function ground(x,z){if(x>30&&x<70&&z>115&&z<162)return .2;if(x>-90&&x<-20&&z>98&&z<138)return .2;if(x>200)return 0;let base=.7*Math.sin(x*.047)*Math.cos(z*.064)+.32*Math.sin(z*.18+x*.07);base+=Math.max(0,-z-27)*.115+extraHeight(x,z);const d=Math.abs(z-riverZ(x));if(Math.abs(x+430)<8)base=lerp(base,.55,clamp((20-d)/12,0,1)*clamp((8-Math.abs(x+430))/4,0,1));return lerp(-.85,base,clamp((d-3.2)/4.8,0,1))}
+function ground(x,z){if(x>30&&x<70&&z>115&&z<162)return .2;if(x>-90&&x<-20&&z>98&&z<138)return .2;if(x>200)return 0;let base=.7*Math.sin(x*.047)*Math.cos(z*.064)+.32*Math.sin(z*.18+x*.07);base+=Math.max(0,-z-27)*.115+extraHeight(x,z);const d=Math.abs(z-riverZ(x));if(Math.abs(x+430)<8)base=lerp(base,.55,clamp((20-d)/12,0,1)*clamp((8-Math.abs(x+430))/4,0,1));return lerp(-.85,base,valeRiverProfile(x,z,d,clamp((d-3.2)/4.8,0,1)))}
 const poi=[{name:"Hero's Camp",x:0,z:64},{name:'Whispering Forest',x:-23,z:36},{name:'Stonebridge River',x:-14,z:riverZ(-14)},{name:'Goblin Encampment',x:28,z:-23},{name:'Mountain Ruins',x:-8,z:-66}];
 const route=[poi[0],poi[1],{x:-14,z:18},{x:-14,z:-4},poi[3],{x:11,z:-43},poi[4]];
 function segmentDist(x,z,a,b){const dx=b.x-a.x,dz=b.z-a.z,t=clamp(((x-a.x)*dx+(z-a.z)*dz)/(dx*dx+dz*dz),0,1);return Math.hypot(x-a.x-t*dx,z-a.z-t*dz)}
 const pathDist=(x,z)=>Math.min(roadDistance(x,z),segmentDist(x,z,{x:-23,z:36},{x:-46,z:38}),...route.slice(1).map((b,i)=>segmentDist(x,z,route[i],b)));
-function landscapeColor(x,z){return Math.abs(z-riverZ(x))<7?0x969c6c:pathDist(x,z)<2.5?0xb5a16b:Math.abs(x)>90||Math.abs(z)>95?terrainColor(x,z):z<-48?0x4b7749:0x38784a}
+function landscapeColor(x,z){const bank=Math.abs(z-riverZ(x)),path=pathDist(x,z),base=bank<7?0x969c6c:path<2.5?0xb5a16b:Math.abs(x)>90||Math.abs(z)>95?terrainColor(x,z):z<-48?0x4b7749:0x38784a;return valeGroundColor(x,z,base,path,bank)}
 let tg=new THREE.PlaneGeometry(WORLD_WIDTH,WORLD_DEPTH,Math.ceil(WORLD_WIDTH/3),Math.ceil(WORLD_DEPTH/3));tg.rotateX(-Math.PI/2);tg.translate((BOUNDS.left+BOUNDS.right)/2,0,(BOUNDS.top+BOUNDS.bottom)/2);let pos=tg.attributes.position,colors=[];for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,ground(x,z));let c=new THREE.Color(landscapeColor(x,z));c.multiplyScalar(.84+seeded()*.13+.12*Math.sin(x*.17)*Math.cos(z*.13));colors.push(c.r,c.g,c.b)}seed=98421;for(let i=0;i<113*121;i++)seeded();tg.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));tg.computeVertexNormals();let terrain=new THREE.Mesh(tg,new THREE.MeshStandardMaterial({vertexColors:true,flatShading:false,roughness:1}));terrain.receiveShadow=true;scene.add(terrain);
 const waterGeo=new THREE.PlaneGeometry(WORLD_WIDTH,riverWidth,Math.ceil(WORLD_WIDTH/2.5),5);waterGeo.rotateX(-Math.PI/2);waterGeo.translate((BOUNDS.left+BOUNDS.right)/2,0,0);const wp=waterGeo.attributes.position;for(let i=0;i<wp.count;i++){wp.setZ(i,wp.getZ(i)+riverZ(wp.getX(i)));wp.setY(i,-.36)}waterGeo.computeVertexNormals();const water=new THREE.Mesh(waterGeo,mat(0x43bdba,{roughness:.27,metalness:.25,transparent:true,opacity:.86}));scene.add(water);
 const obstacles=[],obstacleGrid=new Map();function obstacle(x,z,r){const o={x,z,r};obstacles.push(o);for(let a=Math.floor((x-r-1)/12);a<=Math.floor((x+r+1)/12);a++)for(let b=Math.floor((z-r-1)/12);b<=Math.floor((z+r+1)/12);b++){const k=a+','+b;if(!obstacleGrid.has(k))obstacleGrid.set(k,[]);obstacleGrid.get(k).push(o)}}function nearbyObstacles(x,z){return obstacleGrid.get(Math.floor(x/12)+','+Math.floor(z/12))||[]}function bridgeAt(x,z){return bridges.some(b=>Math.abs(x-b)<2.4&&Math.abs(z-riverZ(b))<8.5)}function surface(x,z,feet){const base=bridgeAt(x,z)?Math.max(.5,ground(x,z)):ground(x,z);return homestead?homestead.surface(x,z,base,feet??hero.root.position.y):base}function deep(x,z){return Math.abs(z-riverZ(x))<3.8&&!bridgeAt(x,z)&&Math.abs(x-62)>6}
@@ -293,9 +294,9 @@ expansion=installExpansionWorld({THREE,scene,hero,mesh,mat,geo,ground,surface,li
 companions=installCompanions({THREE,scene,mesh,mat,hero,$,blocked,surface,face,toast,sound,save,modal,closeModal,cameraSnap,setPosition(x,z){hero.root.position.set(x,surface(x,z),z)},accountStructure,accountEvent(action,body){return accounts?.event(action,body)},get player(){return player},get state(){return state},get panel(){return panel}});
 prologue=installPrologue({THREE,scene,mesh,mat,hero,living,$,ground,spawnEnemy,frontier,poi,drop,save,toast,modal,closeModal,get player(){return player},get panel(){return panel}});
 replaceScouts(THREE,await scoutAssetPromise,enemies,scene);
-visuals=installVisualWorld({landscapeColor,forestArt,BOUNDS,THREE,scene,renderer,camera,sun,hero,shield,geo,mat,ground,surface,pathDist,riverZ,obstacles,nearbyObstacles,living,frontier,enemies,terrain,water,get settings(){return settings},get active(){return state==='playing'&&!panel}});
+visuals=installVisualWorld({landscapeColor,forestArt,BOUNDS,THREE,scene,renderer,camera,sun,hero,shield,geo,mat,ground,surface,pathDist,riverZ,obstacles,nearbyObstacles,living,frontier,enemies,terrain,water,get settings(){return settings},get active(){return state==='playing'&&!panel},get audioContext(){return audio}});
 living.restore(null);
-try{const {installMultiplayer}=await import('./multiplayer.js?v=realm-wildlands-20261010-1');net=installMultiplayer({bounds:BOUNDS,$,THREE,scene,hero,enemies,loot,items,chests,living,frontier,expansion,companions,accountStructure,getAccounts(){return accounts},getHomestead(){return homestead},character,animate,groundedRoll,resetRoll,characterStats,normaliseProgression,face,project,drop,removeLoot,addItem,awardXP,burst,sound,toast,modal,closeModal,start,readSave,hurtPlayer,
+try{const {installMultiplayer}=await import('./multiplayer.js?v=realm-emerald-20261010-1');net=installMultiplayer({bounds:BOUNDS,$,THREE,scene,hero,enemies,loot,items,chests,living,frontier,expansion,companions,accountStructure,getAccounts(){return accounts},getHomestead(){return homestead},character,animate,groundedRoll,resetRoll,characterStats,normaliseProgression,face,project,drop,removeLoot,addItem,awardXP,burst,sound,toast,modal,closeModal,start,readSave,hurtPlayer,
 get player(){return player},get panel(){return panel},get state(){return state},get attack(){return attack},get dodge(){return dodge},get blocking(){return blocking},get bossDead(){return bossDead},setBossDead(value){bossDead=value},
 structureFrom(uid,fn){accountActor=uid===net?.id?null:uid;try{return fn()}finally{accountActor=null}},
 hitFrom(e,amount,heavy,ch,combatStats){const original=hero.root.position.clone();try{accountActor=ch.netId;hero.root.position.copy(ch.root.position);hurtEnemy(e,amount,heavy,combatStats)}finally{accountActor=null;hero.root.position.copy(original)}}
@@ -306,6 +307,6 @@ accounts=installAccounts({$,hero,items,enemies,settings,snapshot,start,showTitle
 homestead=installHomestead({THREE,hero,scene,mesh,$,ground,burst,get attack(){return attack},get dodge(){return dodge},get mounted(){return companions?.mounted},poi,frontier,living,accounts(){return accounts},net(){return net},readSave,save,sound,toast,modal,closeModal,get panel(){return panel},get state(){return state}});
 ui=installUI({returnTown:townReturnMenu,homestead,accounts,prologue,$,living,hero,items,inventory,stats,xpNeeded,progression,expansion,companions,modal,closeModal,settingsMenu,controls,systemPause,getNet(){return net},get player(){return player},get panel(){return panel},get blocking(){return blocking},get guardBreak(){return guardBreak},get dodgeCooldown(){return dodgeCooldown}});
 $('play').disabled=false;$('loading').textContent='A complete journey. No account required.';if(readSave()||accounts.hasRemembered)$('continue').classList.remove('hidden');
-frontier.registerWildlands();
+frontier.registerWildlands();poi.push({name:"The Emerald Vale",x:-430,z:30},{name:"Vale Overlook",x:-492,z:-30});
 if(new URLSearchParams(location.search).has('test'))window.__realm={townReturnMenu,townReturnReason,arriveTown,get prologue(){return prologue},get homestead(){return homestead},get accounts(){return accounts},get invulnerable(){return invulnerable},snapshot,get visuals(){return visuals},get expansion(){return expansion},get companions(){return companions},get frontier(){return frontier},get net(){return net},step(dt=1/60){if(state!=='playing'||panel)return;dt=clamp(dt,0,.05);gameTime+=dt;updateHero(dt);updateEnemies(dt);living.update(dt,gameTime);expansion?.update(dt,gameTime);companions?.update(dt,gameTime);updateHUD();living.updateQuestHUD();ui?.update()},get living(){return living},THREE,scene,renderer,camera,hero,enemies,loot,items,stats,awardXP,progression,landscapeColor,setView(angle,elevation=.25){yaw=angle;pitch=elevation;cameraSnap()},groundedRoll,resetRoll,updateCamera,cameraSnap,get dodge(){return dodge},get player(){return player},get state(){return state},get blocking(){return blocking},get guardBreak(){return guardBreak},get attack(){return attack},get panel(){return panel},start,startAttack,startDodge,pickup,drop,hurtEnemy,hurtPlayer,addItem,equipVisual,inventory,save,readSave,closeModal,ground,surface,blocked,get visited(){return visited},setPosition(x,z){hero.root.position.set(x,surface(x,z),z);cameraSnap()},get bossDead(){return bossDead},get particles(){return particles},get settings(){return settings}};
 </script></body></html>

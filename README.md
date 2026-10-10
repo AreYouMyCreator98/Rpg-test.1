@@ -2,17 +2,23 @@
 
 A procedural 3D browser action RPG with a continuous expanded overworld, five settlements, thirty-three quests, fourteen bosses, five dungeons, pets, mounts and optional persistent four-player Supabase co-op. The original forest, hero, equipment, goblins, village and Goblin Chief remain playable.
 
-**Game files:** `gathering.js`, `gathering-rules.js`, `prologue.js`, `homestead.js`, `building-rules.js`, `scene-batch.js`, `accounts.js`, `expansion-data.js`, `expansion-models.js`, `expansion-world.js`, `companions.js`, `supabase/game-catalog.json`, `progression.js`, `adventure-motion.js`, `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
+**Game files:** `emerald-vale.js`, `emerald-landscape.js`, `environment-art.js`, `account-storage.js`, `scout-model.js`, `assets/environment/emerald-library.glb`, `assets/goblin-scout.gltf`, `gathering.js`, `gathering-rules.js`, `prologue.js`, `homestead.js`, `building-rules.js`, `scene-batch.js`, `accounts.js`, `expansion-data.js`, `expansion-models.js`, `expansion-world.js`, `companions.js`, `supabase/game-catalog.json`, `progression.js`, `adventure-motion.js`, `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; environment and character assets are hosted here; no game-time asset generation tools are required.
 
 ## GitHub Pages
 
-Upload **all twenty-seven runtime files (including `supabase/game-catalog.json` and `assets/goblin-scout.gltf` in their folders)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
+Upload **all thirty runtime files (including `supabase/game-catalog.json` `assets/goblin-scout.gltf`, and `assets/environment/emerald-library.glb` in their folders)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
 `README.md` and `tests/` are documentation and optional development checks, not runtime dependencies. The original playable version is preserved by Git tag **`v1.0-pre-living-world`**, pointing to commit `fbb002b`. Restoring that tag's `index.html` restores V1. Keep your browser's original save backup if rolling back; V1 cannot interpret new V2 equipment variants.
 
 The working V2 baseline is preserved by tag **`v2.0-pre-multiplayer`** (`645f83e`).
+
+## Emerald Vale benchmark
+
+Follow the western road beyond Briarfield to the bridge at x −430. **The Emerald Vale** covers a 200 × 200 area around that crossing, on the southern edge of Verdant Reach. Its forest uses a repository-hosted Blender-authored GLB library, instancing, near/far tree geometry, wind and moisture-based ground cover. Riverbanks use the shared terrain function; the atlas uses the same colour field. The original tree collision roots, bridge, settlements, quests and saves remain in place.
+
+Asset generation (development only): `blender -b --python scripts/build-emerald-assets.py`. The exported GLB is committed; GitHub Pages needs no Blender or build process. Optional `?diagnostics` shows render workload and rolling frame statistics. See [architecture](docs/ENVIRONMENT-ARCHITECTURE.md) and [benchmark validation](docs/EMERALD-VALE-VALIDATION.md) for scope, measurements and unfinished phases.
 
 ## Cinematic world presentation
 

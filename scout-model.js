@@ -5,7 +5,7 @@ export async function loadScoutAsset(){
  try{
   return await Promise.race([(async()=>{
    const {GLTFLoader}=await import('https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/GLTFLoader.js');
-   return new GLTFLoader().loadAsync(new URL('./assets/goblin-scout.gltf?v=realm-wildlands-20261010-1',import.meta.url).href);
+   return new GLTFLoader().loadAsync(new URL('./assets/goblin-scout.gltf?v=realm-emerald-20261010-1',import.meta.url).href);
   })(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('Scout asset timed out')),12000)})]);
  }catch(error){console.warn('Detailed scout unavailable; retaining the existing playable model.',error);return null}
  finally{clearTimeout(timer)}

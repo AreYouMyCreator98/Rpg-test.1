@@ -1,0 +1,31 @@
+{
+  "report": [
+    {
+      "name": "mobile-low",
+      "calls": 154,
+      "triangles": 103059,
+      "geometries": 77,
+      "textures": 6,
+      "softwareRenderMeanMs": 4.475000000093132,
+      "softwareRenderMaxMs": 6.399999998509884
+    },
+    {
+      "name": "panorama-low",
+      "calls": 226,
+      "triangles": 177203,
+      "geometries": 84,
+      "textures": 6,
+      "softwareRenderMeanMs": 3.962500000372529,
+      "softwareRenderMaxMs": 6.700000002980232
+    },
+    {
+      "name": "panorama-medium",
+      "calls": 273,
+      "triangles": 263241,
+      "geometries": 87,
+      "textures": 7,
+      "softwareRenderMeanMs": 11.787500000093132,
+      "softwareRenderMaxMs": 50.30000000074506
+    }
+  ]
+}

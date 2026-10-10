@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
     paths:
+      - emerald-landscape.js
+      - emerald-vale.js
+      - assets/environment/**
       - environment-art.js
       - account-storage.js
       - scout-model.js

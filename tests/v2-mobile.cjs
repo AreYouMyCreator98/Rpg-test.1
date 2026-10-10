@@ -3,7 +3,8 @@ const artifacts=process.env.TEST_ARTIFACT_DIR||path.join(os.tmpdir(),'realm-test
 const assert=require('node:assert/strict');const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
 (async()=>{const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader']});try{
  const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:1});const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
- if(process.env.THREE_TEST_MODULE)await page.route('https://cdn.jsdelivr.net/**',r=>r.fulfill({path:process.env.THREE_TEST_MODULE,contentType:'application/javascript'}));
+ if(process.env.THREE_TEST_MODULE)await page.route('**/three@0.160.1/build/three.module.js',r=>r.fulfill({path:process.env.THREE_TEST_MODULE,contentType:'application/javascript'}));
+ if(process.env.SCOUT_TEST_CACHE)for(const file of ['loaders/GLTFLoader.js','utils/BufferGeometryUtils.js'])await page.route('**/examples/jsm/'+file,r=>r.fulfill({path:process.env.SCOUT_TEST_CACHE+'/'+file.split('/').pop(),contentType:'application/javascript'}));
  await page.goto((process.env.GAME_URL||'http://127.0.0.1:8000/')+'?test');await page.waitForFunction(()=>window.__realm);await page.tap('#play');
  const client=await context.newCDPSession(page),stick=await page.locator('#stick').boundingBox(),attack=await page.locator('#attack-touch').boundingBox();
  const a={x:stick.x+56,y:stick.y+20,id:1},b={x:attack.x+39,y:attack.y+39,id:2};let z=await page.evaluate(()=>__realm.hero.root.position.z);

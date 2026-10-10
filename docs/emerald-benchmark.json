@@ -1,0 +1,51 @@
+{
+  "geometry": {
+    "trees": 392,
+    "cells": 273,
+    "models": 21,
+    "instances": 7508,
+    "groundError": 0.02692175213331449,
+    "enemies": 109,
+    "quests": 33,
+    "level": 9,
+    "coins": 655,
+    "bridge": false,
+    "deep": true,
+    "outside": true
+  },
+  "traversal": {
+    "north": true,
+    "west": true,
+    "east": true,
+    "cells": 9379
+  },
+  "report": [
+    {
+      "name": "mobile-low",
+      "calls": 165,
+      "triangles": 142115,
+      "geometries": 132,
+      "textures": 9,
+      "softwareRenderMeanMs": 8.550000000279397,
+      "softwareRenderMaxMs": 28.300000000745058
+    },
+    {
+      "name": "panorama-low",
+      "calls": 331,
+      "triangles": 311731,
+      "geometries": 142,
+      "textures": 9,
+      "softwareRenderMeanMs": 7.449999999720603,
+      "softwareRenderMaxMs": 17.599999997764826
+    },
+    {
+      "name": "panorama-medium",
+      "calls": 394,
+      "triangles": 420770,
+      "geometries": 146,
+      "textures": 10,
+      "softwareRenderMeanMs": 16.337499999441206,
+      "softwareRenderMaxMs": 71.59999999776483
+    }
+  ]
+}

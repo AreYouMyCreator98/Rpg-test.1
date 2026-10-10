@@ -1,13 +1,21 @@
+import {createWesternRange} from './emerald-landscape.js?v=realm-emerald-20261010-1';
+import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-emerald-20261010-1';
 // Presentation only. No save, item, enemy, network or collision ownership.
-// Repeated decoration is instanced by material in spatial cells; no external assets.
+// Repeated decoration is instanced by material in spatial cells; Vale assets are repository-hosted.
 export function installVisualWorld(api) {
   const {THREE,scene,renderer,hero,geo,mat,ground,surface,pathDist,riverZ,living,frontier,forestArt,BOUNDS}=api;
-  const root=new THREE.Group();root.name='Cinematic overworld';scene.add(root);
+  const vale=installEmeraldVale(api);
+  const root=new THREE.Group();root.name='Cinematic overworld';scene.add(root);root.add(createWesternRange(THREE,ground,BOUNDS));
   const sky=new THREE.Mesh(new THREE.SphereGeometry(1400,24,14),new THREE.ShaderMaterial({
     side:THREE.BackSide,depthWrite:false,
-    uniforms:{horizon:{value:new THREE.Color(0xa9c9c7)},zenith:{value:new THREE.Color(0x598dbb)}},
+    uniforms:{cloudTime:{value:0},horizon:{value:new THREE.Color(0xa9c9c7)},zenith:{value:new THREE.Color(0x598dbb)}},
     vertexShader:`varying vec3 direction;void main(){direction=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
-    fragmentShader:`uniform vec3 horizon;uniform vec3 zenith;varying vec3 direction;void main(){float h=pow(max(normalize(direction).y,0.0),.6);gl_FragColor=vec4(mix(horizon,zenith,h),1.0);
+    fragmentShader:`uniform float cloudTime;uniform vec3 horizon;uniform vec3 zenith;varying vec3 direction;
+    float hashCloud(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+    float noiseCloud(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hashCloud(i),hashCloud(i+vec2(1,0)),f.x),mix(hashCloud(i+vec2(0,1)),hashCloud(i+vec2(1,1)),f.x),f.y);}
+    void main(){vec3 d=normalize(direction);float h=pow(max(d.y,0.0),.6);vec3 skyColor=mix(horizon,zenith,h);
+    vec2 uv=d.xz/max(d.y,.08)*2.8+vec2(cloudTime*.002,0.);float cloud=noiseCloud(uv)*.65+noiseCloud(uv*2.1)*.25+noiseCloud(uv*4.3)*.1;
+    float cover=smoothstep(.57,.74,cloud)*smoothstep(.015,.15,d.y);skyColor=mix(skyColor,vec3(.88,.94,.94),cover*.85);gl_FragColor=vec4(skyColor,1.0);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
     }`
@@ -38,11 +46,23 @@ export function installVisualWorld(api) {
     for(const o of api.nearbyObstacles(x,z))if(o.r===.5||o.r===.55||o.r>=3){const d=Math.hypot(x-o.x,z-o.z);shade+=Math.exp(-d*d/(o.r>=3?22:14))*.24}
     terrainAO[i]=Math.max(.65,1-shade);
   }
-  for(let i=0;i<index.count;i+=3){
-    const a=index.getX(i),b=index.getX(i+1),c=index.getX(i+2),p=source.attributes.position;
-    const tx=Math.floor((p.getX(a)+p.getX(b)+p.getX(c))/3/64),tz=Math.floor((p.getZ(a)+p.getZ(b)+p.getZ(c))/3/64),key=tx+','+tz;
+  function emitTriangle(vertices){
+    const tx=Math.floor(vertices.reduce((n,v)=>n+v.p[0],0)/3/64),tz=Math.floor(vertices.reduce((n,v)=>n+v.p[2],0)/3/64),key=tx+','+tz;
     if(!terrainTiles.has(key))terrainTiles.set(key,{p:[],n:[],c:[]});const out=terrainTiles.get(key);
-    for(const k of [a,b,c])for(const [name,values]of [['position',out.p],['normal',out.n],['color',out.c]]){const attr=source.attributes[name];const ao=name==='color'?terrainAO[k]:1;values.push(attr.getX(k)*ao,attr.getY(k)*ao,attr.getZ(k)*ao)}
+    for(const v of vertices){out.p.push(...v.p);out.n.push(...v.n);out.c.push(...v.c)}
+  }
+  function midpoint(a,b){
+    const p=a.p.map((v,i)=>(v+b.p[i])*.5),x=p[0],z=p[2];
+    // Fade refinement to the original edge interpolation; no cracks against unrefined cells.
+    const blend=THREE.MathUtils.smoothstep(Math.min(x+535,-335-x,z+120,80-z),3,12);
+    p[1]=THREE.MathUtils.lerp(p[1],ground(x,z),blend);
+    const normal=new THREE.Vector3(ground(x-.25,z)-ground(x+.25,z),.5,ground(x,z-.25)-ground(x,z+.25)).normalize();
+    return{p,n:normal.toArray(),c:a.c.map((v,i)=>(v+b.c[i])*.5)};
+  }
+  function subdivide(v,depth){if(!depth){emitTriangle(v);return}const[a,b,c]=v,ab=midpoint(a,b),bc=midpoint(b,c),ca=midpoint(c,a);for(const tri of [[a,ab,ca],[ab,b,bc],[ca,bc,c],[ab,bc,ca]])subdivide(tri,depth-1)}
+  for(let i=0;i<index.count;i+=3){
+    const vertices=[index.getX(i),index.getX(i+1),index.getX(i+2)].map(k=>{const v={};for(const [key,name]of [['p','position'],['n','normal'],['c','color']]){const a=source.attributes[name],f=name==='color'?terrainAO[k]:1;v[key]=[a.getX(k)*f,a.getY(k)*f,a.getZ(k)*f]}return v});
+    subdivide(vertices,vertices.every(v=>inVale(v.p[0],v.p[2]))?1:0);
   }
   const terrainLOD=[];
   for(const [key,t] of terrainTiles){const g=new THREE.BufferGeometry();for(const [name,values]of [['position',t.p],['normal',t.n],['color',t.c]])g.setAttribute(name,new THREE.Float32BufferAttribute(values,3));g.computeBoundingSphere();const m=new THREE.Mesh(g,api.terrain.material);m.receiveShadow=true;root.add(m);const [cx,cz]=key.split(',').map(Number);terrainLOD.push({m,x:cx*64+32,z:cz*64+32})}
@@ -57,8 +77,8 @@ export function installVisualWorld(api) {
   const settlements=[{x:0,z:64,kind:'village'},...frontier.settlements];
   const clear=(x,z,r=1)=>api.nearbyObstacles(x,z).every(o=>Math.hypot(o.x-x,o.z-z)>o.r+r);
   function add(shape,tint,x,y,z,sx,sy,sz,ry=0,rz=0,detail=false,rx=0) {
-    const cx=shape==='mountain'?0:Math.floor(x/64),cz=shape==='mountain'?0:Math.floor(z/64),key=[cx,cz,shape,detail].join(':');
-    if(!batches.has(key))batches.set(key,{cx,cz,shape,tint,detail,entries:[]});
+    const cx=shape==='mountain'?0:Math.floor(x/64),cz=shape==='mountain'?0:Math.floor(z/64),key=[cx,cz,shape,detail,inVale(x,z)].join(':');
+    if(!batches.has(key))batches.set(key,{cx,cz,shape,tint,detail,vale:inVale(x,z),entries:[]});
     batches.get(key).entries.push([x,y,z,sx,sy,sz,ry,rz,rx,tint]);
   }
   // Clumps frame the existing route, never close a traversable passage.
@@ -209,7 +229,7 @@ export function installVisualWorld(api) {
   for(let i=0;i<9;i++)add('box',0xa4b6a0,-16+i*2,ground(-8,-73)+12.5,-73,1,.9,1.5);
   // Giant ridged peaks stand beyond the rectangular playable boundary, never in a road.
   for(let i=0;i<52;i++){
-    const side=i%4,u=Math.floor(i/4)/12;
+    const side=i%4,u=Math.floor(i/4)/12;if(side===2)continue;
     const x=side<2?BOUNDS.left+u*(BOUNDS.right-BOUNDS.left):side===2?BOUNDS.left-115:BOUNDS.right+115;
     const z=side<2?(side===0?BOUNDS.top-115:BOUNDS.bottom+115):BOUNDS.top+u*(BOUNDS.bottom-BOUNDS.top);
     const h=side===0?range(270,420):side===1?range(110,220):range(170,310),base=side===0?75:side===1?-35:25;
@@ -253,9 +273,12 @@ export function installVisualWorld(api) {
     shader.fragmentShader='uniform float riverTime;varying vec2 riverPosition;\n'+shader.fragmentShader;
     shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
       float ripple=sin(riverPosition.x*.8+riverTime)*sin(riverPosition.y*1.8-riverTime*.7);
+      float flow=sin(riverPosition.x*3.-riverTime*1.6+sin(riverPosition.y*2.))*sin(riverPosition.y*5.+riverTime*.4);
       float bank=abs(riverPosition.y-9.0-sin(riverPosition.x*.052)*7.0);
-      diffuseColor.rgb*=.94+.06*ripple;
-      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.56,.72,.57),smoothstep(3.3,3.9,bank)*(.35+.1*ripple));`);
+      diffuseColor.rgb=mix(vec3(.025,.32,.31),vec3(.10,.64,.52),smoothstep(0.,3.9,bank));
+      diffuseColor.rgb+=vec3(.09,.16,.13)*pow(max(flow,0.),12.);
+      diffuseColor.rgb*=.96+.04*ripple;
+      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.56,.72,.57),smoothstep(3.55,3.9,bank)*(.4+.2*ripple));`);
   };
   const mountainMaterial=new THREE.MeshStandardMaterial({color:0xffffff,vertexColors:true,flatShading:true,roughness:1,fog:false});
   mountainMaterial.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>',`outgoingLight=mix(outgoingLight,vec3(.39,.58,.57),clamp(length(vViewPosition)/1500.,.12,.7));
@@ -264,7 +287,7 @@ export function installVisualWorld(api) {
   for(const b of batches.values()){
     const m=new THREE.InstancedMesh(decorativeGeo[b.shape],b.shape==='blade'?grassMaterial:b.shape==='mountain'?mountainMaterial:b.shape==='canopy'?forestArt.leafMaterial:mat(0xffffff,{flatShading:false}),b.entries.length);
     b.entries.forEach((e,i)=>{dummy.position.set(...e.slice(0,3));dummy.scale.set(...e.slice(3,6));dummy.rotation.set(e[8],e[6],e[7]);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix);color.setHex(e[9]).multiplyScalar(.88+random()*.12);m.setColorAt(i,color)});
-    m.castShadow=!b.detail;m.receiveShadow=true;m.computeBoundingSphere();root.add(m);chunks.push({m,x:b.cx*64+32,z:b.cz*64+32,detail:b.detail,sky:b.shape==='mountain'||b.cx*64<BOUNDS.left||b.cx*64>BOUNDS.right||b.cz*64<BOUNDS.top||b.cz*64>BOUNDS.bottom||b.entries.some(e=>e[2]===-73&&e[0]>=-16&&e[0]<=0)});
+    m.castShadow=!b.detail;m.receiveShadow=true;m.computeBoundingSphere();root.add(m);chunks.push({m,vale:b.vale&&['canopy','cone','orb','blade'].includes(b.shape),x:b.cx*64+32,z:b.cz*64+32,detail:b.detail,sky:b.shape==='mountain'||b.cx*64<BOUNDS.left||b.cx*64>BOUNDS.right||b.cz*64<BOUNDS.top||b.cz*64>BOUNDS.bottom||b.entries.some(e=>e[2]===-73&&e[0]>=-16&&e[0]<=0)});
   }
   batches.clear();
   // Soft grounding remains visible on Low, where the real-time shadow map is disabled.
@@ -274,6 +297,7 @@ export function installVisualWorld(api) {
   const shadowGeometry=new THREE.PlaneGeometry(1,1);shadowGeometry.rotateX(-Math.PI/2);
   const actors=[hero,...living.npcs,...api.enemies],shadows=new THREE.InstancedMesh(shadowGeometry,shadowMaterial,actors.length);shadows.frustumCulled=false;scene.add(shadows);
   const ambient=new THREE.DirectionalLight(0xa7c9be,.36);ambient.position.set(35,20,-40);scene.add(ambient);
+  const timings=[];let diagnosticTimer=0;const diagnostic=new URLSearchParams(location.search).has('diagnostics')?document.createElement('pre'):null;if(diagnostic){diagnostic.style.cssText='position:fixed;left:8px;bottom:8px;z-index:99;background:#081c18df;color:#d9e4cd;padding:8px;font:11px monospace;pointer-events:none';document.body.append(diagnostic)}
   let elapsed=0,timer=1,sampleTime=0,samples=0,slow=0,fast=0,scale=1,quality='';
   const baseRatio=()=>Math.min(devicePixelRatio,{low:1,medium:1.5,high:2}[api.settings.quality]||1);
   function resetResolution(){scale=1;quality=api.settings.quality;sampleTime=samples=slow=fast=0;renderer.setPixelRatio(baseRatio());}
@@ -287,15 +311,20 @@ export function installVisualWorld(api) {
     if(next!==scale){scale=next;slow=fast=0;renderer.setPixelRatio(baseRatio()*scale)}
   }
   function update(dt,time,frameSeconds){
-    elapsed+=dt;timer+=dt;wind.value=time;forestArt.wind.value=time;const inside=hero.root.position.x>200;root.visible=!inside;if(!inside){scene.fog.density=api.settings.quality==='low'?.0024:.0018;scene.fog.color.setHex(0xa9c9c7)}sky.position.copy(hero.root.position);ambient.intensity=inside?.08:.36;
+    vale.update(dt,time);if(frameSeconds>0&&frameSeconds<2){timings.push(frameSeconds*1000);if(timings.length>120)timings.shift()}diagnosticTimer+=dt;if(diagnostic&&diagnosticTimer>1){diagnosticTimer=0;const sorted=[...timings].sort((a,b)=>a-b),avg=timings.reduce((a,b)=>a+b,0)/Math.max(1,timings.length);diagnostic.textContent=`${api.settings.quality} · scale ${scale.toFixed(2)} · ${(1000/avg).toFixed(0)} fps
+mean ${avg.toFixed(1)} ms · p95 ${(sorted[Math.floor(sorted.length*.95)]||0).toFixed(1)} ms
+${renderer.info.render.calls} draws · ${renderer.info.render.triangles} triangles
+Vale ${vale.cells.filter(c=>c.m.visible).length}/${vale.cells.length} cells · ${vale.instanceCount} instances
+GPU ${renderer.info.memory.geometries} geometries / ${renderer.info.memory.textures} textures
+${api.enemies.filter(e=>e.hp>0).length} enemies · slow >33ms ${timings.filter(t=>t>33.3).length}/${timings.length}`;}elapsed+=dt;timer+=dt;wind.value=time;forestArt.wind.value=time;const inside=hero.root.position.x>200;root.visible=!inside;if(!inside){scene.fog.density=api.settings.quality==='low'?.0024:.0018;scene.fog.color.setHex(0xa9c9c7)}sky.material.uniforms.cloudTime.value=time;sky.position.copy(hero.root.position);ambient.intensity=inside?.08:.36;
     if(quality!==api.settings.quality)resetResolution();sampleFrame(frameSeconds);
     if(timer>.25){timer=0;if(!inside)refreshMeadow();const reach=api.settings.quality==='low'?82:api.settings.quality==='medium'?115:155;
       for(const t of terrainLOD)t.m.visible=Math.hypot(t.x-hero.root.position.x,t.z-hero.root.position.z)<reach+55;
-      for(const c of chunks){const d=Math.hypot(c.x-hero.root.position.x,c.z-hero.root.position.z);c.m.visible=c.sky||d<(c.detail?reach*.62:reach+40);c.m.castShadow=!c.sky&&!c.detail&&d<45}
+      for(const c of chunks){const d=Math.hypot(c.x-hero.root.position.x,c.z-hero.root.position.z);c.m.visible=!(vale.ready&&c.vale)&&(c.sky||d<(c.detail?reach*.62:reach+40));c.m.castShadow=!c.sky&&!c.detail&&d<45}
       for(const l of lanterns){const visible=Math.hypot(l.x-hero.root.position.x,l.z-hero.root.position.z)<70;l.glow.visible=l.halo.visible=visible}
     }
     lanternMaterial.emissiveIntensity=1.5+Math.sin(time*3)*.08;
     actors.forEach((a,i)=>{const p=a.root.position,on=a.root.visible&&(p.x>200)===inside&&p.distanceToSquared(hero.root.position)<2500;dummy.position.set(p.x,surface(p.x,p.z)+.035,p.z);dummy.rotation.set(0,0,0);dummy.scale.set(on?1.5*(a.scale||1):0,1,on?1.2*(a.scale||1):0);dummy.updateMatrix();shadows.setMatrixAt(i,dummy.matrix)});shadows.instanceMatrix.needsUpdate=true;
   }
-  return {root,chunks,meadow,terrainLOD,farTerrain,lanterns,shadows,detailTextures,resetResolution,sampleFrame,update,get resolutionScale(){return scale}};
+  return {vale,root,chunks,meadow,terrainLOD,farTerrain,lanterns,shadows,detailTextures,resetResolution,sampleFrame,update,get resolutionScale(){return scale}};
 }
