@@ -45,6 +45,9 @@ Browser validation includes shader/JS error capture and the existing touch suite
 movement+attack, block release, camera orbit, Bram interaction, purchases/equipment,
 journal/map, settings and portrait/landscape controls. Physical Android, Safari,
 account-backed multiplayer and phone thermal performance remain unverified here.
+The two-client Chromium regression with a Supabase SDK service double passed
+shared combat/loot, dungeons, pets/mounts, building, gathering, town return and
+host departure; this is not a live Supabase test.
 
 ## Remaining wider overhaul
 
