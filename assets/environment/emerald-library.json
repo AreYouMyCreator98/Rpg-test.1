@@ -1,0 +1,91 @@
+{
+  "author": "Noxavere Studios / Realm of the Fallen",
+  "generator": "scripts/build-emerald-assets.py",
+  "units": "metres",
+  "models": {
+    "oak-a-near": {
+      "triangles": 1032,
+      "vertices": 2686
+    },
+    "oak-a-far": {
+      "triangles": 337,
+      "vertices": 871
+    },
+    "oak-b-near": {
+      "triangles": 1032,
+      "vertices": 2686
+    },
+    "oak-b-far": {
+      "triangles": 337,
+      "vertices": 871
+    },
+    "birch-a-near": {
+      "triangles": 1032,
+      "vertices": 2686
+    },
+    "birch-a-far": {
+      "triangles": 337,
+      "vertices": 871
+    },
+    "ancient-oak-near": {
+      "triangles": 1032,
+      "vertices": 2686
+    },
+    "ancient-oak-far": {
+      "triangles": 337,
+      "vertices": 871
+    },
+    "pine-a-near": {
+      "triangles": 1462,
+      "vertices": 3460
+    },
+    "pine-a-far": {
+      "triangles": 327,
+      "vertices": 931
+    },
+    "fir-a-near": {
+      "triangles": 1462,
+      "vertices": 3460
+    },
+    "fir-a-far": {
+      "triangles": 327,
+      "vertices": 931
+    },
+    "willow-a-near": {
+      "triangles": 2232,
+      "vertices": 6286
+    },
+    "willow-a-far": {
+      "triangles": 337,
+      "vertices": 871
+    },
+    "fern": {
+      "triangles": 161,
+      "vertices": 399
+    },
+    "flowers": {
+      "triangles": 48,
+      "vertices": 120
+    },
+    "reeds": {
+      "triangles": 98,
+      "vertices": 196
+    },
+    "grass": {
+      "triangles": 7,
+      "vertices": 21
+    },
+    "river-rock": {
+      "triangles": 40,
+      "vertices": 120
+    },
+    "moss-rock": {
+      "triangles": 80,
+      "vertices": 240
+    },
+    "fallen-log": {
+      "triangles": 56,
+      "vertices": 106
+    }
+  }
+}
