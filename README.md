@@ -6,7 +6,7 @@ A procedural 3D browser action RPG with a continuous expanded overworld, five se
 
 ## GitHub Pages
 
-Upload **all twenty-one runtime files (including `supabase/game-catalog.json` in its folder)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
+Upload **all twenty-three runtime files (including `supabase/game-catalog.json` in its folder)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
@@ -266,3 +266,12 @@ Iron tools deplete a deposit in two strikes. Tools and carried materials belong 
 Accept **A roof of your own** before gathering. Collect 6 logs and 6 rough stone, craft 8 timber and 6 blocks, then build a foundation with four wall edges including a door and window, plus a roof. Claim 80 timber and 40 stone once per base at Bram or the workbench. Home and Co-op track separate contracts; party contributions count together for the shared base.
 
 Account-backed gathering uses server time, position checks, character identity, version checks and request replay protection. Install the updated `supabase/homesteads.sql` on an existing project before serving this release. It adds protected commands without resetting buildings or character progression. Anonymous co-op remains host-authoritative.
+
+
+## Return to the main town
+
+After visiting **Wanderer’s Village**, open **Journey → Return to village** or the world map’s **Return to Wanderer’s Village** button. Confirm to arrive at the campfire. This is free, one-way travel to the main starting village only; no other destinations are offered. It does not heal you, consume gold, reset encounters or move your party members. Mounts are dismounted and companions arrive beside you.
+
+Return is unavailable before your first village visit, while dead, inside dungeons, within 20 metres of living enemies, or for eight seconds after combat. Existing saved village discoveries are preserved. Cloud characters need a connection; the server validates discovery and safety, and retries reuse the same request. Co-op returns change only your current party position, preserving your separate solo position.
+
+Deploy the updated `supabase/character-runtime.sql` before this frontend release. The additive migration preserves existing discoveries once; new visits come from validated server positions. It does not reset characters or progression.

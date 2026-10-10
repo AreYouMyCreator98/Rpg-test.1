@@ -100,6 +100,8 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  await b.evaluate(()=>__realm.setPosition(-59,129));await b.waitForTimeout(500);await b.evaluate(()=>__realm.homestead.change({action:'transfer',direction:'deposit',resource:'all'},'coop'));
  await a.waitForFunction(()=>__realm.homestead.states.coop.workshop.stock.logs===6);
  console.log('PASS anonymous guest tools remain personal; animated gathering deposits into shared host storage');
+ const hostPosition=await a.evaluate(()=>__realm.hero.root.position.toArray());await b.evaluate(()=>__realm.townReturnMenu());await b.click('#town-return-confirm');assert.equal(await b.evaluate(()=>__realm.hero.root.position.z),64);assert.deepEqual(await a.evaluate(()=>__realm.hero.root.position.toArray()),hostPosition);console.log('PASS guest town return leaves host position and party intact');
+
 
  await a.click('#leave-room');await b.waitForFunction(()=>!__realm.net.active,{},{timeout:12000});
  assert.equal(await a.evaluate(()=>__realm.player.coins),321);assert.equal(await b.evaluate(()=>__realm.player.coins),321);

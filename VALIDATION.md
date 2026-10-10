@@ -308,3 +308,18 @@ Physical Samsung/iPhone/Safari testing and hardware FPS measurements are unavail
 
 - `gathering-live.cjs` passed against the real hosted Supabase project with two disposable confirmed accounts: email/password sign-in, private character isolation, duplicate-session denial, persistent-character room join, guest axe crafting, timed tree depletion, shared chest deposit visible to the host, clean host departure, restored independent solo worlds and retained shared storage. No browser exceptions or cloud conflicts occurred. Temporary accounts were removed afterward.
 - All runtime JavaScript syntax checks and the 23-file versioned static release validator passed.
+
+
+## Main-town return — October 10, 2026
+
+The return route is limited to Wanderer’s Village. Existing village discovery is preserved, and fresh characters must visit before unlocking it. Local and server checks reject unsafe/dungeon returns; arriving does not heal, charge gold or reset the world.
+
+- `town-return-browser.cjs` passed at 390×844: Journey/map buttons, first-visit lock, cancellation, campfire arrival, dismount/pet placement, unchanged health/currency/inventory, discovery and position reload, and combat/dungeon/enemy restrictions.
+- `town-return-sql.cjs` passed against PostgreSQL in PGlite: discovery proof, one-time saved-visit migration, denial of later forged checkpoint unlocks, fixed destination, no progression grants, idempotent replay, dungeon/combat/enemy restrictions, owner isolation, atomic solo arrival and independent co-op position.
+- The existing `character-runtime-sql.cjs` regression suite passed. The updated runtime SQL was installed on the hosted project without resetting characters.
+- `multiplayer-browser.cjs` passed, including guest return leaving the host and party intact, existing combat, loot, gathering, structures and leave/rejoin behaviour. This suite uses a deterministic network service double.
+- `gathering-live.cjs` passed on the real Supabase project with two temporary accounts. A guest’s town return survived a deliberately lost server acknowledgement and retried without a revision conflict or changed inventory. The host stayed in place; host departure restored separate solo worlds. Temporary test accounts were removed afterward.
+
+Physical Android/iPhone/Safari behaviour remains unverified; mobile checks use Chromium emulation.
+
+- `town-return-account.cjs` passed with the actual browser account UI and PGlite RPCs: a party kill notification queued during return still awards its earned XP at the new position, and a server-denied return clears only that request without pausing unrelated account synchronization.

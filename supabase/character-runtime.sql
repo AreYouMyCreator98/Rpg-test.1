@@ -19,6 +19,30 @@ create table if not exists public.realm_character_discoveries(character_id uuid 
 create table if not exists public.realm_character_events(character_id uuid not null references public.realm_characters(id) on delete cascade,request_id uuid not null,action text not null,body jsonb not null,created_at timestamptz not null default clock_timestamp(),primary key(character_id,request_id));
 do $$declare t text;begin foreach t in array array['realm_dropped_items','realm_world_structures','realm_character_discoveries','realm_game_catalog','realm_legacy_imports','realm_character_contexts','realm_encounters','realm_encounter_hits','realm_encounter_credit','realm_reward_claims','realm_character_quests','realm_character_bounties','realm_character_unique_items','realm_character_events'] loop execute format('alter table public.%I enable row level security',t);execute format('revoke all on public.%I from public,anon,authenticated',t);end loop;end$$;
 
+-- Discover the village only from server-validated world positions.
+create or replace function public.realm_record_town_visit() returns trigger language plpgsql security definer set search_path=pg_catalog,public as $$
+begin
+ if new.x*new.x+(new.z-64)^2<144 then
+  insert into public.realm_character_discoveries values(new.character_id,new.world_id,'town') on conflict do nothing;
+ end if;return new;
+end$$;
+revoke all on function public.realm_record_town_visit() from public,anon,authenticated;
+drop trigger if exists realm_town_visit on public.realm_character_contexts;
+create trigger realm_town_visit after insert or update of x,z on public.realm_character_contexts for each row execute function public.realm_record_town_visit();
+-- One-time migration honours saved discoveries without allowing later checkpoint edits to unlock travel.
+create table if not exists public.realm_runtime_migrations(id text primary key);
+alter table public.realm_runtime_migrations enable row level security;
+revoke all on public.realm_runtime_migrations from public,anon,authenticated;
+do $$begin
+ if not exists(select 1 from public.realm_runtime_migrations where id='town-return-v1') then
+  insert into public.realm_character_discoveries
+   select character_id,world_id,'town' from public.realm_character_contexts where x*x+(z-64)^2<144
+   union select id,id,'town' from public.realm_characters where solo_world->'visited' @> '[0]'::jsonb
+  on conflict do nothing;
+  insert into public.realm_runtime_migrations values('town-return-v1');
+ end if;
+end$$;
+
 create or replace function public.realm_character_check(character_id uuid,expected_revision bigint,session_id uuid) returns public.realm_characters
 language plpgsql security definer set search_path=pg_catalog,public as $$
 declare c public.realm_characters;begin
@@ -72,6 +96,7 @@ declare c public.realm_characters;p jsonb;cat jsonb;entry jsonb;allocated intege
  insert into public.realm_legacy_imports(owner,character_id) values(c.owner,c.id);
  insert into public.realm_character_revisions(character_id,revision,progression,solo_world) values(c.id,c.revision,c.progression,c.solo_world);
  update public.realm_characters r set progression=p,solo_world=(legacy-'player'-'settings')||jsonb_build_object('position',jsonb_build_object('x',p->'x','z',p->'z')),revision=r.revision+1,updated_at=clock_timestamp() where r.id=c.id returning * into c;
+ if legacy->'visited' @> '[0]'::jsonb then insert into public.realm_character_discoveries values(c.id,c.id,'town') on conflict do nothing;end if;
  for entry in select value from jsonb_array_elements(p->'inventory') loop if (cat#>>array['items',entry->>'id','rarity'])::integer=4 or (entry->>'id') like 'exp_%' or (entry->>'id') like 'frontier_%' or (entry->>'id') like 'caveblade%' then insert into public.realm_character_unique_items values(c.id,cat#>>array['items',entry->>'id','base']) on conflict do nothing;end if;end loop;
  for entry in select value from jsonb_array_elements(cat->'enemies') loop
   completed:=coalesce((entry->>'boss')::boolean,false) and (coalesce((entry->>'guardian')::boolean,false) and coalesce((legacy#>>'{living,guardianDead}')::boolean,false) or entry->>'type'='3' and not coalesce((entry->>'guardian')::boolean,false) and coalesce((legacy->>'bossDead')::boolean,false) or (legacy#>'{living,frontierBosses}')?(entry->>'family') or (legacy#>'{living,expansion,bosses}')?(entry->>'expansion'));
@@ -124,6 +149,17 @@ declare c public.realm_characters;ctx public.realm_character_contexts;prior publ
   if action in ('buy','upgrade','sell') then select value into entry from jsonb_array_elements(cat->'npcs') where value->>'id'=case when action='upgrade' or action='buy' and left(item_id,1)='w' then 'smith' else 'merchant' end;if sqrt((px-(entry->>'x')::float8)^2+(pz-(entry->>'z')::float8)^2)>5 then raise exception 'Visit the appropriate shop';end if;end if;
   if action='consume' and body?'hp' then update public.realm_characters r set progression=jsonb_set(progression,'{hp}',to_jsonb(greatest(0,least((body->>'hp')::numeric,(p->>'hp')::numeric)))) where r.id=c.id;end if;
   c:=public.realm_character_command(c.id,c.revision,session_id,request_id,action,jsonb_build_object('id',item_id));p:=c.progression;
+ elsif action='return_town' then
+  if px>200 then raise exception 'Leave the dungeon before returning to town';end if;
+  if not exists(select 1 from public.realm_character_discoveries d where d.character_id=c.id and d.world_id=realm_character_event.world_id and d.place='town') then raise exception 'Visit Wanderer’s Village first to unlock this route';end if;
+  if (p->>'hp')::numeric<=0 then raise exception 'You must be alive to return';end if;
+  if ctx.swing_at>clock_timestamp()-interval '8 seconds' then raise exception 'Wait until you have been out of combat for 8 seconds';end if;
+  if exists(select 1 from jsonb_array_elements(cat->'enemies') ce left join public.realm_encounters en on en.world_id=realm_character_event.world_id and en.target=(ce->>'id')::integer
+   where coalesce(en.hp,1)>0 and (coalesce(en.x,(ce->>'x')::float8)-px)^2+(coalesce(en.z,(ce->>'z')::float8)-pz)^2<400)
+   then raise exception 'Move away from nearby enemies before returning';end if;
+  px:=0;pz:=64;
+  -- Persist solo arrival in the same transaction, even if the connection drops before acknowledgement.
+  if world_id=c.id then update public.realm_characters r set solo_world=jsonb_set(r.solo_world,'{position}','{"x":0,"z":64}'::jsonb) where r.id=c.id;end if;
  elsif action in ('move','travel','respawn') then
   if sqrt((px+14)^2+(pz-9)^2)<15 then insert into public.realm_character_discoveries values(c.id,world_id,'bridge') on conflict do nothing;end if;
   if sqrt((px+31)^2+(pz+68)^2)<20 then insert into public.realm_character_discoveries values(c.id,world_id,'ruins') on conflict do nothing;end if;
