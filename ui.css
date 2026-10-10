@@ -142,3 +142,6 @@ html.zoom-recovery,html.zoom-recovery body{touch-action:pinch-zoom}
 .estate-choices{display:flex;gap:8px;flex-wrap:wrap}
 
 .workshop-options{display:flex;flex-wrap:wrap;gap:8px}.workshop-options button{min-height:44px;flex:1;padding:9px;font-size:14px}#work-content .quest-entry{margin:12px 0;padding:12px}#work-content h3{font-size:18px;margin:0 0 8px}#work-content p{font-size:14px;line-height:1.5}
+
+/* Device-local rendering controls use the shared menu material and keep narrow touch layouts within the panel. */
+.graphics-row{flex-wrap:wrap;font:13px var(--ui-sans);gap:10px}.graphics-row>span{flex:1;min-width:85px}.graphics-row input[type=range]{width:110px;min-width:65px;flex:1;padding:0;accent-color:var(--ui-gold)}.graphics-row output{min-width:38px;text-align:right;color:var(--ui-sage)}.graphics-row select{max-width:100%;font:13px var(--ui-sans)}

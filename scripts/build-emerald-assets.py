@@ -44,7 +44,7 @@ class Model:
   ob=bpy.data.objects.new(self.name,mesh);bpy.context.collection.objects.link(ob);ob.data.materials.append(material)
   report[self.name]={'triangles':sum(len(f)-2 for f in self.f),'vertices':len(self.v)}
 wood=(.19,.095,.04);green=(.23,.43,.055)
-for name,seed,kind in [('oak-a',14,'oak'),('oak-b',43,'oak'),('birch-a',28,'birch'),('ancient-oak',92,'oak'),('pine-a',55,'pine'),('fir-a',67,'pine'),('willow-a',82,'willow')]:
+for name,seed,kind in [('oak-a',14,'oak'),('oak-b',43,'oak'),('oak-c',71,'oak'),('birch-b',37,'birch'),('pine-b',104,'pine'),('pine-c',126,'pine'),('birch-a',28,'birch'),('ancient-oak',92,'oak'),('pine-a',55,'pine'),('fir-a',67,'pine'),('willow-a',82,'willow'),('dead-tree',153,'dead'),('sapling',177,'sapling')]:
  for lod in ['near','far']:
   rng=random.Random(seed);m=Model(name+'-'+lod);near=lod=='near';h=9 if kind=='pine' else 7.5
   lean=rng.uniform(-.6,.6);bark=(.58,.57,.4) if kind=='birch' else wood
@@ -52,7 +52,10 @@ for name,seed,kind in [('oak-a',14,'oak'),('oak-b',43,'oak'),('birch-a',28,'birc
   if near:
    for j in range(5):
     a=j*math.tau/5;m.tube([(math.cos(a)*.65,math.sin(a)*.65,.02),(math.cos(a)*.25,math.sin(a)*.25,.15),(0,0,.8)],[.06,.13,.1],bark,5)
-  if kind=='pine':
+  if kind=='dead':
+   for j in range(5):
+    a=j*2.4;z=h*(.35+j*.1);m.tube([(lean*.5,0,z),(math.cos(a)*1.2,math.sin(a)*1.2,z+.6),(math.cos(a)*1.8,math.sin(a)*1.8,z+.5)],[.13,.06,.007],wood,5 if near else 4)
+  elif kind=='pine':
    for tier in range(7 if near else 5):
     t=tier/(7 if near else 5);z=h*(.25+t*.69);radius=(1-t)*3.05+.15
     for j in range(6):
@@ -74,17 +77,18 @@ for name,seed,kind in [('oak-a',14,'oak'),('oak-b',43,'oak'),('birch-a',28,'birc
     endpoint=(math.cos(a)*radius,math.sin(a)*radius,z)
     m.tube([(lean*.5,0,h*.44),(endpoint[0]*.55,endpoint[1]*.55,z-.65),endpoint],[.12,.075,.025],bark,5 if near else 4)
     pal=(.36,.5,.095) if kind=='birch' else (.19,.38,.065) if kind=='willow' else (.16+(j%3)*.025,.34+(j%3)*.035,.045)
-    m.crown(endpoint,(1.65,1.55,1.4 if kind!='willow' else .65),pal,seed+j,near)
+    m.crown(endpoint,(1.65,1.55,1.85 if kind!='willow' else 1.0),pal,seed+j,near)
     if kind=='willow' and near:
      for k in range(3):
       xx=endpoint[0]+math.sin(k*2)*.7;yy=endpoint[1]+math.cos(k*2)*.7
       m.crown((xx,yy,z-1.2),(.3,.35,1.55),(.16,.34,.07),seed+j+k,0)
+  if kind=='sapling':m.v=[tuple(v*.3 for v in p) for p in m.v]
   m.finish()
-for name in ['fern','flowers','reeds','grass','river-rock','moss-rock','fallen-log']:
+for name in ['fern','flowers','reeds','grass','tall-grass','bush','mushrooms','moss','ivy','river-rock','moss-rock','stepping-stone','outcrop','fallen-log','stump','branch']:
  m=Model(name);rng=random.Random(800)
- if name in ['fern','grass','reeds']:
+ if name in ['fern','grass','tall-grass','reeds']:
   for j in range(7):
-   a=j*2.4;dx,dy=math.cos(a),math.sin(a);h=.45 if name=='grass' else .65 if name=='fern' else 1.2
+   a=j*2.4;dx,dy=math.cos(a),math.sin(a);h=.8 if name=='tall-grass' else .45 if name=='grass' else .65 if name=='fern' else 1.2
    if name=='fern':
     m.tube([(0,0,0),(dx*.25,dy*.25,h),(dx*.65,dy*.65,h*.6)],[.014,.009,.002],(.12,.28,.035),3)
     for k in range(1,6):
@@ -99,6 +103,19 @@ for name in ['fern','flowers','reeds','grass','river-rock','moss-rock','fallen-l
    x,y=math.sin(j*2)*.25,math.cos(j*2)*.25;z=.3+j*.045;m.tube([(x,y,0),(x+.02,y,z)],[.012,.007],(.16,.3,.04),3)
    for k in range(5):
     a=k*math.tau/5;m.face([(x,y,z),(x+math.cos(a)*.12,y+math.sin(a)*.12,z+.04),(x+math.cos(a+.9)*.12,y+math.sin(a+.9)*.12,z+.02)],(.85,.67,.25) if j%2 else (.43,.35,.68))
+ elif name=='bush':
+  for j in range(4):m.crown((math.sin(j*2.4)*.4,math.cos(j*2.4)*.4,.4+j*.08),(.6,.55,.45),(.12,.3,.045),j+42,0)
+ elif name=='mushrooms':
+  for j in range(3):
+   x,y=j*.14,math.sin(j*2)*.15;m.tube([(x,y,0),(x,y,.18+j*.03)],[.027,.022],(.62,.52,.34),5);m.crown((x,y,.21+j*.03),(.12,.11,.065),(.5,.18,.05),j+80,0)
+ elif name in ['moss','ivy']:
+  for j in range(6):m.crown((math.sin(j*2.4)*.3,math.cos(j*2.4)*.3,.035),(.22,.18,.06),(.17,.31,.055),j+23,0)
+ elif name=='stump':
+  m.tube([(0,0,0),(.05,0,.4),(0,.04,.7)],[.45,.34,.29],wood,9);m.crown((0,.04,.7),(.25,.24,.025),(.45,.28,.1),34,0)
+ elif name=='branch':m.tube([(-.8,0,.04),(0,.1,.08),(.7,-.1,.04)],[.035,.05,.015],wood,5);m.tube([(0,.1,.08),(.3,.5,.05)],[.035,.01],wood,5)
+ elif name=='stepping-stone':m.crown((0,0,.06),(.8,.65,.13),(.39,.44,.4),133,0)
+ elif name=='outcrop':
+  for j in range(3):m.crown((j*.7,math.sin(j)*.3,.6+j*.1),(.85,.8,1.1),(.32,.36,.34),200+j,1)
  elif name=='fallen-log':m.tube([(-1.8,0,.23),(-.5,.08,.32),(1.8,.15,.28)],[.28,.32,.24],wood,9);m.tube([(.2,.05,.4),(.4,.5,.65)],[.09,.025],wood,5)
  else:
   m.crown((0,0,.18 if name=='river-rock' else .35),(.55,.4,.35) if name=='river-rock' else (.9,.65,.7),(.34,.39,.35),123,0)

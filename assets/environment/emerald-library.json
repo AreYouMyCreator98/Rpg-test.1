@@ -19,6 +19,38 @@
       "triangles": 337,
       "vertices": 871
     },
+    "oak-c-near": {
+      "triangles": 1032,
+      "vertices": 2686
+    },
+    "oak-c-far": {
+      "triangles": 337,
+      "vertices": 871
+    },
+    "birch-b-near": {
+      "triangles": 1032,
+      "vertices": 2686
+    },
+    "birch-b-far": {
+      "triangles": 337,
+      "vertices": 871
+    },
+    "pine-b-near": {
+      "triangles": 1462,
+      "vertices": 3460
+    },
+    "pine-b-far": {
+      "triangles": 327,
+      "vertices": 931
+    },
+    "pine-c-near": {
+      "triangles": 1462,
+      "vertices": 3460
+    },
+    "pine-c-far": {
+      "triangles": 327,
+      "vertices": 931
+    },
     "birch-a-near": {
       "triangles": 1032,
       "vertices": 2686
@@ -59,6 +91,22 @@
       "triangles": 337,
       "vertices": 871
     },
+    "dead-tree-near": {
+      "triangles": 277,
+      "vertices": 541
+    },
+    "dead-tree-far": {
+      "triangles": 137,
+      "vertices": 271
+    },
+    "sapling-near": {
+      "triangles": 1032,
+      "vertices": 2686
+    },
+    "sapling-far": {
+      "triangles": 337,
+      "vertices": 871
+    },
     "fern": {
       "triangles": 161,
       "vertices": 399
@@ -75,6 +123,26 @@
       "triangles": 7,
       "vertices": 21
     },
+    "tall-grass": {
+      "triangles": 7,
+      "vertices": 21
+    },
+    "bush": {
+      "triangles": 160,
+      "vertices": 480
+    },
+    "mushrooms": {
+      "triangles": 159,
+      "vertices": 435
+    },
+    "moss": {
+      "triangles": 240,
+      "vertices": 720
+    },
+    "ivy": {
+      "triangles": 240,
+      "vertices": 720
+    },
     "river-rock": {
       "triangles": 40,
       "vertices": 120
@@ -83,9 +151,25 @@
       "triangles": 80,
       "vertices": 240
     },
+    "stepping-stone": {
+      "triangles": 40,
+      "vertices": 120
+    },
+    "outcrop": {
+      "triangles": 192,
+      "vertices": 576
+    },
     "fallen-log": {
       "triangles": 56,
       "vertices": 106
+    },
+    "stump": {
+      "triangles": 83,
+      "vertices": 201
+    },
+    "branch": {
+      "triangles": 36,
+      "vertices": 70
     }
   }
 }

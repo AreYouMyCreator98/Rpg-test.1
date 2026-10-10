@@ -16,6 +16,7 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  function roomState(uid){const r=rooms.get(members.get(uid));return r?{...r,players:[...r.players]}:null}
  try{
  const context=await browser.newContext({viewport:{width:960,height:700}});
+ await context.addInitScript(()=>{const raf=window.requestAnimationFrame;window.requestAnimationFrame=fn=>raf(t=>{if(window.__realm)window.__realm.renderer.render=()=>{};fn(t)})});
  await context.route('**/@supabase/supabase-js@2.117.3/+esm',r=>r.fulfill({body:sdk,contentType:'application/javascript'}));
  if(process.env.THREE_TEST_MODULE)await context.route('**/three@0.160.1/build/three.module.js',r=>r.fulfill({path:process.env.THREE_TEST_MODULE,contentType:'application/javascript'}));
  if(process.env.SCOUT_TEST_CACHE)for(const file of ['loaders/GLTFLoader.js','utils/BufferGeometryUtils.js'])await context.route('**/examples/jsm/'+file,r=>r.fulfill({path:process.env.SCOUT_TEST_CACHE+'/'+file.split('/').pop(),contentType:'application/javascript'}));

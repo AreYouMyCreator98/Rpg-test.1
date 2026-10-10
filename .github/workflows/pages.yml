@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
     paths:
+      - river-details.js
+      - graphics.js
+      - terrain-stream.js
+      - environment-life.js
       - emerald-landscape.js
       - emerald-vale.js
       - assets/environment/**

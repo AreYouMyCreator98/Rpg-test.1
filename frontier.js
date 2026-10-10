@@ -1,9 +1,10 @@
-import {inVale} from './emerald-vale.js?v=realm-emerald-20261010-1';
-import {icon} from './ui.js?v=realm-emerald-20261010-1';
+import {graphics,retireInstances} from './graphics.js?v=realm-living-landscape-1';
+import {inVale} from './emerald-vale.js?v=realm-living-landscape-1';
+import {icon} from './ui.js?v=realm-living-landscape-1';
 // Recover older cached HTML before it can pair its obsolete HUD with this module.
 // This module must retain this guard while pre-design-system pages remain cached.
-if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-emerald-20261010-1"]')){
- const fresh=new URL(location.href),release='realm-emerald-20261010-1';
+if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-living-landscape-1"]')){
+ const fresh=new URL(location.href),release='realm-living-landscape-1';
  if(fresh.searchParams.get('v')!==release){fresh.searchParams.set('v',release);location.replace(fresh.href)}
  else{document.body.textContent='The game update could not load. Reopen the game to retry. Your saved journey is safe.'}
  await new Promise(()=>{}); // Navigation replaces this document; never initialize mixed UI.
@@ -40,7 +41,13 @@ export const ROADS=[
  [[-430,-35],[-452,-44],[-474,-38],[-492,-30]]
 ];
 export function roadDistance(x,z){let best=Infinity;for(const r of ROADS)for(let i=1;i<r.length;i++){const [ax,az]=r[i-1],[bx,bz]=r[i],dx=bx-ax,dz=bz-az,t=Math.max(0,Math.min(1,((x-ax)*dx+(z-az)*dz)/(dx*dx+dz*dz)));best=Math.min(best,Math.hypot(x-ax-t*dx,z-az-t*dz))}return best}
-export function terrainColor(x,z){return z<-700?0x9aaebb:z<-460?0x5e9275:x<-330?0x327853:z<-260?0x99adb0:x>75&&z<-150?0x647565:x<-215&&z<-25?0x7d8773:x<-100&&z>85?0x849657:0x3c7750}
+export function terrainColor(x,z){
+ const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*(3-2*t)};
+ const mix=(a,b,t)=>{let c=0;for(const bit of [16,8,0])c|=Math.round(((a>>bit)&255)*(1-t)+((b>>bit)&255)*t)<<bit;return c};
+ let c=0x3c7750;c=mix(c,0x849657,smooth(-100,-165,x)*smooth(65,115,z));c=mix(c,0x647565,smooth(45,110,x)*smooth(-100,-200,z));c=mix(c,0x327853,smooth(-270,-390,x));c=mix(c,0x5e9275,smooth(-410,-530,z));c=mix(c,0x9aaebb,smooth(-650,-780,z));
+ // The original Frostmere snow belt feathers into adjoining woodland instead of a square.
+ c=mix(c,0x99adb0,smooth(-230,-300,z)*(1-smooth(-335,-390,z))*smooth(-350,-260,x));return c;
+}
 export function extraHeight(x,z){const blend=Math.max(0,Math.min(1,(Math.max(Math.abs(x),Math.abs(z))-85)/45));const north=Math.max(0,Math.min(1,(-z-340)/160)),west=Math.max(0,Math.min(1,(-x-330)/120));return blend*(3*Math.sin(x*.018)*Math.cos(z*.027)+14*Math.exp(-((x+65)**2+(z+295)**2)/4200))+north*(24+18*Math.sin(x*.016)*Math.cos(z*.011)+50*Math.exp(-((x+70)**2+(z+795)**2)/11000))+west*(7+6*Math.sin(z*.025)*Math.cos(x*.014))}
 
 export function installFrontier(api){
@@ -84,7 +91,7 @@ export function installFrontier(api){
   const key=Math.floor(x/48)+','+Math.floor(z/48)+','+inVale(x,z);if(!chunks.has(key))chunks.set(key,{vale:inVale(x,z),x:Math.floor(x/48)*48+24,z:Math.floor(z/48)*48+24,trunk:[],leaf:[],rock:[]});const chunk=chunks.get(key),y=ground(x,z),h=i<3400?4+random(i*3+2)*4:6+random(i*3+2)*5;
   if((z<-263&&x>=-330&&z>=-340)||z<-720||random(i+8000)>.9){chunk.rock.push([x,y+.7,z,1,.9,1.2]);vegetation.push({x,z,rock:true})}else{chunk.trunk.push([x,y+h*.35,z,.22,h*.7,.22]);for(let j=0;j<3;j++)chunk.leaf.push([x,y+h*(.45+j*.23),z,(2.15-j*.43)*(i<3400?1:1.25),h*.52,(2.15-j*.43)*(i<3400?1:1.25)]);api.obstacle(x,z,.5);vegetation.push({x,z})}
  }
- const farPine=new THREE.ConeGeometry(1,1,6,1);const chunkMeshes=[];for(const c of chunks.values())for(const [shape,color,list] of [['cyl',0x65503b,c.trunk],['cone',c.z<-230?0x527d75:0x37724d,c.leaf],['orb',0x82978e,c.rock]]){if(!list.length)continue;const m=api.instance(shape,color,list);if(shape==='cone'){m.geometry=api.forestArt.pine;m.material=api.forestArt.leafMaterial.clone();m.material.onBeforeCompile=api.forestArt.leafMaterial.onBeforeCompile;m.material.color.setHex(color)}root.add(m);chunkMeshes.push({m,vale:c.vale,x:c.x,z:c.z,full:m.geometry,far:shape==='cone'?farPine:m.geometry})}
+ const farPine=new THREE.ConeGeometry(1,1,6,1);const chunkMeshes=[];for(const c of chunks.values())for(const [shape,color,list] of [['cyl',0x65503b,c.trunk],['cone',c.z<-230?0x527d75:0x37724d,c.leaf],['orb',0x82978e,c.rock]]){if(!list.length)continue;const m=api.instance(shape,color,list);if(shape==='cone'){m.geometry=api.forestArt.pine;m.material=api.forestArt.leafMaterial.clone();m.material.onBeforeCompile=api.forestArt.leafMaterial.onBeforeCompile;m.material.color.setHex(color)}root.add(m);chunkMeshes.push({m,rock:shape==='orb',vale:c.vale,x:c.x,z:c.z,full:m.geometry,far:shape==='cone'?farPine:m.geometry})}
  // Populate enemy families with articulated bodies, not recoloured goblins.
  function creature(f,boss){
   if(f.id==='bandit'||f.id==='skeleton'){const ch=api.character(false);ch.bodyMat.color.setHex(f.color);ch.cape.material=mat(f.id==='bandit'?0x6a3433:0x433d56);ch.scale=boss?1.55:1;ch.root.scale.setScalar(ch.scale);
@@ -142,6 +149,12 @@ export function installFrontier(api){
   if(cave){const scale=full?frame.scale:w/(zoom*1.4),cx=full?frame.x:p.x,cz=full?frame.z:p.z;project=(x,z)=>[w/2+(x-cx)*scale,h/2+(z-cz)*scale];for(const [l,r,t,b] of [[296,304,-34,8],[300,316,-24,-14],[288,312,-62,-32]]){const [x,y]=project(l,t);c.fillStyle='#777f76';c.fillRect(x,y,(r-l)*scale,(b-t)*scale);c.strokeStyle='#b1b5a2';c.strokeRect(x,y,(r-l)*scale,(b-t)*scale)}const [gx,gy]=project(296,-32);c.fillStyle=living.serialize().gateOpen?'#8ab788':'#cf965d';c.fillRect(gx,gy,8*scale,2);const [px,py]=project(306,-53);c.fillStyle='#398b9f';c.fillRect(px,py,6*scale,10*scale);for(const [x,z] of [[313,-21],[290,-59],[300,6]]){const [tx,ty]=project(x,z);c.fillStyle='#e3bd78';c.fillRect(tx-2,ty-2,4,4)}for(let i=0;i<28;i++){const [x,y]=project(i%2?289:311,-35-(i%14)*1.8);c.fillStyle=i%3?'#8be0cd':'#b098e1';c.fillRect(x-1,y-1,2,2)}}
   else if(full){project=(x,z)=>[w/2+(x-frame.x)*frame.scale,h/2+(z-frame.z)*frame.scale];const [x,y]=project(BOUNDS.left,BOUNDS.top);c.drawImage(atlas,x,y,WORLD_WIDTH*frame.scale,WORLD_DEPTH*frame.scale)}
   else{const a=northUp?0:(api.getYaw()||0),scale=w/(zoom*2),co=Math.cos(a),si=Math.sin(a);project=(x,z)=>{const dx=x-p.x,dz=z-p.z;return[w/2+(dx*co-dz*si)*scale,h/2+(dx*si+dz*co)*scale]};c.translate(w/2,h/2);c.rotate(a);c.scale(scale,scale);c.drawImage(atlas,BOUNDS.left-p.x,BOUNDS.top-p.z,WORLD_WIDTH,WORLD_DEPTH);c.setTransform(1,0,0,1,0,0)}
+  if(!cave&&full&&mapZoom>2){
+   c.save();const scale=frame.scale;
+   for(const v of vegetation){const[x,y]=project(v.x,v.z);if(x<0||x>w||y<0||y>h)continue;const size=Math.max(1.2,scale*(v.rock?.7:1.1));c.fillStyle=v.rock?'#97a599':v.z<-650?'#526f66':'#315f40';c.beginPath();if(v.rock){c.ellipse(x,y,size,size*.7,0,0,Math.PI*2)}else{c.moveTo(x,y-size*1.4);c.lineTo(x-size,y+size);c.lineTo(x+size,y+size)}c.fill()}
+   for(const b of [...structures,...living.buildings]){if(!Number.isFinite(b.x)||!b.w||!b.d)continue;const[x,y]=project(b.x,b.z);if(x<-30||x>w+30||y<-30||y>h+30)continue;c.fillStyle=b.color||'#b7a882';c.fillRect(x-b.w*scale/2,y-b.d*scale/2,b.w*scale,b.d*scale);c.strokeStyle='#463f34';c.lineWidth=1;c.strokeRect(x-b.w*scale/2,y-b.d*scale/2,b.w*scale,b.d*scale);c.beginPath();c.moveTo(x-b.w*scale/2,y);c.lineTo(x+b.w*scale/2,y);c.stroke()}
+   c.restore();
+  }
   function dot(x,z,color,r=3,label){if((x>200)!==cave)return;const [xx,yy]=project(x,z);if(xx<0||yy<0||xx>w||yy>h)return;c.fillStyle=color;c.beginPath();c.arc(xx,yy,full?Math.max(r,pixelRatio*2):r,0,Math.PI*2);c.fill();if(label){const font=Math.max(16,11*pixelRatio);c.font=font+'px sans-serif';c.textAlign='center';const width=c.measureText(label).width,tx=Math.max(width/2+4,Math.min(w-width/2-4,xx)),ty=yy-8*pixelRatio,rect={l:tx-width/2-4,r:tx+width/2+4,t:ty-font,b:ty+4};if(rect.t<0||labels.some(b=>rect.l<b.r&&rect.r>b.l&&rect.t<b.b&&rect.b>b.t))return;labels.push(rect);c.lineWidth=4;c.strokeStyle='#18352c';c.strokeText(label,tx,ty);c.fillStyle='#f4e4bf';c.fillText(label,tx,ty)}}
   if(!cave){api.poi.forEach((v,i)=>dot(v.x,v.z,api.visited.includes(i)?'#efd195':'#a2b8a4',full?4:3,full?v.name:null));dot(-46,36,'#bd9ddb',4,full?'Hollowroot Cave':null)}
   for(const n of living.npcs)dot(n.root.position.x,n.root.position.z,'#8bded8',3);
@@ -173,6 +186,6 @@ export function installFrontier(api){
   $('clear-waypoint').onclick=()=>{waypoint=null;refresh()};$('atlas-journal').onclick=living.journal;$('atlas-town').onclick=api.returnTown;refresh();
  }
  const staticProps=root.children.filter(o=>!o.isInstancedMesh);
- function update(dt){elapsed+=dt;for(const o of staticProps)o.visible=Math.hypot(o.position.x-hero.root.position.x,o.position.z-hero.root.position.z)<(api.settings.quality==='low'?175:280);root.visible=hero.root.position.x<200;for(const c of chunkMeshes){const d=Math.hypot(c.x-hero.root.position.x,c.z-hero.root.position.z);c.m.visible=!(valeReady&&c.vale)&&d<(api.settings.quality==='low'?145:200);c.m.geometry=d>(api.settings.quality==='low'?75:120)?c.far:c.full;}for(const s of structures)if(s.hub)s.hub.rotation.z=elapsed*.4;for(const e of tells.keys())tell(e);mapTimer+=dt;if(mapTimer>.15){mapTimer=0;const northAngle=northUp||hero.root.position.x>200?0:(api.getYaw()||0);box.style.setProperty('--north-x',50+Math.sin(northAngle)*50);box.style.setProperty('--north-y',50-Math.cos(northAngle)*50);$('mini-north').setAttribute('aria-pressed',String(northUp));if(box.offsetParent!==null)paint(mini);if($('frontier-atlas'))paint($('frontier-atlas'),true);$('map-bearing').textContent=hero.root.position.x>200?'Hollowroot Cave':waypoint?'◆ '+Math.round(Math.hypot(waypoint[0]-hero.root.position.x,waypoint[1]-hero.root.position.z))+'m · waypoint':northUp?'N ↑ · North up':'N · Camera follows'}}
+ function update(dt){elapsed+=dt;for(const o of staticProps)o.visible=Math.hypot(o.position.x-hero.root.position.x,o.position.z-hero.root.position.z)<(api.settings.quality==='low'?175:280);root.visible=hero.root.position.x<200;for(const c of chunkMeshes){const d=Math.hypot(c.x-hero.root.position.x,c.z-hero.root.position.z);retireInstances(c.m,(!valeReady||c.rock&&!c.vale)&&d<graphics(api.settings).distance,elapsed);c.m.geometry=d>(api.settings.quality==='low'?75:120)?c.far:c.full;}for(const s of structures)if(s.hub)s.hub.rotation.z=elapsed*.4;for(const e of tells.keys())tell(e);mapTimer+=dt;if(mapTimer>.15){mapTimer=0;const northAngle=northUp||hero.root.position.x>200?0:(api.getYaw()||0);box.style.setProperty('--north-x',50+Math.sin(northAngle)*50);box.style.setProperty('--north-y',50-Math.cos(northAngle)*50);$('mini-north').setAttribute('aria-pressed',String(northUp));if(box.offsetParent!==null)paint(mini);if($('frontier-atlas'))paint($('frontier-atlas'),true);$('map-bearing').textContent=hero.root.position.x>200?'Hollowroot Cave':waypoint?'◆ '+Math.round(Math.hypot(waypoint[0]-hero.root.position.x,waypoint[1]-hero.root.position.z))+'m · waypoint':northUp?'N ↑ · North up':'N · Camera follows'}}
  return{setValeAssetsReady(value){valeReady=value},bounds:BOUNDS,wildlands:WILDLANDS,vegetation,registerWildlands(){for(const p of WILDLANDS){api.poi.push({...p});for(const side of [-1,1]){api.obstacle(p.x+side*4,p.z,.65);structures.push({x:p.x+side*4,z:p.z,w:1.1,d:1.1,color:'#bac9b8',kind:'waystone'})}}atlasDirty=true},invalidateAtlas(){atlasDirty=true},setWaypoint(x,z){waypoint=[x,z]},paint,update,animate,updateEnemy,onDeath,restoreBosses,interact,tell,worldMap,structures,settlements:SETTLEMENTS,families:FAMILIES,mini,get atlas(){return atlas},get mapView(){return{...mapCenter,zoom:mapZoom}},get waypoint(){return waypoint},hint(){return nearestRest()?'Rest at the village fountain':''}};
 }
