@@ -1,3 +1,31 @@
+# Major expansion validation — 10 October 2026
+
+Release: `realm-expansion-20261010-1`. This section describes the current expansion; the earlier sections below are historical release records.
+
+The game initializes with **106 enemies, 14 bosses, 33 quests, five dungeons including Hollowroot, five pets and three mounts**. The original 49 enemies and seven bosses remain. Testing uses real game logic with controlled fixtures; it does not simulate an entire unassisted level-1-to-40 playthrough.
+
+| Executed suite | Checks |
+| --- | --- |
+| `character-runtime-sql.cjs` | Actual PostgreSQL functions via PGlite: reinstall, owner isolation, exclusive leases, one-time legacy import, protected checkpoints, movement/cooldown/damage bounds, encounter participation, idempotent reward claims, quest requirements, server-clock bounty cooldowns, equipped-item drop/recollection escrow. |
+| `persistent-rooms-sql.cjs` | Selected-character ownership, leases, four-player limit, guest/persistent-room separation, unauthorized world rejection and solo-world separation after host departure. |
+| `accounts-browser.cjs` | Actual account UI and PostgreSQL RPCs with an Auth service double: legacy backup, purchases/equipment, real sword contacts and rewards, offline queue replay after lease expiry, conflicting-revision recovery without overwriting the original local save. |
+| `accounts-live.cjs` | Two disposable email/password accounts against hosted Supabase Auth, RLS, RPCs and private Realtime: owned slots, foreign-owner denial, duplicate-session denial, persistent room join, guest combat XP/loot, no XP for a nonparticipating host, and restoration of separate solo state. |
+| `expansion-browser.cjs` | Distinct roster/model registration, four dungeon transitions/collision/gates, boss combat and phases, unique loot, bounty claim/cooldown, companion purchase/equip, mounting/movement/rider attachment and reload persistence. |
+| `expansion-content.cjs` | Root glyph sequence, three key chests, four gates/treasures and camera clearance; all seven bosses have three damaging patterns, a second phase, death and unique loot; all pets animate and all mounts ride with indoor exclusion. |
+| `multiplayer-browser.cjs` | Two real game clients with a deterministic room service: original rooms/combat/loot/Hollowroot, guest expansion chest/gate, pets and mounted rider replication, host-menu combat, public discovery and leave/disconnect cleanup. |
+| `progression-unit.cjs`, `progression-browser.cjs` | All 18 skill effects, five attributes, level-20 migration, allocation previews/duplicate guards, Whirlwind contacts, respec debit, level-40 awards and reload. |
+| `movement-camera.cjs`, `v2-mobile.cjs` | Grounded roll, stamina and invulnerability; camera settings/first-person/dungeon behavior; emulated simultaneous touch movement/attack/block, release, orbit, shops, equipment and portrait/landscape menu bounds. |
+| `quiet-ui.cjs`, `map-orientation.cjs` | HUD/menu interactions at 320×568, 360×650, 844×390 and 1440×900; optional minimap persistence; five camera bearings, independent hero facing, north-up/cave orientation and atlas waypoint interaction. |
+| `visual-browser.cjs` | Actual WebGL, generated detail textures, camera framing, cave-light restoration, quality/save persistence and no captured JavaScript/shader exceptions. Low-quality village sample: 241 draw calls / 149,034 triangles. This is not a phone FPS measurement. |
+
+Runtime JavaScript syntax and the seventeen-file Pages staging/version validator passed. Local browser tests can use the exact pinned Three.js downloaded through certificate-verified HTTPS. Hosted tests also use certificate-verified HTTP/WebSocket proxies; no TLS checks are disabled. Layout and network regression suites throttle or suppress repeated drawing after initialization to keep software-GPU timing manageable; the separate rendering suite exercises real drawing.
+
+Test fixtures explicitly advance some combat frames or arrange positions/health to isolate behavior. A background host tab initially made the multiplayer timing check time out; bringing that host tab to the foreground allowed the unchanged damage assertion to pass. Progression attack targets were given a larger health fixture to avoid random critical kills changing the level before the respec assertion.
+
+Physical Samsung/iPhone hardware, Safari/WebKit, battery/thermal behavior, audible sound quality, real email inbox delivery and long-duration balance remain unverified. Email confirmation/recovery call real Supabase APIs with the Pages callback configured. The account server validates reward events and economy operations while the host still simulates physics; this is not a claim of cheat-proof browser combat.
+
+---
+
 # V2 validation
 
 Validated against the final V2 game files with headless Chromium, software WebGL and Playwright. All four checked-in suites completed successfully. No JavaScript exceptions were captured.

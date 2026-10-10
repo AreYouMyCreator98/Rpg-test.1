@@ -1,12 +1,12 @@
 # Realm of the Fallen — The Shattered Marches
 
-A procedural 3D browser action RPG with a continuous expanded overworld, five settlements, sixteen quests, seven bosses, a cave dungeon and optional four-player Supabase co-op. The original forest, hero, equipment, goblins, village and Goblin Chief remain playable.
+A procedural 3D browser action RPG with a continuous expanded overworld, five settlements, thirty-three quests, fourteen bosses, five dungeons, pets, mounts and optional persistent four-player Supabase co-op. The original forest, hero, equipment, goblins, village and Goblin Chief remain playable.
 
-**Game files:** `progression.js`, `adventure-motion.js`, `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
+**Game files:** `accounts.js`, `expansion-data.js`, `expansion-models.js`, `expansion-world.js`, `companions.js`, `supabase/game-catalog.json`, `progression.js`, `adventure-motion.js`, `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
 
 ## GitHub Pages
 
-Upload **all eleven game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
+Upload **all seventeen runtime files (including `supabase/game-catalog.json` in its folder)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
@@ -46,7 +46,7 @@ Each giver offers a four-enemy hunt and a boss quest. Accept and claim rewards i
 
 The **minimap** renders terrain relief and elevation contours, trees, rocks, roads, river crossings, buildings, quest targets, villagers, enemies, loot and party members. Use **+/−** for range, **N** to toggle north-up, and **Map** for the full atlas. Click or tap the atlas to place a waypoint; the minimap displays its distance. Inside Hollowroot, the map switches to cave rooms, the gate, pool, crystal formations and chest locations.
 
-Old saves retain their original key, character, equipment, coins and quests. New quests and boss flags receive defaults; expanded positions and new weapons survive reload. Co-op synchronizes the expanded coordinates, telegraphs, boss completion and unique loot. As before, co-op uses fresh session characters and leaves solo saves untouched. Clients on different world revisions receive a reload message instead of silently desynchronizing.
+Old saves retain their original key, character, equipment, coins and quests. New quests and boss flags receive defaults; expanded positions and new weapons survive reload. Co-op synchronizes the expanded coordinates, telegraphs, boss completion and unique loot. Co-op supports selected account characters in persistent rooms and fresh characters in guest rooms. Both keep the solo world separate. Clients on different world revisions receive a reload message instead of silently desynchronizing.
 
 The pre-expansion working version is preserved by **`v2.1-pre-frontier`**. Repeated new trees and rocks use spatially grouped instancing; nearby collision uses a spatial grid; Low graphics reduces vegetation draw distance. Device frame rates depend on hardware and have not been certified.
 
@@ -152,7 +152,7 @@ Supabase's pinned SDK loads from jsDelivr only when connecting to multiplayer.
 
 The room creator's browser simulates the shared world. The host must keep the tab
 active; there is no host migration. Menus do not pause the world. Rooms use fresh,
-session-only characters and never overwrite solo saves. Leaving restores solo
+separate room-world state and never overwrite solo-world progress. Account characters keep validated progression; guest characters remain session-only. Leaving restores solo
 progress. This is casual co-op, with client-reported movement/equipment, not an
 MMO or a cheat-resistant competitive service. Public/private room authorization
 is enforced with Supabase RPC/RLS and per-sender private Realtime topics.
@@ -183,7 +183,7 @@ normal browser connection.
 
 The shared hero rig now has articulated knees and a forward shoulder roll with anticipation, tuck and recovery; core-mesh ground contact is maintained while the existing collision movement and invulnerability remain active. Remote party members use the same pose. Base stamina is 150, regeneration is 18/second after the existing recovery delay, and dodging costs 25. Old saves preserve their stamina percentage; rest points refill the new maximum.
 
-Open **Menu → Settings → Camera & accessibility** for live FOV (45–100°, default 70°), classic/shoulder/first-person view, shoulder side, sensitivity and vertical inversion. Preferences stay on this device. First-person hides the local head, torso and cape while retaining the existing weapon rig and combat. Mobile orbit uses the same preferences. Mount-specific camera validation will follow the mount stage; mounts do not exist yet.
+Open **Menu → Settings → Camera & accessibility** for live FOV (45–100°, default 70°), classic/shoulder/first-person view, shoulder side, sensitivity and vertical inversion. Preferences stay on this device. First-person hides the local head, torso and cape while retaining the existing weapon rig and combat. Mobile orbit uses the same preferences. Mounts blend camera height with their mounting transition and remain excluded from dungeon interiors.
 
 ## Expansion Stage 2 — character builds
 
@@ -191,7 +191,7 @@ Open **Menu → Settings → Camera & accessibility** for live FOV (45–100°, 
 
 All 18 nodes change combat calculations. Whirlwind Slash changes the third attack in the existing combo into a circular sweep, so it uses the same desktop/touch attack control. Other nodes improve damage, criticals, stagger, defence, potion healing, stamina, movement, dodge or blocking. Skills can be reset for 50 + 10 × level gold. Resetting does not refill health or stamina. Attribute allocation is permanent for this stage.
 
-Saves use schema 3 under the original storage key. Before continuing an older save, the exact original is retained under `realm-fallen-save-v1-pre-progression`; if that backup cannot be written, migration stops instead of overwriting it. Original quest/boss state and equipment remain separate from character attributes. Co-op still uses session-only heroes; their earned levels/builds work within the room, but account-backed character transfer is not enabled yet.
+Saves use schema 3 under the original storage key. Before continuing an older save, the exact original is retained under `realm-fallen-save-v1-pre-progression`; if that backup cannot be written, migration stops instead of overwriting it. Original quest/boss state and equipment remain separate from character attributes. Account characters retain their builds between solo and persistent co-op; guest rooms remain session-only.
 
 ## Accurate atlas and material detail
 
@@ -199,8 +199,22 @@ The minimap follows the camera with a white view arrow and fan. A small gold tic
 
 The presentation uses three generated 128×128 detail textures for ground, timber and masonry, merged building materials, warmer sunlight and adjusted filmic exposure. No image downloads or additional drawing batches are needed. These are subtle material improvements, not a replacement world or a promise of reference-image parity.
 
-## Account backend development
+## Accounts, cloud saves and persistent co-op
 
-The hosted Stage 3 database foundation and protected economy commands are installed, but account login/cloud character selection and persistent co-op are **not enabled in the game yet**. See `EXPANSION-STATUS.md`. Local saves and session-only co-op remain the playable path.
+Open **Accounts & characters** on the title screen, or **Journey → Adventurers**. Create/confirm an email account, then choose one of five slots. You can start fresh or import the existing local character once. Importing writes `realm-fallen-save-v1-before-account-import` before contacting the server; the original local save remains untouched. Legacy imports are explicitly grandfathered, while future progression uses validated server events.
 
-Run `tests/characters-foundation-sql.cjs` and `tests/character-commands-sql.cjs` with PGlite for local permission/economy checks. `python scripts/check-hosted-characters.py` uses the securely injected `SUPABASE_ACCESS_TOKEN` only against the Supabase Management API and runs a rollback-only hosted database test. `--apply` first installs the two additive migrations. Never use that token in browser code. Hosted SQL checks do not certify email delivery, Auth UI or live two-account multiplayer.
+Choose an account adventurer before creating/joining a persistent room. All participants in that room need an account character. Guest rooms remain available with fresh session-only heroes. Solo position, quests and boss completion stay separate from room-world state; legitimate character progression returns with the adventurer.
+
+Offline actions are queued locally after the game has loaded. Reconnecting renews the character lease and replays typed commands, not arbitrary inventory snapshots. Conflicting revisions preserve both copies and pause synchronization. The Accounts screen can download a recovery copy or explicitly resume the newer cloud copy. Delete confirms before archiving a slot; historical revisions remain private to its owner.
+
+The existing project is configured with the Pages Auth callback. For a new project, install these reviewed SQL files in order: `multiplayer.sql`, `characters-foundation.sql`, `character-commands.sql`, `character-runtime.sql`, `game-catalog-seed.sql`, `persistent-rooms.sql`. Enable email Auth and anonymous Auth for guest rooms. Set the Auth site URL/redirect allowlist to your Pages directory. Keep service-role and management tokens out of game files. Only the browser-safe publishable key belongs in `multiplayer-config.js`.
+
+The database owns prices, resources, point budgets, encounter/reward rules, claim IDs and account bounty clocks. RLS protects each owner's characters and backups. See [EXPANSION-STATUS.md](EXPANSION-STATUS.md) for the trust boundary and [VALIDATION.md](VALIDATION.md) for executed tests.
+
+## Dungeons, contracts and companions
+
+Speak with Elowen for ten creature hunts and seven boss quests. The forest leads to Rootbound Catacombs; marsh paths lead to the Sunken Temple; mountain routes reach Frostspire Crypt; the northwestern ruins lead to the Obsidian Forge. Each contains connected rooms, an alternate route, treasure, a gate and a named boss. Three additional bosses await in the overworld. Hollowroot and all seven earlier bosses remain.
+
+The large village bounty board offers repeatable elite and boss contracts. Account cooldowns use server time; local cooldowns count active playtime. Unique boss weapons cannot be repeatedly awarded to the same account character.
+
+**Journey → Companions** unlocks five pets with small passive bonuses. **Mount stable** unlocks the horse, dire wolf and Emberhorn. Summon/dismount there or with **R**; Attack/Dodge also dismount before combat. The stamina bar shows mount stamina while riding. Pets and mounted riders are visible to party members. No additional HUD panels are required.

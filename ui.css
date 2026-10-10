@@ -106,3 +106,5 @@
 @media(max-width:540px){.skill-trees{grid-template-columns:1fr}.skill-node{min-height:60px}.stat-grid{font-size:12px}}
 
 input[type="range"],input[type="checkbox"]{accent-color:var(--ui-gold)}
+/* Expansion menus inherit the shared glass and typography tokens. */
+.collection-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:12px}.collection-grid .quest-entry{margin:0;display:flex;flex-direction:column;gap:8px}.collection-grid button{margin-top:auto}#account-content>.quest-entry{display:flex;flex-wrap:wrap;gap:8px;padding:16px;border:1px solid var(--ui-border);background:var(--ui-glass)}#account-content>.quest-entry h3,#account-content>.quest-entry p{width:100%;margin:0 0 6px}#account-content>label{display:block;margin:12px 0}#account-content button{min-height:44px}#account-status{color:var(--ui-sage);overflow-wrap:anywhere}#account-content>.quest-entry button{flex:1 1 120px;font-size:13px}#bounty-list .quest-entry small{color:var(--ui-gold)}

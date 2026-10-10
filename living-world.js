@@ -101,18 +101,18 @@ export function installLivingWorld(api) {
     if(!vendor||!canTrade(vendor.id))return false;
     const allowed=vendor.id==='smith'?['w1','w2','w3','w4']:['potion','a1','a2','a3','a4'];
     if(!allowed.includes(id)||api.player.coins<prices[id]||(items[id].type!=='consumable'&&quantity(id)))return false;
-    api.player.coins-=prices[id];api.addItem(id);api.save();api.sound('coin');api.toast('Purchased '+items[id].name);return true;
+    api.accountEvent?.('buy',{id});api.player.coins-=prices[id];api.addItem(id);api.save();api.sound('coin');api.toast('Purchased '+items[id].name);return true;
   }
   function sell(id) {
     if(!canTrade('merchant')||!quantity(id)||['quest'].includes(items[id]?.type)||[api.player.weapon,api.player.armour].includes(id))return false;
-    if(!removeItem(id,1))return false;api.player.coins+=sellPrice(id);api.save();api.sound('coin');return true;
+    if(!removeItem(id,1))return false;api.accountEvent?.('sell',{id});api.player.coins+=sellPrice(id);api.save();api.sound('coin');return true;
   }
   function upgradeCost(id) {const rank=items[id]?.upgrade||0;return{coins:35+rank*40,tooth:2+rank*2,gem:rank>=1?1:0};}
   function upgrade(id) {
     const item=items[id],cost=upgradeCost(id);
     if(!canTrade('smith')||item?.type!=='weapon'||item.upgrade>=3||!quantity(id)||api.player.coins<cost.coins||quantity('tooth')<cost.tooth||quantity('gem')<cost.gem)return false;
     // Validate everything before the synchronous debit. One copy in, one copy out.
-    api.player.coins-=cost.coins;removeItem('tooth',cost.tooth);if(cost.gem)removeItem('gem',cost.gem);removeItem(id,1);
+    api.accountEvent?.('upgrade',{id});api.player.coins-=cost.coins;removeItem('tooth',cost.tooth);if(cost.gem)removeItem('gem',cost.gem);removeItem(id,1);
     const next=item.base+'~'+(item.upgrade+1);api.addItem(next);if(api.player.weapon===id)api.player.weapon=next;
     api.equipVisual();api.save();api.sound('level');api.toast('Tempered '+items[next].name);return true;
   }
@@ -154,7 +154,7 @@ export function installLivingWorld(api) {
   const beacon=mesh('orb',mat(0xe9c579,{emissive:0xb58132,emissiveIntensity:.6}),0,3,0,.18,.28,.18);beacon.visible=false;beacon.castShadow=false;
   const marker=document.createElement('div');marker.id='quest-marker';$('hud').append(marker);
   const journalButton=document.createElement('button');journalButton.id='journal-button';journalButton.textContent='J · Journal / Map';journalButton.onclick=()=>journal();document.querySelector('.quest').append(journalButton);
-  function progress(q) {
+  function progress(q) {const extra=api.getExpansion?.()?.progress(q);if(extra!==null&&extra!==undefined)return extra;
     if(q.enemyFamily)return data.quests[q.id]?.count||0;
     if(q.bossFamily)return data.frontierBosses.includes(q.bossFamily)?1:0;
     if(q.id==='scouts')return data.quests.scouts.count;
@@ -167,13 +167,13 @@ export function installLivingWorld(api) {
   function acceptQuest(id) {
     const q=questDefinitions.find(q=>q.id===id);
     if(!q||api.panel!=='quest-dialogue'||vendor?.id!==q.giver||nearestNPC()!==vendor||data.quests[id].status!=='available')return false;
-    data.quests[id].status='active';data.tracked=id;api.save();api.toast('Quest accepted · '+q.name);return true;
+    api.accountEvent?.('quest_accept',{id});data.quests[id].status='active';data.tracked=id;api.save();api.toast('Quest accepted · '+q.name);return true;
   }
   function claimQuest(id) {
     const q=questDefinitions.find(q=>q.id===id);
     if(!q||api.panel!=='quest-dialogue'||vendor?.id!==q.giver||nearestNPC()!==vendor||data.quests[id].status!=='active'||progress(q)<q.goal)return false;
     // Mark claimed before awarding: repeated clicks cannot repeat the transaction.
-    data.quests[id].status='claimed';
+    api.accountEvent?.('quest_claim',{id});data.quests[id].status='claimed';
     if(id==='teeth')removeItem('tooth',10);if(id==='supplies')removeItem('supplies',1);if(id==='relic')removeItem('relic',1);
     api.player.coins+=q.gold;api.awardXP(q.xp);api.save();api.sound('level');api.toast('Completed · '+q.name);return true;
   }
@@ -207,8 +207,8 @@ export function installLivingWorld(api) {
     api.modal('The Emerald Wilds',`<div class="eyebrow">North ↑ · ${cave?'You are in Hollowroot Cave':'Your discoveries'}</div><svg class="world-map" viewBox="0 0 440 420" role="img" aria-label="Map of the forest, village, river, ruins and cave"><rect width="440" height="420" rx="12" fill="#273f34"/><polyline points="${river}" stroke="#72b9bb" stroke-width="9" fill="none"/><polyline points="${[[0,64],[-23,36],[-14,18],[-14,-4],[28,-23],[11,-43],[-8,-66]].map(([x,z])=>px(x)+','+py(z)).join(' ')}" stroke="#b6a477" stroke-width="3" fill="none"/>${labels}<circle cx="${px(cave?-46:p.x)}" cy="${py(cave?36:p.z)}" r="5" fill="#fff" stroke="#e9c579" stroke-width="2"/></svg><p class="map-note">White: you · Gold: discovered · Grey: uncharted. Follow the trail north; the cave branches west from Whispering Forest.</p><button id="map-journal">Quest journal</button>`,'map');$('map-journal').onclick=journal;
   }
   function onKill(e,spawnLoot=true) {
-    if(e.family){if(e.isBoss){if(!data.frontierBosses.includes(e.family))data.frontierBosses.push(e.family)}else{const q=data.quests['hunt_'+e.family];if(q?.status==='active')q.count=Math.min(4,q.count+1)}}
-    if(e.type===0&&data.quests.scouts.status==='active')data.quests.scouts.count=Math.min(5,data.quests.scouts.count+1);
+    if(e.family){if(e.isBoss){if(!data.frontierBosses.includes(e.family))data.frontierBosses.push(e.family)}else if(api.eligibleKill?.(e)!==false){const q=data.quests['hunt_'+e.family];if(q?.status==='active')q.count=Math.min(4,q.count+1)}}
+    if(api.eligibleKill?.(e)!==false&&e.type===0&&data.quests.scouts.status==='active')data.quests.scouts.count=Math.min(5,data.quests.scouts.count+1);
     // A tooth is real loot; collecting or turning it in still requires interaction.
     if(spawnLoot&&e.type!==3&&!e.family)api.drop('tooth',e.root.position.x-.4,e.root.position.z+.4);
   }
@@ -286,11 +286,11 @@ export function installLivingWorld(api) {
   }
   function enterCave() {
     if(api.state!=='playing'||Math.hypot(hero.root.position.x+46,hero.root.position.z-38)>4)return false;
-    data.caveDiscovered=true;setArea('cave');api.setPosition(300,0);api.clearAction();api.save();api.toast('Discovered · Hollowroot Cave');return true;
+    data.caveDiscovered=true;setArea('cave');api.setPosition(300,0);api.accountEvent?.('travel');api.clearAction();api.save();api.toast('Discovered · Hollowroot Cave');return true;
   }
   function exitCave() {
     if(Math.hypot(hero.root.position.x-300,hero.root.position.z-5)>3.5)return false;
-    setArea('world');api.setPosition(-46,39);api.clearAction();api.save();api.toast('The forest air welcomes you back.');return true;
+    setArea('world');api.setPosition(-46,39);api.accountEvent?.('travel');api.clearAction();api.save();api.toast('The forest air welcomes you back.');return true;
   }
   function returnToVillage(){setArea('world');api.setPosition(0,64);api.clearAction()}
   function caveInteract() {
@@ -298,11 +298,11 @@ export function installLivingWorld(api) {
     if(Math.hypot(hero.root.position.x-300,hero.root.position.z-5)<3)return exitCave();
     if(!data.gateOpen&&Math.abs(hero.root.position.z+31)<3&&Math.abs(hero.root.position.x-300)<4){
       if(!quantity('cavekey')){api.toast('A key lies in the eastern scaffold chamber.');return true}
-      removeItem('cavekey',1);data.gateOpen=true;gate.visible=false;api.sound('loot');api.save();api.toast('The iron gate opens.');return true;
+      api.accountStructure?.('hollow:gate');removeItem('cavekey',1);data.gateOpen=true;gate.visible=false;api.sound('loot');api.save();api.toast('The iron gate opens.');return true;
     }
     const c=dungeonChests.find(c=>!data[c.key]&&Math.hypot(hero.root.position.x-c.x,hero.root.position.z-c.z)<2.6);
     if(c){if(api.enemies.some(e=>e.hp>0&&e.root.position.distanceTo(hero.root.position)<7)){api.toast('Defeat the nearby guards first.');return true}
-      data[c.key]=true;c.g.rotation.z=.16;
+      api.accountStructure?.('hollow:'+c.key);data[c.key]=true;c.g.rotation.z=.16;
       if(c.key==='keyChest')api.drop('cavekey',c.x-.7,c.z);else{api.drop('gem',c.x+.4,c.z,2);api.drop('coin',c.x-.4,c.z,55)}api.save();return true;
     }return false;
   }
@@ -331,14 +331,14 @@ export function installLivingWorld(api) {
   function guardianTell(e){const phase=e.attack?e.attack.t/e.attack.duration:1,pattern=e.pattern%3;tell.visible=data.area==='cave'&&e.hp>0&&e.state==='attack'&&phase<.7;tell.position.copy(e.root.position);tell.position.y=.06;tell.scale.setScalar(pattern===2?4.3:pattern===0?3.6:2.4);tell.material.opacity=.25+Math.min(1,phase)*.6}
   function caveUpdate(time) {
     gate.visible=!data.gateOpen;dungeonChests.forEach(c=>c.g.rotation.z=data[c.key]?.16:0);
-    if(data.area!=='cave'){tell.visible=false;return}
+    if(data.area!=='cave'||hero.root.position.x>350){tell.visible=false;caveLights.forEach(l=>l.visible=false);return}caveLights.forEach(l=>l.visible=true);
     const nearest=[...torchPositions].sort((a,b)=>a.distanceToSquared(hero.root.position)-b.distanceToSquared(hero.root.position));
     caveLights.forEach((l,i)=>{l.position.copy(nearest[i]);l.intensity=9+Math.sin(time*7+i)});
     torchFlames.forEach((f,i)=>f.scale.y=.65+Math.sin(time*8+i)*.12);pool.position.y=.08+Math.sin(time*1.5)*.015;
     if(guardian.state!=='attack'||guardian.hp<=0)tell.visible=false;
   }
   function afterStart(){setArea(data.area==='cave'?'cave':'world');if(data.guardianDead){guardian.hp=0;guardian.dead=4;guardian.state='death';guardian.root.visible=false}}
-  function interact() {if(caveInteract())return true;const n=nearestNPC();if(n){dialogue(n);return true}if(Math.hypot(hero.root.position.x-24,hero.root.position.z+29)<2.7&&!data.suppliesRecovered){if(api.enemies.some(e=>e.hp>0&&Math.hypot(e.root.position.x-24,e.root.position.z+29)<10)){api.toast('Clear the camp before recovering its supplies.');return true}data.suppliesRecovered=true;api.addItem('supplies');api.save();api.toast('Recovered the village supplies');return true}if(Math.hypot(hero.root.position.x-board.x,hero.root.position.z-board.z)<3){journal();return true}return false}
+  function interact() {if(caveInteract())return true;const n=nearestNPC();if(n){dialogue(n);return true}if(Math.hypot(hero.root.position.x-24,hero.root.position.z+29)<2.7&&!data.suppliesRecovered){if(api.enemies.some(e=>e.hp>0&&Math.hypot(e.root.position.x-24,e.root.position.z+29)<10)){api.toast('Clear the camp before recovering its supplies.');return true}api.accountStructure?.('supplies');api.accountEvent?.('pickup',{structure:'supplies',id:'supplies'});data.suppliesRecovered=true;api.addItem('supplies');api.save();api.toast('Recovered the village supplies');return true}if(Math.hypot(hero.root.position.x-board.x,hero.root.position.z-board.z)<3){journal();return true}return false}
   function hint(){const c=caveHint();if(c)return c;if(!data.suppliesRecovered&&Math.hypot(hero.root.position.x-24,hero.root.position.z+29)<2.7)return 'Recover village supplies';const n=nearestNPC();return n?'Talk to '+n.name:Math.hypot(hero.root.position.x-board.x,hero.root.position.z-board.z)<3?'Read village noticeboard':null}
   function update(dt,time) {
     caveUpdate(time);supplyCrate.visible=data.area!=='cave'&&!data.suppliesRecovered;forge.scale.y=.8+Math.sin(time*9)*.15;lanterns.forEach((m,i)=>m.material.emissiveIntensity=.85+Math.sin(time*3+i)*.15);
@@ -356,5 +356,5 @@ export function installLivingWorld(api) {
   }
   restore(null);
   function serialize(){return data}
-  return {registerNPC:npc,enterCave,exitCave,returnToVillage,caveBlocked,afterStart,guardian,guardianDefeated,guardianAttack,guardianTell,cavePatrols,interact,hint,update,restore,serialize,onKill,updateQuestHUD,journal,worldMap,acceptQuest,claimQuest,questDialogue,questDefinitions,progress,purchase,sell,upgrade,upgradeCost,shop,dialogue,npcs,buildings,quantity};
+  return {setArea,registerNPC:npc,enterCave,exitCave,returnToVillage,caveBlocked,afterStart,guardian,guardianDefeated,guardianAttack,guardianTell,cavePatrols,interact,hint,update,restore,serialize,onKill,updateQuestHUD,journal,worldMap,acceptQuest,claimQuest,questDialogue,questDefinitions,progress,purchase,sell,upgrade,upgradeCost,shop,dialogue,npcs,buildings,quantity};
 }

@@ -6,7 +6,7 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-FILES = ['progression.js', 'adventure-motion.js', 'index.html', 'visual-world.js', 'ui.css', 'ui.js', 'frontier.js', 'living-world.js',
+FILES = ['accounts.js', 'supabase/game-catalog.json', 'expansion-data.js', 'expansion-models.js', 'expansion-world.js', 'companions.js', 'progression.js', 'adventure-motion.js', 'index.html', 'visual-world.js', 'ui.css', 'ui.js', 'frontier.js', 'living-world.js',
          'multiplayer.js', 'multiplayer-config.js', 'supabase-rooms.js']
 html = (ROOT / 'index.html').read_text()
 match = re.search(r'ui\.css\?v=([a-zA-Z0-9-]+)', html)
@@ -20,6 +20,7 @@ for name in FILES:
     for url in re.findall(r"(?:from\s+|import\()\s*['\"]\./([^'\"]+)['\"]", source):
         if url.split('?')[0] not in FILES or not url.endswith('?v=' + release):
             raise ValueError(f'{name}: unversioned or inconsistent dependency {url}')
+    (output / name).parent.mkdir(parents=True, exist_ok=True)
     (output / name).write_bytes((ROOT / name).read_bytes())
 if f"release='{release}'" not in (ROOT / 'frontier.js').read_text():
     raise ValueError('Legacy recovery must use the current release identity')

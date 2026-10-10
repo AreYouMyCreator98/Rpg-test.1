@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
     paths:
+      - accounts.js
+      - supabase/game-catalog.json
+      - expansion-data.js
+      - expansion-models.js
+      - expansion-world.js
+      - companions.js
       - progression.js
       - adventure-motion.js
       - index.html
