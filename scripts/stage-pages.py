@@ -6,7 +6,7 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-FILES = ['index.html', 'visual-world.js', 'ui.css', 'ui.js', 'frontier.js', 'living-world.js',
+FILES = ['adventure-motion.js', 'index.html', 'visual-world.js', 'ui.css', 'ui.js', 'frontier.js', 'living-world.js',
          'multiplayer.js', 'multiplayer-config.js', 'supabase-rooms.js']
 html = (ROOT / 'index.html').read_text()
 match = re.search(r'ui\.css\?v=([a-zA-Z0-9-]+)', html)

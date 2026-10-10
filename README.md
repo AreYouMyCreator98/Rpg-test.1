@@ -2,11 +2,11 @@
 
 A procedural 3D browser action RPG with a continuous expanded overworld, five settlements, sixteen quests, seven bosses, a cave dungeon and optional four-player Supabase co-op. The original forest, hero, equipment, goblins, village and Goblin Chief remain playable.
 
-**Game files:** `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
+**Game files:** `adventure-motion.js`, `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
 
 ## GitHub Pages
 
-Upload **all nine game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
+Upload **all ten game files** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
@@ -178,3 +178,9 @@ set `REALM_TEST_PROXY=1` and `NETWORK_TOOLS_ROOT` to a directory containing
 `ws@8.22.0` and `https-proxy-agent@7.0.6`. The proxy test path verifies TLS for
 both HTTP and WebSockets and preserves binary frames; it does not weaken the game’s
 normal browser connection.
+
+## Expansion Stage 1 — movement and camera
+
+The shared hero rig now has articulated knees and a forward shoulder roll with anticipation, tuck and recovery; core-mesh ground contact is maintained while the existing collision movement and invulnerability remain active. Remote party members use the same pose. Base stamina is 150, regeneration is 18/second after the existing recovery delay, and dodging costs 25. Old saves preserve their stamina percentage; rest points refill the new maximum.
+
+Open **Menu → Settings → Camera & accessibility** for live FOV (45–100°, default 70°), classic/shoulder/first-person view, shoulder side, sensitivity and vertical inversion. Preferences stay on this device. First-person hides the local head, torso and cape while retaining the existing weapon rig and combat. Mobile orbit uses the same preferences. Mount-specific camera validation will follow the mount stage; mounts do not exist yet.

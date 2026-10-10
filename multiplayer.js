@@ -1,5 +1,5 @@
-import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-quiet-20261010-1';
-import {connectSupabase} from './supabase-rooms.js?v=realm-quiet-20261010-1';
+import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-motion-20261010-1';
+import {connectSupabase} from './supabase-rooms.js?v=realm-motion-20261010-1';
 
 export function installMultiplayer(api) {
   const {$,THREE,hero,enemies,loot,items,living}=api;
@@ -144,9 +144,9 @@ export function installMultiplayer(api) {
     if(!host&&clock-lastSnapshot>20){leave('The host stopped responding. Your solo save is unchanged.');return}
     for(const [uid,p] of peers){
       if(!p.pose)continue;const d=p.pose,old=p.ch.root.position.clone();p.ch.root.position.lerp(new THREE.Vector3(d.x,d.y,d.z),1-Math.exp(-dt*18));api.face(p.ch,d.yaw,dt);
-      const speed=Math.min(7,old.distanceTo(p.ch.root.position)/Math.max(dt,.001));api.animate(p.ch,speed,dt,d.attack,d.hp<=0?2:0);
+      const speed=Math.min(7,old.distanceTo(p.ch.root.position)/Math.max(dt,.001));api.resetRoll(p.ch);api.animate(p.ch,speed,dt,d.attack,d.hp<=0?2:0);
       if(d.blocking)p.ch.arms[0].rotation.x=-1.35;
-      if(d.dodge>0)p.ch.rig.rotation.x=-Math.PI*2*(1-d.dodge/.58);
+      if(d.dodge>0)api.groundedRoll(p.ch,d.dodge/.58);
       p.ch.root.visible=clock-p.last<5&&(d.x>200)===(hero.root.position.x>200)&&p.ch.root.position.distanceTo(hero.root.position)<55;
       const armour=items[d.armour],weapon=items[d.weapon];p.ch.bodyMat.color.setHex(armour?.color||0x42614c);p.ch.bodyMat.metalness=(armour?.defence||0)>=4?.65:0;p.ch.bladeMat.color.setHex(weapon?.color||0xaabbbc);p.ch.weapon.visible=!!weapon;
       p.label.textContent=(roster.find(r=>r.id===uid)?.name||'Adventurer')+` · Lv ${d.level} · ${Math.max(0,Math.ceil(d.hp))} HP`+(d.hp<=0?' · fallen':d.away?' · away':'');if(p.ch.root.visible)api.project(p.ch.root.position.clone().add(new THREE.Vector3(0,2.8,0)),p.label);else p.label.style.display='none';

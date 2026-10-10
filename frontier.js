@@ -1,7 +1,7 @@
 // Recover older cached HTML before it can pair its obsolete HUD with this module.
 // This module must retain this guard while pre-design-system pages remain cached.
-if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-quiet-20261010-1"]')){
- const fresh=new URL(location.href),release='realm-quiet-20261010-1';
+if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-motion-20261010-1"]')){
+ const fresh=new URL(location.href),release='realm-motion-20261010-1';
  if(fresh.searchParams.get('v')!==release){fresh.searchParams.set('v',release);location.replace(fresh.href)}
  else{document.body.textContent='The game update could not load. Reopen the game to retry. Your saved journey is safe.'}
  await new Promise(()=>{}); // Navigation replaces this document; never initialize mixed UI.
@@ -106,7 +106,7 @@ export function installFrontier(api){
  function onDeath(e){if(!e.family)return false;const p=e.root.position;api.drop('coin',p.x,p.z,e.isBoss?100+e.type*12:8+e.type*2);api.drop('trophy_'+e.family,p.x+.5,p.z);api.drop(e.isBoss?'frontier_'+e.family:'potion',p.x-.5,p.z);tells.get(e).visible=false;if(e.isBoss){api.sound('victory');api.toast('Victory · '+e.name)}return true}
  function restoreBosses(){for(const e of enemies)if(e.isBoss&&living.serialize().frontierBosses?.includes(e.family)){e.hp=0;e.dead=4;e.state='death';e.root.visible=false}for(const r of tells.values())r.visible=false;waypoint=null}
  function nearestRest(){return SETTLEMENTS.find(s=>Math.hypot(hero.root.position.x-s.x,hero.root.position.z-s.z)<4)}
- function interact(){const s=nearestRest();if(!s)return false;api.player.hp=api.player.maxHp;api.player.stamina=100;api.toast('Rested at '+s.name);api.sound('level');api.save();return true}
+ function interact(){const s=nearestRest();if(!s)return false;api.player.hp=api.player.maxHp;api.player.stamina=api.player.maxStamina;api.toast('Rested at '+s.name);api.sound('level');api.save();return true}
  const box=document.createElement('div');box.id='frontier-mini';box.innerHTML='<canvas width="240" height="240" aria-label="Detailed local minimap"></canvas><small id="map-bearing">N · The Shattered Marches</small><div class="mini-controls"><button id="mini-out" aria-label="Zoom out">−</button><button id="mini-map">Map</button><button id="mini-in" aria-label="Zoom in">+</button><button id="mini-north" aria-label="Toggle north up">N</button></div>';$('hud').append(box);const mini=box.querySelector('canvas');$('mini-out').onclick=()=>zoom=Math.min(100,zoom+12);$('mini-in').onclick=()=>zoom=Math.max(18,zoom-12);$('mini-map').onclick=worldMap;$('mini-north').onclick=()=>{northUp=!northUp;$('mini-north').classList.toggle('north-up',northUp)};mini.onclick=worldMap;
  const atlas=document.createElement('canvas');atlas.width=atlas.height=900;const ac=atlas.getContext('2d'),sx=900/510,sz=900/520;const mx=x=>(x-BOUNDS.left)*sx,mz=z=>(z-BOUNDS.top)*sz;
  for(let y=0;y<900;y+=3)for(let x=0;x<900;x+=3){const wx=x/sx+BOUNDS.left,wz=y/sz+BOUNDS.top,c=new THREE.Color(terrainColor(wx,wz)),slope=ground(wx+2,wz)-ground(wx-2,wz);c.multiplyScalar(Math.max(.65,Math.min(1.2,1-slope*.1)));ac.fillStyle='#'+c.getHexString();ac.fillRect(x,y,3,3)}

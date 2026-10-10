@@ -60,7 +60,7 @@ export function installUI(api){
  function flash(el){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;el.animate([{filter:'brightness(1.35)'},{filter:'brightness(1)'}],{duration:300})}
  function update(){
   const p=api.player;if(!p)return;
-  $('level').textContent='Lv '+p.level;$('stamtext').textContent=(api.blocking?'Blocking ':api.guardBreak>0?'Recovering ':'Stamina ')+Math.floor(p.stamina)+' / 100';
+  $('level').textContent='Lv '+p.level;$('stamtext').textContent=(api.blocking?'Blocking ':api.guardBreak>0?'Recovering ':'Stamina ')+Math.floor(p.stamina)+' / '+p.maxStamina;
   $('gold-counter').classList.toggle('gold-large',String(p.coins).length>4);
   if(lastGold!==p.coins){if(lastGold!==null)flash($('gold-counter'));lastGold=p.coins}
   const data=living.serialize(),q=living.questDefinitions.find(q=>q.id===data.tracked&&data.quests[q.id]?.status==='active')||living.questDefinitions.find(q=>data.quests[q.id]?.status==='active');

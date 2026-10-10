@@ -12,7 +12,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
  await page.goto((process.env.GAME_URL||'http://127.0.0.1:8000/')+'?test');await page.waitForFunction(()=>window.__realm);await page.click('#continue');
  let p=await page.evaluate(()=>__realm.player);for(const k of ['level','xp','hp','coins','weapon','armour'])assert.equal(p[k],oldSave.player[k]);assert.deepEqual(p.inventory,oldSave.player.inventory);
  assert.equal(await page.evaluate(()=>__realm.bossDead),true);assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('realm-fallen-save-v1-backup')).version),1);
- assert.equal(p.stamina,100);console.log('PASS V1 migration preserves equipment, inventory, XP, level, health, coins, chief completion, and backup');
+ assert.equal(p.stamina,150);console.log('PASS V1 migration preserves equipment, inventory, XP, level, health, coins, chief completion, and backup');
  const step=frames=>page.evaluate(n=>{for(let i=0;i<n;i++)__realm.step(1/60)},frames);
  await step(80);await page.keyboard.down('KeyF');await step(1);assert.equal(await page.evaluate(()=>__realm.blocking),true);
  let before=await page.evaluate(()=>({hp:__realm.player.hp,stamina:__realm.player.stamina}));await page.evaluate(()=>__realm.hurtPlayer(20));let after=await page.evaluate(()=>({hp:__realm.player.hp,stamina:__realm.player.stamina}));assert(before.hp-after.hp<=5);assert(before.stamina-after.stamina>=18);
