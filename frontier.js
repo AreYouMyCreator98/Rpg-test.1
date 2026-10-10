@@ -1,8 +1,8 @@
-import {icon} from './ui.js?v=realm-zoom-20261010-5';
+import {icon} from './ui.js?v=realm-hearth-20261010-1';
 // Recover older cached HTML before it can pair its obsolete HUD with this module.
 // This module must retain this guard while pre-design-system pages remain cached.
-if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-zoom-20261010-5"]')){
- const fresh=new URL(location.href),release='realm-zoom-20261010-5';
+if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-hearth-20261010-1"]')){
+ const fresh=new URL(location.href),release='realm-hearth-20261010-1';
  if(fresh.searchParams.get('v')!==release){fresh.searchParams.set('v',release);location.replace(fresh.href)}
  else{document.body.textContent='The game update could not load. Reopen the game to retry. Your saved journey is safe.'}
  await new Promise(()=>{}); // Navigation replaces this document; never initialize mixed UI.
@@ -23,7 +23,7 @@ export const FAMILIES=[
  {id:'elemental',name:'Stormbound Elemental',boss:'Astrax · The Stormheart',quest:'Stones that walk',bossQuest:'Break the stormheart',giver:'sage',npc:'Sage Orin',village:'snow',x:-40,z:-291,bx:-69,bz:-312,hp:155,bossHp:600,speed:2,damage:25,color:0x78bfc8,reward:'Stormheart Edge',power:49}
 ];
 export const ROADS=[
- [[50,118],[50,106],[0,83],[0,64]], [[0,83],[-35,97],[-75,97]],
+ [[50,151],[50,118],[50,106],[0,83],[0,64]], [[0,83],[-35,97],[-75,97]],
  [[0,64],[-60,75],[-110,80],[-132,64],[-146,38],[-180,38]], [[-110,80],[-155,135],[-245,118],[-286,135]],
  [[-180,38],[-180,9+Math.sin(-180*.052)*7],[-190,-35],[-255,-80],[-288,-106]],
  [[-190,-35],[-125,-140],[-159,-158]], [[-8,-66],[-40,-125],[-125,-140]],
@@ -165,5 +165,5 @@ export function installFrontier(api){
   $('clear-waypoint').onclick=()=>{waypoint=null;refresh()};$('atlas-journal').onclick=living.journal;refresh();
  }
  function update(dt){elapsed+=dt;root.visible=hero.root.position.x<200;for(const c of chunkMeshes)c.m.visible=Math.hypot(c.x-hero.root.position.x,c.z-hero.root.position.z)<(api.settings.quality==='low'?85:130);for(const s of structures)if(s.hub)s.hub.rotation.z=elapsed*.4;for(const e of tells.keys())tell(e);mapTimer+=dt;if(mapTimer>.15){mapTimer=0;const northAngle=northUp||hero.root.position.x>200?0:(api.getYaw()||0);box.style.setProperty('--north-x',50+Math.sin(northAngle)*50);box.style.setProperty('--north-y',50-Math.cos(northAngle)*50);$('mini-north').setAttribute('aria-pressed',String(northUp));if(box.offsetParent!==null)paint(mini);if($('frontier-atlas'))paint($('frontier-atlas'),true);$('map-bearing').textContent=hero.root.position.x>200?'Hollowroot Cave':waypoint?'◆ '+Math.round(Math.hypot(waypoint[0]-hero.root.position.x,waypoint[1]-hero.root.position.z))+'m · waypoint':northUp?'N ↑ · North up':'N · Camera follows'}}
- return{paint,update,animate,updateEnemy,onDeath,restoreBosses,interact,tell,worldMap,structures,settlements:SETTLEMENTS,families:FAMILIES,mini,get atlas(){return atlas},get mapView(){return{...mapCenter,zoom:mapZoom}},get waypoint(){return waypoint},hint(){return nearestRest()?'Rest at the village fountain':''}};
+ return{invalidateAtlas(){atlasDirty=true},setWaypoint(x,z){waypoint=[x,z]},paint,update,animate,updateEnemy,onDeath,restoreBosses,interact,tell,worldMap,structures,settlements:SETTLEMENTS,families:FAMILIES,mini,get atlas(){return atlas},get mapView(){return{...mapCenter,zoom:mapZoom}},get waypoint(){return waypoint},hint(){return nearestRest()?'Rest at the village fountain':''}};
 }

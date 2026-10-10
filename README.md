@@ -2,11 +2,11 @@
 
 A procedural 3D browser action RPG with a continuous expanded overworld, five settlements, thirty-three quests, fourteen bosses, five dungeons, pets, mounts and optional persistent four-player Supabase co-op. The original forest, hero, equipment, goblins, village and Goblin Chief remain playable.
 
-**Game files:** `accounts.js`, `expansion-data.js`, `expansion-models.js`, `expansion-world.js`, `companions.js`, `supabase/game-catalog.json`, `progression.js`, `adventure-motion.js`, `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
+**Game files:** `prologue.js`, `homestead.js`, `building-rules.js`, `scene-batch.js`, `accounts.js`, `expansion-data.js`, `expansion-models.js`, `expansion-world.js`, `companions.js`, `supabase/game-catalog.json`, `progression.js`, `adventure-motion.js`, `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
 
 ## GitHub Pages
 
-Upload **all seventeen runtime files (including `supabase/game-catalog.json` in its folder)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
+Upload **all twenty-one runtime files (including `supabase/game-catalog.json` in its folder)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
@@ -207,7 +207,7 @@ Choose an account adventurer before creating/joining a persistent room. All part
 
 Offline actions are queued locally after the game has loaded. Reconnecting renews the character lease and replays typed commands, not arbitrary inventory snapshots. Conflicting revisions preserve both copies and pause synchronization. The Accounts screen can download a recovery copy or explicitly resume the newer cloud copy. Delete confirms before archiving a slot; historical revisions remain private to its owner.
 
-The existing project is configured with the Pages Auth callback. For a new project, install these reviewed SQL files in order: `multiplayer.sql`, `characters-foundation.sql`, `character-commands.sql`, `character-runtime.sql`, `game-catalog-seed.sql`, `persistent-rooms.sql`. Enable email Auth and anonymous Auth for guest rooms. Set the Auth site URL/redirect allowlist to your Pages directory. Keep service-role and management tokens out of game files. Only the browser-safe publishable key belongs in `multiplayer-config.js`.
+The existing project is configured with the Pages Auth callback. For a new project, install these reviewed SQL files in order: `multiplayer.sql`, `characters-foundation.sql`, `character-commands.sql`, `character-runtime.sql`, `game-catalog-seed.sql`, `persistent-rooms.sql`, `prologue.sql`, `homesteads.sql`. Enable email Auth and anonymous Auth for guest rooms. Set the Auth site URL/redirect allowlist to your Pages directory. Keep service-role and management tokens out of game files. Only the browser-safe publishable key belongs in `multiplayer-config.js`.
 
 The database owns prices, resources, point budgets, encounter/reward rules, claim IDs and account bounty clocks. RLS protects each owner's characters and backups. See [EXPANSION-STATUS.md](EXPANSION-STATUS.md) for the trust boundary and [VALIDATION.md](VALIDATION.md) for executed tests.
 
@@ -230,3 +230,18 @@ Use **Continue → choose your adventurer** (or **Accounts & characters**, then 
 If synchronization is paused, **Use cloud copy (keep offline backup)** resumes the last accepted cloud progress and archives unsynced local actions first. **Download previous offline backup** exports that archive; its JSON text is a recovery file, not a playable page. Do not delete a character or clear browser data to resolve a conflict.
 
 Before switching devices or browsers, use **Accounts → Save & release for another browser**. If a crashed or closed browser still holds the character, wait up to 90 seconds for its lease to expire. Only one browser may play the same character at a time.
+
+
+## The Unburied and building a home
+
+New solo characters awaken with their rusty blade in the Unmarked Graves. Read the warning, defeat three grave robbers, break the northern gate, then follow the road to Bram’s charter at the village. Story checkpoints and defeated grave robbers persist. Existing characters keep their level, equipment, position and progression; missing prologue data means an established journey, not a new character. Co-op still starts in the village.
+
+Open **Journey → Build / foundations** (desktop **B**). Choose **Home Base foundation** or **Co-op Base foundation**, then mark its plot on the map. The plots are south-west of Wanderer’s Village. Walk near a cell, choose a part, rotate with the button or **T**, and place a green preview. Finish exits construction. Movement and camera controls stay active. Mounting still uses R.
+
+Both bases support foundations, walls, window walls, working doors, stairs, upper floors and pitched roofs. New foundations attach to existing ones; upper floors need stairs, and roofs need two supporting walls. Closed doors block passage; use Interact to open them. Storeys are selected in the construction menu. Salvage returns half the material cost and cannot remove occupied supports.
+
+Each base has separate timber/stone supplies and a 64-piece limit. Supply piles at the south-east corner replenish every five seconds; Interact gathers 24 timber and 12 stone, capped at 500 each. These supplies are separate from equipment, currency and progression.
+
+A Home Base belongs to its owner; visitors cannot edit it. The Co-op Base belongs to the host’s character and is shared by that host’s parties, not duplicated for every room. Account bases persist in Supabase across devices. Server commands enforce membership, ownership, material costs, placement/support rules, proximity, version conflicts and idempotent retries. Anonymous parties use host-authoritative construction; their base remains on the host’s browser. Solo local homes remain in the existing save. Account and anonymous base stores are intentionally separate; existing character imports do not automatically import browser-built structures.
+
+For a new Supabase installation, apply the complete schema sequence above. On an existing configured project, install the updated runtime/catalog and the additive prologue/homesteads migrations. They change the default for future characters and add protected estate tables; they do not reset existing characters.

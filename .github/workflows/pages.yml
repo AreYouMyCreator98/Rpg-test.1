@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
     paths:
+      - scene-batch.js
+      - homestead.js
+      - building-rules.js
       - prologue.js
       - accounts.js
       - supabase/game-catalog.json

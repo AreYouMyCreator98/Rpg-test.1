@@ -268,3 +268,20 @@ Login/recovery UI, cloud save synchronization, legacy imports, encounter/reward 
 The cache-upgrade suite passed both stale-entry cases and missing-CSS protection with saved progress intact. GitHub release validation `38020252532` and Pages deployment `38020252326` succeeded for `fcbd806`.
 
 A mobile Chromium smoke check then loaded the actual Pages URL and pinned CDN over certificate-verified HTTPS. It passed release `realm-atlas-20261010-1`, WebGL rendering of all three detail textures, corrected camera-follow bearing, touch menu/map/waypoint/attack interactions, retained 49 enemies and schema-3 saving, with no browser errors. The hosted rollback-only database test passed again after deployment. This did not test account login or persistent multiplayer, which remain unimplemented.
+
+
+## The Unburied / Home and Co-op bases — 2026-10-10
+
+- `tests/prologue.cjs`: new graveyard spawn and rusty blade, warning interaction, three actual sword kills, locked gate, escape, stage reload, village charter and legacy level-26 preservation passed.
+- `tests/homesteads-sql.cjs` (PGlite): repeat installation, future-character graveyard default, owner-only home, party guest co-op edits, direct-table denial, independent supplies, stale revisions, idempotent requests, duplicate edges, support requirements and server supply cooldown/proximity passed.
+- `tests/character-runtime-sql.cjs`: existing movement/attack validation, quest/bounty rewards, escrow pickup, leases, protected checkpoints and legacy import passed.
+- `tests/accounts-live.cjs`: two disposable confirmed accounts used real hosted Auth, RLS, private Realtime and RPCs. Persistent characters, guest combat/loot, guest-built shared foundation, host visibility, home read-only permission, host departure, separate solo restoration and shared-base persistence passed without browser exceptions. Test accounts were removed after the run.
+- `tests/visual-browser.cjs`: real WebGL, 109 enemies (106 retained plus three prologue enemies), 33 existing quests, camera framing, generated textures, adaptive resolution, cave transition, quality switching and save/reload passed. Low village sample: 241 draw calls / 148,775 triangles; no JavaScript, shader or console errors. New static graveyard/building meshes are instanced by geometry/material.
+- Chromium mobile emulation is not physical Android/iOS testing. Safari and physical-phone frame rates remain unverified. No claim of cross-browser pixel equivalence is made.
+
+- `tests/homesteads-browser.cjs`: 390×844 touch placement, all seven parts, exact material deductions, gathering, closed/open door collision, stair height progression, upper-floor support, separate local Home/Co-op reload, map footprints and waypoint passed. Actual WebGL screenshots of the graveyard and built structure, plus the settled mobile construction menu, were inspected.
+
+- The two-client service-double multiplayer suite also passed guest construction through the anonymous host, private-home read-only state, existing combat/loot/gates/pets/mounts, public discovery and host-departure recovery.
+
+- Final reruns: prologue passed after moving the warning into starting interaction range; map controls passed terrain recovery, +/- zoom, centering, drag, pinch, waypoint transforms, dungeon maps and wheel zoom. The map drag fixture now begins at the village so its southward pan is not already clamped by the new graveyard spawn at the map edge. Mobile viewport tests passed attack-icon/label double taps, simultaneous joystick/combo, default-touch cancellation, healing, account input sizing and invalid-Continue preservation.
+- Stairwell rules were exercised in both SQL and browser tests. Actual movement steps climbed the stairs to an adjacent upper floor; restoring that local snapshot retained height 3.6. The final hosted construction functions include those same tested support rules.

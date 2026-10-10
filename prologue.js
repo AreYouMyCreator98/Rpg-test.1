@@ -1,7 +1,8 @@
+import {batchScenery} from './scene-batch.js?v=realm-hearth-20261010-1';
 // Chapter zero is world progress; absent data means an existing journey, never a reset.
 export function installPrologue(api){
  const {THREE,mesh,ground,hero,living,$}=api,root=new THREE.Group();api.scene.add(root);
- const START={x:50,z:151},grave={x:46,z:150},gate={x:50,z:118},charter={x:0,z:83};let waking=0;
+ const START={x:50,z:151},grave={x:47.8,z:150},gate={x:50,z:118},charter={x:0,z:83};let waking=0;
  const data=()=>living.serialize().prologue??={version:1,stage:3,read:false,killed:[]};
  const prop=(s,c,x,y,z,a,b,d,parent=root)=>mesh(s,c,x,y,z,a,b,d,parent);
  for(const side of [-1,1])prop('box',0x555d59,50+side*17,2.1,138,1,4.2,41);
@@ -9,13 +10,18 @@ export function installPrologue(api){
  for(let i=0;i<6;i++)for(const side of [-1,1]){const x=50+side*12,z=124+i*5;prop('box',0x6e7671,x,.8,z,1,1.6,.35);prop('box',0x838d7b,x,1.35,z,1.5,.25,.38);prop('box',0x464c43,x,.04,z+1,1.7,.08,2.2);}
  prop('box',0x42382d,50,.17,151,1.4,.34,2.6);for(const side of [-1,1])prop('box',0x6e543c,50+side*.8,.4,151,.15,.8,2.8);
  prop('box',0x7e8272,grave.x,.55,grave.z,1.4,1.1,.6);prop('box',0xc4b798,grave.x,.58,grave.z+.4,.55,.05,.4);
+ // Weathered masonry and closer graves frame the playable escape route.
+ for(const side of [-1,1])for(let z=120;z<159;z+=4){prop('box',0x747c70,50+side*17,4.25,z,1.3,.22,3.9);prop('box',0x606b60,50+side*16.4,1.4,z,.18,2.8,.55)}
+ for(const side of [-1,1])for(const z of [132,140,147]){const x=50+side*6;prop('box',0x737f73,x,.7,z,.95,1.4,.28);prop('box',0x9a9e83,x,1.15,z,1.4,.22,.32);prop('orb',0x716b52,x,.17,z+1,1,.2,1.5)}
+ for(const x of [36,40,60,64]){prop('box',0x657366,x,3.9,118,2,.8,1.15);prop('box',0x88927b,x,4.35,118,2.2,.18,1.3)}
  const hinge=new THREE.Group();hinge.position.set(47,0,118);root.add(hinge);for(let i=0;i<9;i++)prop('box',0x434b46,i*.75,1.7,0,.12,3.4,.12,hinge);prop('box',0x71674c,3,1,0,6,.15,.18,hinge);prop('box',0x71674c,3,2.5,0,6,.15,.18,hinge);
  for(const x of [45,55]){prop('cyl',0x655441,x,1.3,119,.12,2.6,.12);prop('cone',api.mat(0xf9b75b,{emissive:0xeb7a2b,emissiveIntensity:.7}),x,2.7,119,.2,.55,.2)}
  prop('box',0x614c37,charter.x,ground(charter.x,charter.z)+1,charter.z,.12,2,.12);prop('box',0xc4ad77,charter.x,ground(charter.x,charter.z)+1.6,charter.z,1.8,.8,.12);
+ root.remove(hinge);batchScenery(THREE,root);root.add(hinge);
  const foes=[[44,140,0,'Grave-picker'],[58,132,0,'Lantern thief'],[50,124,1,'Veyr · Keeper of the Pit']].map(([x,z,t,name],i)=>{const e=api.spawnEnemy(x,z,t);e.prologue=i;e.name=name;e.label.firstChild.textContent=name;e.respawn=Infinity;return e});
  api.poi.push({name:'The Unmarked Graves',x:50,z:138});api.frontier.structures.push({x:50,z:138,w:35,d:42,color:'#77796c',kind:'graveyard'});
  function restore(saved){const old=saved?.living?.prologue;living.serialize().prologue=old?{version:1,stage:Math.max(0,Math.min(3,Number(old.stage)||0)),read:!!old.read,killed:Array.isArray(old.killed)?[...new Set(old.killed.filter(i=>Number.isInteger(i)&&i>=0&&i<3))]:[]}:saved?{version:1,stage:3,read:true,killed:[]}:{version:1,stage:0,read:false,killed:[]};for(const e of foes)if(data().killed.includes(e.prologue)){e.hp=0;e.dead=4;e.root.visible=false;e.respawn=Infinity}waking=!saved?2.4:0;hinge.rotation.y=data().stage>=2?-Math.PI/2:0;}
- function afterStart(){if(data().stage===0)api.toast('CHAPTER ZERO · THE UNBURIED — A rusty blade is all that remains.');}
+ function afterStart(){if(data().stage===0)api.toast('CHAPTER ZERO · THE UNBURIED — Read the warning beside your grave. Your rusty blade is all that remains.');}
  function dialogue(title,text,button,fn){api.modal(title,'<div class="eyebrow">The lone warrior · Chapter zero</div><p>'+text+'</p><button id="story-next" class="primary">'+button+'</button>','story');$('story-next').onclick=()=>{api.closeModal();fn?.();api.save()};}
  function interact(){const p=hero.root.position,near=q=>Math.hypot(p.x-q.x,p.z-q.z)<3;
   if(near(grave)){dialogue('A name scratched away','Cold earth fills your gloves. Your armour bears the mark of the royal vanguard, but every name on the burial ledger has been struck through. Beneath a fallen soldier’s hand you find a warning: “The king ordered us buried before the battle was over. If one of us wakes, follow the lanterns. Bram in Wanderer’s Village will remember.”<br><br>You are alone. Someone made certain of that.','Keep the warning',()=>{data().read=true;data().stage=Math.max(1,data().stage)});return true}

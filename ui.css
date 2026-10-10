@@ -132,3 +132,11 @@ html.zoom-recovery,html.zoom-recovery body{touch-action:pinch-zoom}
 #zoom-recovery>div{max-width:420px;pointer-events:none}
 #zoom-recovery h2{font:28px var(--ui-serif);color:var(--ui-gold)}
 #zoom-recovery p{font:16px/1.5 var(--ui-sans)}
+
+/* Construction uses the same glass tokens and leaves movement/camera accessible. */
+#build-controls{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));width:min(300px,58vw);padding:12px;z-index:35;pointer-events:auto}
+#build-controls p{font-size:12px;min-height:32px;margin:8px 0}
+#build-controls>div{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+#build-controls button{min-height:44px;padding:8px;font-size:14px}
+.building-mode .touch-actions{visibility:hidden}
+.estate-choices{display:flex;gap:8px;flex-wrap:wrap}

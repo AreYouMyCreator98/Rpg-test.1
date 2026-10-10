@@ -86,6 +86,11 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  // Menus must not stop the host simulating another player's fight.
  await a.evaluate(()=>__realm.net.lobby());await a.bringToFront();await b.evaluate(()=>{__realm.setPosition(299,-48);__realm.player.hp=100;for(let i=0;i<30;i++)__realm.step(.05)});await b.waitForFunction(()=>__realm.player.hp<100,{},{timeout:30000}).catch(async e=>{console.log('GUARDIAN',await a.evaluate(()=>({attack:__realm.living.guardian.attack,hit:__realm.living.guardian.hit,state:__realm.living.guardian.state,hp:__realm.living.guardian.hp,pos:__realm.living.guardian.root.position.toArray(),target:__realm.living.guardian.netTarget,peers:[...__realm.net.peers.values()].map(p=>({pose:p.pose,position:p.ch.root.position.toArray()}))})));console.log('GUEST',await b.evaluate(()=>({invulnerable:__realm.invulnerable,mounted:__realm.companions.mounted,panel:__realm.panel,state:__realm.state,hp:__realm.player.hp})));throw e});
  console.log('PASS host menu keeps guardian combat running for guest');
+ await b.evaluate(()=>{__realm.closeModal();__realm.living.setArea('overworld');__realm.setPosition(-74,118)});await b.waitForTimeout(600);
+ await b.evaluate(()=>__realm.homestead.change({action:'place',piece:{id:crypto.randomUUID(),type:'foundation',x:0,z:0,rotation:0,level:0}},'coop'));
+ await a.waitForFunction(()=>__realm.homestead.states.coop.pieces.length===1);await b.waitForFunction(()=>__realm.homestead.states.coop.pieces.length===1);
+ assert.equal(await b.evaluate(()=>__realm.homestead.states.home.canEdit),false);
+ console.log('PASS anonymous guest builds shared foundation through host, with private home read-only');
  await a.click('#leave-room');await b.waitForFunction(()=>!__realm.net.active,{},{timeout:12000});
  assert.equal(await a.evaluate(()=>__realm.player.coins),321);assert.equal(await b.evaluate(()=>__realm.player.coins),321);
  // Public discovery uses the same working join flow.

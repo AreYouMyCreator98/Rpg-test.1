@@ -6,11 +6,11 @@ const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
  if(process.env.THREE_TEST_MODULE)await page.route('https://cdn.jsdelivr.net/**',r=>r.fulfill({path:process.env.THREE_TEST_MODULE,contentType:'application/javascript'}));
  await page.addInitScript(()=>localStorage.setItem('realm-fallen-settings',JSON.stringify({quality:'low',sound:false})));
- await page.goto((process.env.GAME_URL||'http://localhost:8000/')+'?test');await page.waitForFunction(()=>window.__realm);await page.tap('#play');
+ await page.goto((process.env.GAME_URL||'http://localhost:8000/')+'?test');await page.waitForFunction(()=>window.__realm);await page.tap('#play');await page.evaluate(()=>__realm.setPosition(0,64));await page.waitForTimeout(300);
  const initial=await page.evaluate(()=>{
   const r=__realm;r.visuals.update(.3,1,1/60);r.renderer.render(r.scene,r.camera);
   return {calls:r.renderer.info.render.calls,triangles:r.renderer.info.render.triangles,enemies:r.enemies.length,quests:r.living.questDefinitions.length,shadows:r.visuals.shadows.count,instanced:r.visuals.chunks.filter(c=>c.m.isInstancedMesh).length};
- });assert.equal(await page.evaluate(()=>__realm.scene.children.find(o=>o.isHemisphereLight).intensity),1.25);assert.equal(initial.enemies,106);assert.equal(initial.quests,33);assert(initial.shadows>=58);assert(initial.instanced>50);assert(initial.calls<300,JSON.stringify(initial));assert(initial.triangles<180000,JSON.stringify(initial));console.log('PASS Low village rendering budget and preserved enemies/quests:',initial);
+ });assert.equal(await page.evaluate(()=>__realm.scene.children.find(o=>o.isHemisphereLight).intensity),1.25);assert.equal(initial.enemies,109);assert.equal(initial.quests,33);assert(initial.shadows>=58);assert(initial.instanced>50);assert(initial.calls<300,JSON.stringify(initial));assert(initial.triangles<180000,JSON.stringify(initial));console.log('PASS Low village rendering budget and preserved enemies/quests:',initial);
  for(const [x,z]of [[0,64],[-5,61],[-7,57],[-20,43],[-180,57],[-20,-225]]){
   await page.evaluate(([x,z])=>__realm.setPosition(x,z),[x,z]);await page.waitForTimeout(150);
   const view=await page.evaluate(()=>{const r=__realm;const top=r.hero.root.position.clone().add(new r.THREE.Vector3(0,2.2,0)).project(r.camera),feet=r.hero.root.position.clone().project(r.camera);return{distance:r.camera.position.distanceTo(r.hero.root.position),height:Math.abs(top.y-feet.y)/2,ground:r.camera.position.y-r.surface(r.camera.position.x,r.camera.position.z)}});
