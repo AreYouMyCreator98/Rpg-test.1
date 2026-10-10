@@ -6,6 +6,13 @@ export function refineAdventurer(THREE,ch){
  // Replace the flat rectangular cloak with a tapered, pleated, scalloped silhouette.
  const v=[],ix=[];for(let r=0;r<7;r++)for(let c=0;c<9;c++){const u=c/8,t=r/6;v.push((u-.5)*(.88+t*.25),.5-t*1.05+(r===6?Math.abs(u-.5)*.11:0),Math.sin(u*Math.PI*6)*.28*t-Math.sin(t*Math.PI)*.5)}
  for(let r=0;r<6;r++)for(let c=0;c<8;c++){const a=r*9+c;ix.push(a,a+1,a+9,a+1,a+10,a+9)}const cape=new THREE.BufferGeometry();cape.setAttribute('position',new THREE.Float32BufferAttribute(v,3));cape.setIndex(ix);cape.computeVertexNormals();ch.cape.geometry=cape;
+ // Replace spherical pauldrons with a curved, layered armour shell.
+ const pv=[],pi=[];for(let row=0;row<4;row++)for(let col=0;col<9;col++){const a=col/8*Math.PI;pv.push(Math.cos(a)*(1-row*.09),Math.sin(a)*(.75-row*.1)-row*.22,(row/3-.5)*1.7)}
+ for(let r=0;r<3;r++)for(let c=0;c<8;c++){const a=r*9+c;pi.push(a,a+1,a+9,a+1,a+10,a+9)}const shell=new THREE.BufferGeometry();shell.setAttribute('position',new THREE.Float32BufferAttribute(pv,3));shell.setIndex(pi);shell.computeVertexNormals();ch.shoulder.forEach(m=>{m.geometry=shell;m.material.side=THREE.DoubleSide});ch.arms.forEach(a=>{a.children[0].geometry=shell;});
+ // Smaller inset eyes and swept locks refine the existing expressive head.
+ ch.head.children.filter(o=>o.isMesh&&o.geometry.type==='BoxGeometry').forEach(o=>{o.scale.x*=.82;o.scale.y*=.72});
+ const hair=ch.head.children[2]?.material;
+ for(let k=0;k<5;k++){const lock=add(panel([[-.06,.13],[.07,.11],[.10,-.04],[.025,-.18],[-.04,-.06]],.045),hair,ch.head,-.21+k*.095,.21,.20);lock.rotation.z=-.28+k*.07;}
  // Chest harness, collar and layered tassets follow existing torso movement.
  for(const side of [-1,1]){
  const strap=add(panel([[-.055,.32],[.055,.32],[.055,-.32],[-.055,-.32]]),leather,ch.rig,side*.19,1.23,.275);strap.rotation.z=side*.42;

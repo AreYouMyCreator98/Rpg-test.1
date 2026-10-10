@@ -1,9 +1,10 @@
-import {installRiverDetails} from './river-details.js?v=realm-cinematic-1';
-import {installEnvironmentLife} from './environment-life.js?v=realm-cinematic-1';
-import {graphics,retireInstances} from './graphics.js?v=realm-cinematic-1';
-import {createTerrainStream} from './terrain-stream.js?v=realm-cinematic-1';
-import {createWesternRange} from './emerald-landscape.js?v=realm-cinematic-1';
-import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-cinematic-1';
+import {dressVillage} from './village-art.js?v=realm-village-1';
+import {installRiverDetails} from './river-details.js?v=realm-village-1';
+import {installEnvironmentLife} from './environment-life.js?v=realm-village-1';
+import {graphics,retireInstances} from './graphics.js?v=realm-village-1';
+import {createTerrainStream} from './terrain-stream.js?v=realm-village-1';
+import {createWesternRange} from './emerald-landscape.js?v=realm-village-1';
+import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-village-1';
 // Presentation only. No save, item, enemy, network or collision ownership.
 // Repeated decoration is instanced by material in spatial cells; Vale assets are repository-hosted.
 export function installVisualWorld(api) {
@@ -116,7 +117,7 @@ export function installVisualWorld(api) {
     const {x,z,w,d,h}=b,y=ground(x,z);
     // Roof courses, ridge caps, diagonal timber braces, masonry and shuttered windows.
     for(const side of [-1,1]){
-      for(let row=0;row<4;row++)add('box',row%2?0x475b50:0x52675b,x+side*w*(.08+row*.125),y+h+1.45-row*.32,z,.11,.12,d+.65,0,-side*.48);
+      for(let row=0;row<(living.buildings.some(v=>v.g===b.g)?0:4);row++)add('box',row%2?0x475b50:0x52675b,x+side*w*(.08+row*.125),y+h+1.45-row*.32,z,.11,.12,d+.65,0,-side*.48);
       for(let k=0;k<3;k++)add('box',0x705139,x+(k-1)*w*.3,y+h*.47,z+side*(d/2+.09),.1,h*.83,.12,0,(k%2?1:-1)*.65);
       for(const xx of [-w*.3,w*.3])for(const lr of [-1,1])add('box',0x6b5940,x+xx+lr*.47,y+h*.6,z+side*(d/2+.12),.2,.96,.1);
       for(let j=0;j<Math.floor(w);j++)add('box',j%2?0x889080:0x758173,x-w/2+j+.5,y+.17,z+side*(d/2+.16),.83,.3,.26);
@@ -126,6 +127,7 @@ export function installVisualWorld(api) {
     add('box',0x818a79,x+w*.3,y+h+1.25,z-.7,.62,2.3,.65);
     add('box',0x535d51,x+w*.3,y+h+2.4,z-.7,.8,.14,.83);
   }
+  dressVillage({THREE,buildings:living.buildings,ground,add,geometries:decorativeGeo});
   // Bake the existing static building surfaces together by spatial cell. Preserve signs,
   // glowing windows and all interactive/animated objects; no runtime geometry churn.
   const masonry=new Map(),v=new THREE.Vector3(),normal=new THREE.Vector3(),nm=new THREE.Matrix3();
@@ -138,7 +140,7 @@ export function installVisualWorld(api) {
     nm.getNormalMatrix(m.matrixWorld);
     for(let j=0;j<(index?index.count:p.count);j++){
       const k=index?index.getX(j):j;v.fromBufferAttribute(p,k).applyMatrix4(m.matrixWorld);normal.fromBufferAttribute(n,k).applyNormalMatrix(nm);
-      out.p.push(v.x,v.y,v.z);out.n.push(normal.x,normal.y,normal.z);out.c.push(m.material.color.r,m.material.color.g,m.material.color.b);const tint=m.material.color;out.kind.push(tint.r<.4&&tint.r>tint.g*1.3&&tint.g>tint.b*1.3?1:0);
+      out.p.push(v.x,v.y,v.z);out.n.push(normal.x,normal.y,normal.z);const base=m.material.color.clone();if(living.buildings.some(v=>v.g===b.g)&&Math.abs(base.r-base.g)<.18&&base.r>.4)base.lerp(new THREE.Color(0xc6b393),.28);out.c.push(base.r,base.g,base.b);const tint=m.material.color;out.kind.push(tint.r<.4&&tint.r>tint.g*1.3&&tint.g>tint.b*1.3?1:0);
     }
     m.visible=false;
   });

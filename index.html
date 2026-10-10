@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><link rel="icon" href="data:,"><meta name="theme-color" content="#102f29"><title>Realm of the Fallen</title>
-<link rel="stylesheet" href="./ui.css?v=realm-cinematic-1"></head><body>
+<link rel="stylesheet" href="./ui.css?v=realm-village-1"></head><body>
 <div id="shade"></div><section id="title"><div class="eyebrow">The Shattered Marches · World expansion</div><h1>Realm of<br>the <span>Fallen</span></h1><div class="rule"></div><p>Beyond the old forest, a kingdom awaits. Explore mountain villages, reclaim the roads, and challenge fourteen bosses, descend into ancient dungeons and ride with your companions.</p><div class="buttons"><button class="primary" id="play" disabled>Begin your journey &nbsp; →</button><button id="continue" class="hidden">Continue</button></div><div class="small-buttons"><button id="title-controls">Controls</button><button id="title-settings">Settings</button></div><div id="loading">Awakening the forest…</div></section><div id="brand">REALM OF THE FALLEN &nbsp; / &nbsp; THE SHATTERED MARCHES</div>
 <div id="hud" class="hidden">
  <section class="hero-card panel" aria-label="Character status"><span class="hero-emblem" data-icon="hero"></span><div class="hero-top"><span class="hero-name">The Wanderer</span><span class="level" id="level">Lv 1</span></div><div class="status-row health"><div class="bar"><i id="hpbar"></i></div><span id="hptext"></span></div><div class="status-row experience"><div class="bar xp"><i id="xpbar"></i></div><span id="xptext"></span></div><div class="status-row stamina-row"><div class="bar stamina"><i id="staminabar"></i></div><span id="stamtext">Stamina 100 / 100</span></div></section>
@@ -40,29 +40,29 @@
 </script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js"}}</script>
 <script type="module">
-import {graphics,normaliseGraphics} from './graphics.js?v=realm-cinematic-1';
-import {batchScenery} from './scene-batch.js?v=realm-cinematic-1';
-import {valeGroundColor,valeRiverProfile} from './emerald-vale.js?v=realm-cinematic-1';
-import {createForestArt} from './environment-art.js?v=realm-cinematic-1';
-import {createCinematic} from './cinematic.js?v=realm-cinematic-1';
-import {refineAdventurer} from './hero-detail.js?v=realm-cinematic-1';
-import {loadScoutAsset,replaceScouts,animateScout} from './scout-model.js?v=realm-cinematic-1';
+import {graphics,normaliseGraphics} from './graphics.js?v=realm-village-1';
+import {batchScenery} from './scene-batch.js?v=realm-village-1';
+import {valeGroundColor,valeRiverProfile} from './emerald-vale.js?v=realm-village-1';
+import {createForestArt} from './environment-art.js?v=realm-village-1';
+import {createCinematic} from './cinematic.js?v=realm-village-1';
+import {refineAdventurer} from './hero-detail.js?v=realm-village-1';
+import {loadScoutAsset,replaceScouts,animateScout} from './scout-model.js?v=realm-village-1';
 const scoutAssetPromise=loadScoutAsset();
-let installLivingWorld,migrateSave;try{({installLivingWorld,migrateSave}=await import('./living-world.js?v=realm-cinematic-1'))}catch(e){fatal('The Living World module could not load. Keep index.html and living-world.js together, then reload.');throw e}
-const {installFrontier,BOUNDS,WORLD_WIDTH,WORLD_DEPTH,roadDistance,terrainColor,extraHeight}=await import('./frontier.js?v=realm-cinematic-1');
-import {installHomestead} from './homestead.js?v=realm-cinematic-1';
-import {installAccounts} from './accounts.js?v=realm-cinematic-1';
+let installLivingWorld,migrateSave;try{({installLivingWorld,migrateSave}=await import('./living-world.js?v=realm-village-1'))}catch(e){fatal('The Living World module could not load. Keep index.html and living-world.js together, then reload.');throw e}
+const {installFrontier,BOUNDS,WORLD_WIDTH,WORLD_DEPTH,roadDistance,terrainColor,extraHeight}=await import('./frontier.js?v=realm-village-1');
+import {installHomestead} from './homestead.js?v=realm-village-1';
+import {installAccounts} from './accounts.js?v=realm-village-1';
 let prologue=null,homestead=null,living=null,net=null,frontier=null,ui=null,visuals=null,progression=null,expansion=null,companions=null,accounts=null,accountActor=null,accountDrops=false,accountReward=null;let lastTownCombat=-Infinity,townReturnBusy=false;
-const {installPrologue}=await import('./prologue.js?v=realm-cinematic-1');
-const {installUI,icon}=await import('./ui.js?v=realm-cinematic-1');
-let installVisualWorld;try{({installVisualWorld}=await import('./visual-world.js?v=realm-cinematic-1'))}catch(e){fatal('The scenery module could not load. Reload to retry; keep visual-world.js with the other game files. Your saved journey is safe.');throw e}
-const {installExpansionWorld}=await import('./expansion-world.js?v=realm-cinematic-1');
-const {installCompanions,normaliseCompanions}=await import('./companions.js?v=realm-cinematic-1');
+const {installPrologue}=await import('./prologue.js?v=realm-village-1');
+const {installUI,icon}=await import('./ui.js?v=realm-village-1');
+let installVisualWorld;try{({installVisualWorld}=await import('./visual-world.js?v=realm-village-1'))}catch(e){fatal('The scenery module could not load. Reload to retry; keep visual-world.js with the other game files. Your saved journey is safe.');throw e}
+const {installExpansionWorld}=await import('./expansion-world.js?v=realm-village-1');
+const {installCompanions,normaliseCompanions}=await import('./companions.js?v=realm-village-1');
 const $=id=>document.getElementById(id);let THREE;
 try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js')}catch(e){fatal('The forest could not load. Check your internet connection and reload. The game needs access to cdn.jsdelivr.net.');throw e}
 function fatal(message){const el=document.createElement('div');el.id='fatal';el.style.cssText='position:fixed;inset:0;z-index:100;background:#102f29;color:#f3e8d1;display:grid;place-content:center;padding:24px';el.innerHTML='<h2>Journey interrupted</h2><p></p><button onclick="location.reload()">Try again</button>';el.querySelector('p').textContent=message;document.body.append(el)}
-import {prepareRollRig,groundedRoll,resetRoll,normaliseCamera} from './adventure-motion.js?v=realm-cinematic-1';
-import {normaliseProgression,characterStats,refreshVitals,xpForLevel,installProgression} from './progression.js?v=realm-cinematic-1';
+import {prepareRollRig,groundedRoll,resetRoll,normaliseCamera} from './adventure-motion.js?v=realm-village-1';
+import {normaliseProgression,characterStats,refreshVitals,xpForLevel,installProgression} from './progression.js?v=realm-village-1';
 const forestArt=createForestArt(THREE);
 const TAU=Math.PI*2,clamp=THREE.MathUtils.clamp,lerp=THREE.MathUtils.lerp,rand=(a,b)=>a+Math.random()*(b-a),V=THREE.Vector3;
 const mobile=matchMedia('(pointer:coarse)').matches;if(mobile)document.body.classList.add('touch');
@@ -306,7 +306,7 @@ prologue=installPrologue({THREE,scene,mesh,mat,hero,living,$,ground,spawnEnemy,f
 replaceScouts(THREE,await scoutAssetPromise,enemies,scene,{camera,get settings(){return settings}});
 visuals=installVisualWorld({startingScenery,startingTrees:trunks,landscapeColor,forestArt,BOUNDS,THREE,scene,renderer,camera,sun,hero,shield,geo,mat,ground,surface,pathDist,riverZ,obstacles,nearbyObstacles,living,frontier,enemies,terrain,water,get settings(){return settings},get active(){return state==='playing'&&!panel},get audioContext(){return audio}});
 living.restore(null);
-try{const {installMultiplayer}=await import('./multiplayer.js?v=realm-cinematic-1');net=installMultiplayer({bounds:BOUNDS,$,THREE,scene,hero,enemies,loot,items,chests,living,frontier,expansion,companions,accountStructure,getAccounts(){return accounts},getHomestead(){return homestead},character,animate,groundedRoll,resetRoll,characterStats,normaliseProgression,face,project,drop,removeLoot,addItem,awardXP,burst,sound,toast,modal,closeModal,start,readSave,hurtPlayer,
+try{const {installMultiplayer}=await import('./multiplayer.js?v=realm-village-1');net=installMultiplayer({bounds:BOUNDS,$,THREE,scene,hero,enemies,loot,items,chests,living,frontier,expansion,companions,accountStructure,getAccounts(){return accounts},getHomestead(){return homestead},character,animate,groundedRoll,resetRoll,characterStats,normaliseProgression,face,project,drop,removeLoot,addItem,awardXP,burst,sound,toast,modal,closeModal,start,readSave,hurtPlayer,
 get player(){return player},get panel(){return panel},get state(){return state},get attack(){return attack},get dodge(){return dodge},get blocking(){return blocking},get bossDead(){return bossDead},setBossDead(value){bossDead=value},
 structureFrom(uid,fn){accountActor=uid===net?.id?null:uid;try{return fn()}finally{accountActor=null}},
 hitFrom(e,amount,heavy,ch,combatStats){const original=hero.root.position.clone();try{accountActor=ch.netId;hero.root.position.copy(ch.root.position);hurtEnemy(e,amount,heavy,combatStats)}finally{accountActor=null;hero.root.position.copy(original)}}
