@@ -16,6 +16,7 @@ on:
       - scout-model.js
       - assets/goblin-scout.gltf
       - assets/models/goblin_scout.glb
+      - assets/models/goblin_scout_lod.glb
       - scene-batch.js
       - gathering.js
       - gathering-rules.js

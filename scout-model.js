@@ -8,19 +8,22 @@ export async function loadScoutAsset(){
   const loader=new GLTFLoader();
   try{
    const [asset,{clone}]=await deadline(Promise.all([
-    loader.loadAsync(new URL('./assets/models/goblin_scout.glb?v=realm-red-cowl-1',import.meta.url).href),
+    loader.loadAsync(new URL('./assets/models/goblin_scout.glb?v=realm-red-cowl-2',import.meta.url).href),
     import(CDN+'examples/jsm/utils/SkeletonUtils.js')
    ]),10000);
    if(!REQUIRED.every(name=>asset.animations.some(c=>c.name===name)))throw new Error('Scout clips are incomplete');
    const names=['Root','Head','UpperArmL','UpperArmR','ThighL','ThighR','HandR'];
    if(!names.every(name=>asset.scene.getObjectByName(name)))throw new Error('Scout skeleton is incomplete');
-   return {...asset,cloneSkinned:clone,skinned:true};
+   // Optional geometry streams independently; a slow/failed LOD cannot delay Play.
+   const lodPromise=deadline(loader.loadAsync(new URL('./assets/models/goblin_scout_lod.glb?v=realm-red-cowl-2',import.meta.url).href),10000)
+    .then(low=>validatedLod(asset,low)).catch(error=>{console.warn('Scout LOD unavailable; keeping full detail.',error);return null});
+   return {...asset,cloneSkinned:clone,skinned:true,lodPromise};
   }catch(error){console.warn('Red Cowl unavailable; loading the original Scout.',error)}
   // Existing glTF remains a genuine playable fallback, including its original clips.
-  return await deadline(loader.loadAsync(new URL('./assets/goblin-scout.gltf?v=realm-red-cowl-1',import.meta.url).href),5000);
+  return await deadline(loader.loadAsync(new URL('./assets/goblin-scout.gltf?v=realm-red-cowl-2',import.meta.url).href),5000);
  }catch(error){console.warn('Scout assets unavailable; retaining the procedural model.',error);return null}
 }
-export function replaceScouts(THREE,asset,enemies,scene){
+export function replaceScouts(THREE,asset,enemies,scene,view=null){
  if(!asset)return;
  for(const e of enemies){
   if(e.type!==0||e.prologue!==undefined||e.family||e.expansion)continue;
@@ -40,7 +43,12 @@ export function replaceScouts(THREE,asset,enemies,scene){
   for(const clip of asset.animations){const action=mixer.clipAction(clip);action.play();action.enabled=true;action.setEffectiveWeight(0);actions[clip.name]=action}
   let weapon=find('Dagger');
   if(asset.skinned){weapon=new THREE.Group();weapon.name='Dagger';find('HandR').add(weapon)}
-  Object.assign(e,{root,rig:asset.skinned?model:find('Rig'),head:find('Head'),arms:asset.skinned?[find('UpperArmL'),find('UpperArmR')]:[find('ArmL'),find('ArmR')],legs:asset.skinned?[find('ThighL'),find('ThighR')]:[find('LegL'),find('LegR')],weapon,scoutModel:{mixer,actions,skinned:!!asset.skinned,state:null,elapsed:0,rootBone:find('Root')}});
+  Object.assign(e,{root,rig:asset.skinned?model:find('Rig'),head:find('Head'),arms:asset.skinned?[find('UpperArmL'),find('UpperArmR')]:[find('ArmL'),find('ArmR')],legs:asset.skinned?[find('ThighL'),find('ThighR')]:[find('LegL'),find('LegR')],weapon,scoutModel:{mixer,actions,skinned:!!asset.skinned,state:null,elapsed:0,rootBone:find('Root'),view,lod:false,lodPairs:null}});
+  asset.lodPromise?.then(geometries=>{
+   if(!geometries)return;
+   const pairs=[];model.traverse(mesh=>{if(mesh.isSkinnedMesh)pairs.push({mesh,high:mesh.geometry,low:geometries.get(mesh.material.name)})});
+   if(pairs.length&&pairs.every(p=>p.low))e.scoutModel.lodPairs=pairs;
+  });
   // Retire only the old procedural character's instance-owned materials.
   e.bodyMat.dispose();e.bladeMat.dispose();scene.remove(old);scene.add(root);
  }
@@ -48,6 +56,7 @@ export function replaceScouts(THREE,asset,enemies,scene){
 export function animateScout(e,speed,dt,attack,dying){
  if(!e.scoutModel)return false;
  const s=e.scoutModel;
+ updateScoutDetail(e);
  const name=dying?'Death':e.stagger>0?'Stagger':e.recoil>0?'Damage':attack?'Attack':speed>2.8?'Run':speed>.1?'Walk':'Idle';
  const clip=s.skinned&&['Damage','Stagger'].includes(name)?'Hit':name;
  if(s.state!==name||(['Damage','Stagger'].includes(name)&&(e.recoil||0)>(s.previousRecoil||0)+.02)){s.state=name;s.elapsed=0}
@@ -70,3 +79,31 @@ export function animateScout(e,speed,dt,attack,dying){
  s.mixer.update(0);return true;
 }
 function lerp(a,b,t){return a+(b-a)*t}
+
+// Swap only vertex buffers. Bones, skin binding, mixer and action time never change.
+export function updateScoutDetail(e){
+ const s=e.scoutModel;if(!s?.lodPairs||!s.view)return false;
+ const settings=s.view.settings,quality=settings.quality==='auto'?['low','medium','high'][settings.autoTier??1]:settings.quality;
+ const threshold={low:12,medium:18,high:26,ultra:36}[quality]||18;
+ const distance=e.root.position.distanceTo(s.view.camera.position);
+ // Hysteresis avoids flickering between meshes while orbiting or moving at a boundary.
+ const next=s.lod?distance>threshold-3:distance>threshold;
+ if(next===s.lod)return false;
+ for(const pair of s.lodPairs)pair.mesh.geometry=next?pair.low:pair.high;
+ s.lod=next;return true;
+}
+function validatedLod(high,low){
+ const primary=new Map(),result=new Map();
+ high.scene.updateMatrixWorld(true);low.scene.updateMatrixWorld(true);
+ high.scene.traverse(m=>{if(m.isSkinnedMesh)primary.set(m.material.name,m)});
+ const sameMatrix=(a,b)=>a.elements.every((v,i)=>Math.abs(v-b.elements[i])<.00001);
+ low.scene.traverse(m=>{
+  if(!m.isSkinnedMesh)return;
+  const h=primary.get(m.material.name);
+  if(!h||result.has(m.material.name)||!sameMatrix(h.matrixWorld,m.matrixWorld)||!sameMatrix(h.bindMatrix,m.bindMatrix)||
+     h.skeleton.bones.length!==m.skeleton.bones.length||!h.skeleton.bones.every((b,i)=>b.name===m.skeleton.bones[i].name&&sameMatrix(h.skeleton.boneInverses[i],m.skeleton.boneInverses[i])))throw new Error('Scout LOD skin binding does not match');
+  result.set(m.material.name,m.geometry);
+ });
+ if(!primary.size||result.size!==primary.size)throw new Error('Scout LOD material set does not match');
+ return result;
+}

@@ -2,11 +2,11 @@
 
 A procedural 3D browser action RPG with a continuous expanded overworld, five settlements, thirty-three quests, fourteen bosses, five dungeons, pets, mounts and optional persistent four-player Supabase co-op. The original forest, hero, equipment, goblins, village and Goblin Chief remain playable.
 
-**Game files:** `emerald-vale.js`, `emerald-landscape.js`, `environment-art.js`, `account-storage.js`, `scout-model.js`, `assets/environment/emerald-library.glb`, `assets/models/goblin_scout.glb`, `assets/goblin-scout.gltf`, `gathering.js`, `gathering-rules.js`, `prologue.js`, `homestead.js`, `building-rules.js`, `scene-batch.js`, `accounts.js`, `expansion-data.js`, `expansion-models.js`, `expansion-world.js`, `companions.js`, `supabase/game-catalog.json`, `progression.js`, `adventure-motion.js`, `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; environment and character assets are hosted here; no game-time asset generation tools are required.
+**Game files:** `emerald-vale.js`, `emerald-landscape.js`, `environment-art.js`, `account-storage.js`, `scout-model.js`, `assets/environment/emerald-library.glb`, `assets/models/goblin_scout.glb`, `assets/models/goblin_scout_lod.glb`, `assets/goblin-scout.gltf`, `gathering.js`, `gathering-rules.js`, `prologue.js`, `homestead.js`, `building-rules.js`, `scene-batch.js`, `accounts.js`, `expansion-data.js`, `expansion-models.js`, `expansion-world.js`, `companions.js`, `supabase/game-catalog.json`, `progression.js`, `adventure-motion.js`, `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; environment and character assets are hosted here; no game-time asset generation tools are required.
 
 ## GitHub Pages
 
-Upload **all thirty-five runtime files (including `supabase/game-catalog.json` `assets/models/goblin_scout.glb`, `assets/goblin-scout.gltf`, and `assets/environment/emerald-library.glb` in their folders)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
+Upload **all thirty-six runtime files (including `supabase/game-catalog.json` `assets/models/goblin_scout.glb`, `assets/models/goblin_scout_lod.glb`, `assets/goblin-scout.gltf`, and `assets/environment/emerald-library.glb` in their folders)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
@@ -288,7 +288,8 @@ Deploy the updated `supabase/character-runtime.sql` before this frontend release
 
 The Red Cowl Scout is authored with free Blender/Python and loaded from
 `assets/models/goblin_scout.glb`: 9,925 triangles, 22 bones, 11 material primitives
-and six animation clips. Seven ordinary Scouts use independent skinned skeletons
+and six animation clips. An optional 4,928-triangle LOD streams in the background
+and reuses the same rig at distance. Seven ordinary Scouts use independent skinned skeletons
 with shared geometry/materials. AI, HP, hitboxes, rewards and saves are unchanged.
 The original `assets/goblin-scout.gltf` and procedural model remain loading fallbacks.
 

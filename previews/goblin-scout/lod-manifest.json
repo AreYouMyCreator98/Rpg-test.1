@@ -1,0 +1,9 @@
+{
+  "blender_triangles": 4962,
+  "blender": "4.3.2",
+  "triangles": 4928,
+  "bytes": 836880,
+  "bones": 22,
+  "animations": "reuses primary rig and clips",
+  "ratio": 0.5
+}

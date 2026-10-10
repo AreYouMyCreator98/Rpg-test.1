@@ -17,6 +17,7 @@ From the repository root:
 ```sh
 blender -b -t 4 --python scripts/characters/build_goblin.py
 blender -b /tmp/realm-character/goblin-scout.blend -t 4 --python scripts/characters/render_animation_review.py
+blender -b /tmp/realm-character/goblin-scout.blend -t 4 --python scripts/characters/build_scout_lod.py
 ```
 
 Generator options after `--`: `--first-only` renders only three-quarter;
@@ -76,3 +77,35 @@ For browser tests, set `PLAYWRIGHT_PATH` to the installed module and
 Future model changes must regenerate the GLB, inspect renders and rerun asset,
 combat and fallback tests. Rotate the shared release query identity for deployment
 so cached modules cannot mix incompatible asset adapters.
+
+## Mobile detail levels
+
+The independent `build_scout_lod.py` pass simplifies a freshly generated Blender
+checkpoint without modifying the primary GLB or saved `.blend`. It exports
+`assets/models/goblin_scout_lod.glb`: **4,928 exported triangles**, 836,880 bytes,
+22 bones, 11 materials. Blender's intermediate count is 4,962; the glTF exporter
+drops 34 degenerate triangles. The manifest records both counts. The supplemental
+file intentionally omits animations: gameplay reuses the main rig and clips.
+Repeated generation produced identical GLB hashes and left the primary untouched.
+
+Only compatible geometry can be attached. The loader checks material names,
+mesh transforms, bind matrices, bone order and inverse-bind matrices before
+swapping buffers. No additional skeletons or mixers are created per Scout.
+
+Distance from the actual game camera controls switching:
+
+| Preset | Simplify beyond | Restore full detail at |
+| --- | ---: | ---: |
+| Low | 12 units | 9 units |
+| Medium | 18 units | 15 units |
+| High | 26 units | 23 units |
+| Ultra | 36 units | 33 units |
+
+Auto uses its currently measured quality tier. The gap between entry and exit
+prevents oscillation. Each client selects visual detail locally; no extra network
+messages or gameplay changes are involved. The optional download does not gate
+startup, and a missing/incompatible LOD retains the primary skinned Scout.
+
+`tests/scout-lod.cjs` checks binding compatibility, weights, animated bounds,
+thresholds, Auto changes, pose/time preservation, repeated-switch GPU resources,
+and missing-file behavior. See `docs/SCOUT-LOD-VALIDATION.md` for measured scope.
