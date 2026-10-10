@@ -76,3 +76,8 @@ Before opening unrestricted public access, review Supabase's anonymous-auth abus
 controls and service quotas. The built-in 100-room/four-member caps are resource
 bounds, not a replacement for provider rate limits. Anonymous Auth users remain in
 Supabase after rooms expire; manage their retention in the dashboard.
+
+
+## Regional shops and travelling merchants
+
+After the character runtime is installed, apply `settlement-trade.sql`. It safely patches the existing trade validator and adds a capability RPC. It is safe to run again. This migration was applied to the game project for the realm-settlements-1 release. It does not reset characters. If you reinstall character-runtime.sql later, reapply settlement-trade.sql afterwards.

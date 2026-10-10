@@ -17,6 +17,9 @@ on:
       - assets/goblin-scout.gltf
       - assets/models/goblin_scout.glb
       - assets/models/goblin_scout_lod.glb
+      - settlement-life.js
+      - stronghold-art.js
+      - village-art.js
       - boss-arenas.js
       - scene-batch.js
       - gathering.js

@@ -1,4 +1,4 @@
-import {batchScenery} from './scene-batch.js?v=realm-arenas-1';
+import {batchScenery} from './scene-batch.js?v=realm-settlements-1';
 // Chapter zero is world progress; absent data means an existing journey, never a reset.
 export function installPrologue(api){
  const {THREE,mesh,ground,hero,living,$}=api,root=new THREE.Group();api.scene.add(root);

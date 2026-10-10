@@ -95,44 +95,46 @@ export function installLivingWorld(api) {
   npc('elder','Elowen','Village Keeper',-1,70,0x79805b);
   const prices={w1:30,w2:85,w3:170,w4:290,a1:25,a2:70,a3:140,a4:250,potion:12};
   const sellPrice=id=>id==='tooth'?4:id==='gem'?32:Math.max(2,Math.floor((prices[items[id]?.base||id]||10)*.4)+(items[id]?.upgrade||0)*10);
-  function nearestNPC(){return npcs.find(n=>n.root.position.distanceTo(hero.root.position)<3.1)}
-  function canTrade(role) {return api.state==='playing' && api.panel==='shop' && vendor?.id===role && nearestNPC()===vendor;}
+  function nearestNPC(){return npcs.filter(n=>n.root.position.distanceTo(hero.root.position)<3.1).sort((a,b)=>a.root.position.distanceToSquared(hero.root.position)-b.root.position.distanceToSquared(hero.root.position))[0]}
+  function canTrade(role) {return api.state==='playing' && api.panel==='shop' && (vendor?.trade||vendor?.id)===role && nearestNPC()===vendor;}
+  function recordTrade(action,id){const account=api.getAccounts?.();if(account?.active&&vendor?.civic&&!account.regionalTrading){api.toast('Regional cloud trading is not available yet. Bram and Mira can still trade in Wanderer’s Village.');return false}const result=api.accountEvent?.(action,{id,vendor:vendor?.id});return !account?.active||!!result;}
   function purchase(id) {
-    if(!vendor||!canTrade(vendor.id))return false;
-    const allowed=vendor.id==='smith'?['w1','w2','w3','w4']:['potion','a1','a2','a3','a4'];
+    if(!vendor||!canTrade(vendor.trade||vendor.id))return false;
+    const allowed=(vendor.trade||vendor.id)==='smith'?['w1','w2','w3','w4']:['potion','a1','a2','a3','a4'];
     if(!allowed.includes(id)||api.player.coins<prices[id]||(items[id].type!=='consumable'&&quantity(id)))return false;
-    api.accountEvent?.('buy',{id});api.player.coins-=prices[id];api.addItem(id);api.save();api.sound('coin');api.toast('Purchased '+items[id].name);return true;
+    if(!recordTrade('buy',id))return false;api.player.coins-=prices[id];api.addItem(id);api.save();api.sound('coin');api.toast('Purchased '+items[id].name);return true;
   }
   function sell(id) {
     if(!canTrade('merchant')||!quantity(id)||['quest'].includes(items[id]?.type)||[api.player.weapon,api.player.armour].includes(id))return false;
-    if(!removeItem(id,1))return false;api.accountEvent?.('sell',{id});api.player.coins+=sellPrice(id);api.save();api.sound('coin');return true;
+    if(!recordTrade('sell',id)||!removeItem(id,1))return false;api.player.coins+=sellPrice(id);api.save();api.sound('coin');return true;
   }
   function upgradeCost(id) {const rank=items[id]?.upgrade||0;return{coins:35+rank*40,tooth:2+rank*2,gem:rank>=1?1:0};}
   function upgrade(id) {
     const item=items[id],cost=upgradeCost(id);
     if(!canTrade('smith')||item?.type!=='weapon'||item.upgrade>=3||!quantity(id)||api.player.coins<cost.coins||quantity('tooth')<cost.tooth||quantity('gem')<cost.gem)return false;
     // Validate everything before the synchronous debit. One copy in, one copy out.
-    api.accountEvent?.('upgrade',{id});api.player.coins-=cost.coins;removeItem('tooth',cost.tooth);if(cost.gem)removeItem('gem',cost.gem);removeItem(id,1);
+    if(!recordTrade('upgrade',id))return false;api.player.coins-=cost.coins;removeItem('tooth',cost.tooth);if(cost.gem)removeItem('gem',cost.gem);removeItem(id,1);
     const next=item.base+'~'+(item.upgrade+1);api.addItem(next);if(api.player.weapon===id)api.player.weapon=next;
     api.equipVisual();api.save();api.sound('level');api.toast('Tempered '+items[next].name);return true;
   }
   function portrait(n){return `<svg class="portrait" viewBox="0 0 80 90" aria-hidden="true"><path fill="#${n.color.toString(16)}" d="M7 90V62L25 50H55L73 62V90Z"/><path fill="#d4a676" d="M23 18L40 10L57 18V43L48 56H31L23 43Z"/><path fill="#67503a" d="M20 27V16L38 5L59 16V27L42 19Z"/><path fill="#273f32" d="M29 30H34V35H29ZM46 30H51V35H46Z"/><path stroke="#7d543b" d="M34 45H46"/></svg>`}
   function dialogue(n) {
-    vendor=n;api.modal(n.name+' · '+n.role,`<div class="dialogue-intro">${portrait(n)}<p>${n.intro|| (n.id==='smith'?'A good blade grows with its bearer. Bring me coins, goblin teeth, and moonstones; I will temper your steel.':n.id==='merchant'?'Welcome home, traveller. I trade armour and healing draughts, and pay fairly for trophies from the wilds.':'Our village needs you. The forest grows restless, and something ancient stirs beneath the hills.')}</p></div><div class="menu-buttons">${['smith','merchant'].includes(n.id)?'<button id="open-shop" class="primary">'+(n.id==='smith'?'Browse swords & upgrades':'Buy & sell goods')+'</button>':''}${n.id==='smith'?'<button id="npc-shelter">Learn to gather &amp; build a shelter</button>':''}<button id="npc-quests">Ask about village work</button><button id="npc-leave">Farewell</button></div>`,'dialogue');
+    vendor=n;api.modal(n.name+' · '+n.role,`<div class="dialogue-intro">${portrait(n)}<p>${n.intro|| (n.id==='smith'?'A good blade grows with its bearer. Bring me coins, goblin teeth, and moonstones; I will temper your steel.':n.id==='merchant'?'Welcome home, traveller. I trade armour and healing draughts, and pay fairly for trophies from the wilds.':'Our village needs you. The forest grows restless, and something ancient stirs beneath the hills.')}</p></div><div class="menu-buttons">${['smith','merchant'].includes(n.trade||n.id)?'<button id="open-shop" class="primary">'+((n.trade||n.id)==='smith'?'Browse swords & upgrades':'Buy & sell goods')+'</button>':''}${n.id==='smith'?'<button id="npc-shelter">Learn to gather &amp; build a shelter</button>':''}${n.destination?'<button id="npc-directions">Mark '+n.destination.name+' on my map</button>':''}<button id="npc-quests">Ask about village work</button><button id="npc-leave">Farewell</button></div>`,'dialogue');
     if($('open-shop'))$('open-shop').onclick=()=>shop(n);if($('npc-shelter'))$('npc-shelter').onclick=()=>api.getHomestead()?.gathering.menu('quest');
+    if($('npc-directions'))$('npc-directions').onclick=()=>{api.getFrontier().setWaypoint(n.destination.x,n.destination.z);api.closeModal();api.toast('Route marked · '+n.destination.name)};
     $('npc-quests').onclick=()=>questDialogue(n);$('npc-leave').onclick=api.closeModal;
   }
   function shop(n) {
-    vendor=n;const stock=n.id==='smith'?['w1','w2','w3','w4']:['potion','a1','a2','a3','a4'];
-    api.modal(n.name+'’s '+(n.id==='smith'?'forge':'market'),`<div class="shop-wallet">${api.player.coins} coins · ${quantity('tooth')} teeth · ${quantity('gem')} moonstones</div><div id="shop-rows"></div><button id="shop-back">Back to conversation</button>`,'shop');
+    vendor=n;const stock=(n.trade||n.id)==='smith'?['w1','w2','w3','w4']:['potion','a1','a2','a3','a4'];
+    api.modal(n.name+'’s '+((n.trade||n.id)==='smith'?'forge':'market'),`<div class="shop-wallet">${api.player.coins} coins · ${quantity('tooth')} teeth · ${quantity('gem')} moonstones</div><div id="shop-rows"></div><button id="shop-back">Back to conversation</button>`,'shop');
     const rows=$('shop-rows');
     function row(text,label,action,disabled=false){const el=document.createElement('div');el.className='shop-row';const span=document.createElement('span');span.textContent=text;const button=document.createElement('button');button.textContent=label;button.disabled=disabled;button.onclick=()=>{action();shop(n)};el.append(span,button);rows.append(el)}
     for(const id of stock){const it=items[id],owned=quantity(id);row(it.name+' · '+(it.damage?it.damage+' damage':it.defence!==undefined?it.defence+' defence':'65 healing'),owned&&it.type!=='consumable'?'Owned':'Buy · '+prices[id],()=>purchase(id),api.player.coins<prices[id]||!!(owned&&it.type!=='consumable'));}
     for(const entry of [...api.player.inventory]) {
       const it=items[entry.id],equipped=[api.player.weapon,api.player.armour].includes(entry.id);
-      if(n.id==='smith'&&it.type==='weapon'&&it.upgrade<3){const c=upgradeCost(entry.id);row(it.name+': '+it.damage+' → '+(it.damage+4)+' damage · '+c.coins+' coins, '+c.tooth+' teeth'+(c.gem?', 1 moonstone':''),'Temper +'+(it.upgrade+1),()=>upgrade(entry.id),api.player.coins<c.coins||quantity('tooth')<c.tooth||quantity('gem')<c.gem)}
+      if((n.trade||n.id)==='smith'&&it.type==='weapon'&&it.upgrade<3){const c=upgradeCost(entry.id);row(it.name+': '+it.damage+' → '+(it.damage+4)+' damage · '+c.coins+' coins, '+c.tooth+' teeth'+(c.gem?', 1 moonstone':''),'Temper +'+(it.upgrade+1),()=>upgrade(entry.id),api.player.coins<c.coins||quantity('tooth')<c.tooth||quantity('gem')<c.gem)}
       if(['weapon','armour'].includes(it.type))row(it.name+' ×'+entry.qty,equipped?'Equipped':'Equip',()=>{api.player[it.type]=entry.id;api.equipVisual();api.save()},equipped);
-      if(n.id==='merchant'&&it.type!=='quest')row(it.name+' ×'+entry.qty,equipped?'Unequip to sell':'Sell one · '+sellPrice(entry.id),()=>sell(entry.id),equipped);
+      if((n.trade||n.id)==='merchant'&&it.type!=='quest')row(it.name+' ×'+entry.qty,equipped?'Unequip to sell':'Sell one · '+sellPrice(entry.id),()=>sell(entry.id),equipped);
     }
     $('shop-back').onclick=()=>dialogue(n);
   }
@@ -342,7 +344,7 @@ export function installLivingWorld(api) {
   function hint(){const c=caveHint();if(c)return c;if(!data.suppliesRecovered&&Math.hypot(hero.root.position.x-24,hero.root.position.z+29)<2.7)return 'Recover village supplies';const n=nearestNPC();return n?'Talk to '+n.name:Math.hypot(hero.root.position.x-board.x,hero.root.position.z-board.z)<3?'Read village noticeboard':null}
   function update(dt,time) {
     caveUpdate(time);supplyCrate.visible=data.area!=='cave'&&!data.suppliesRecovered;forge.scale.y=.8+Math.sin(time*9)*.15;lanterns.forEach((m,i)=>m.material.emissiveIntensity=.85+Math.sin(time*3+i)*.15);
-    for(const n of npcs){if(data.area!=='cave'&&api.state!=='title'&&n.root.position.distanceTo(hero.root.position)<17)api.project(n.root.position.clone().add(new THREE.Vector3(0,2.7,0)),n.label);else n.label.style.display='none';const near=n.root.position.distanceTo(hero.root.position)<4;let speed=0;
+    for(const n of npcs){if(n.civic){n.root.visible=data.area!=='cave'&&n.root.position.distanceTo(hero.root.position)<65;if(!n.root.visible){n.label.style.display='none';continue}}if(data.area!=='cave'&&api.state!=='title'&&n.root.position.distanceTo(hero.root.position)<17)api.project(n.root.position.clone().add(new THREE.Vector3(0,2.7,0)),n.label);else n.label.style.display='none';const near=n.root.position.distanceTo(hero.root.position)<4;let speed=n.walkSpeed||0;
       if(n.id==='merchant'&&!near){const x=n.x+Math.sin(time*.22)*1.2;speed=Math.abs(x-n.root.position.x)/Math.max(dt,.001);n.root.position.x=x;}
       api.animate(n,speed,dt);if(near)api.face(n,Math.atan2(hero.root.position.x-n.root.position.x,hero.root.position.z-n.root.position.z),dt);
       if(n.id==='smith'&&!near){n.arms[1].rotation.x=-.6-Math.max(0,Math.sin(time*3))*.9;}

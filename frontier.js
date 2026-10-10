@@ -1,10 +1,10 @@
-import {graphics,retireInstances} from './graphics.js?v=realm-arenas-1';
-import {inVale} from './emerald-vale.js?v=realm-arenas-1';
-import {icon} from './ui.js?v=realm-arenas-1';
+import {graphics,retireInstances} from './graphics.js?v=realm-settlements-1';
+import {inVale} from './emerald-vale.js?v=realm-settlements-1';
+import {icon} from './ui.js?v=realm-settlements-1';
 // Recover older cached HTML before it can pair its obsolete HUD with this module.
 // This module must retain this guard while pre-design-system pages remain cached.
-if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-arenas-1"]')){
- const fresh=new URL(location.href),release='realm-arenas-1';
+if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-settlements-1"]')){
+ const fresh=new URL(location.href),release='realm-settlements-1';
  if(fresh.searchParams.get('v')!==release){fresh.searchParams.set('v',release);location.replace(fresh.href)}
  else{document.body.textContent='The game update could not load. Reopen the game to retry. Your saved journey is safe.'}
  await new Promise(()=>{}); // Navigation replaces this document; never initialize mixed UI.
@@ -17,7 +17,11 @@ export const SETTLEMENTS=[
  {id:'capital',name:'Dawnwatch City',x:-180,z:38,kind:'city',color:0x677e94},
  {id:'mill',name:'Briarfield Village',x:-155,z:135,kind:'village',color:0x9e7450},
  {id:'snow',name:'Frostmere Village',x:-20,z:-235,kind:'village',color:0x687e85},
- {id:'marsh',name:'Reedhaven Village',x:115,z:-125,kind:'village',color:0x648770}
+ {id:'marsh',name:'Reedhaven Village',x:115,z:-125,kind:'village',color:0x648770},
+ {id:'amber',name:'Amberwick Village',x:-430,z:70,kind:'village',color:0x99734e,added:true},
+ {id:'cedar',name:'Cedarwatch Village',x:-462,z:-225,kind:'village',color:0x647663,added:true},
+ {id:'hearth',name:'Highhearth Village',x:-350,z:-440,kind:'village',color:0x6d7c8b,added:true},
+ {id:'sky',name:'Skyrest Village',x:-157,z:-651,kind:'village',color:0x667c8a,added:true}
 ];
 export const FAMILIES=[
  {id:'wolf',name:'Greyfang Wolf',boss:'Fenrir · The Moonfang',quest:'Fangs in the wheat',bossQuest:'Silence the Moonfang',giver:'ranger',npc:'Warden Rowan',village:'mill',x:-245,z:118,bx:-286,bz:135,hp:45,bossHp:220,speed:3.8,damage:10,color:0x8b9894,reward:'Moonfang Sabre',power:20},
@@ -27,6 +31,7 @@ export const FAMILIES=[
  {id:'elemental',name:'Stormbound Elemental',boss:'Astrax · The Stormheart',quest:'Stones that walk',bossQuest:'Break the stormheart',giver:'sage',npc:'Sage Orin',village:'snow',x:-40,z:-291,bx:-69,bz:-312,hp:155,bossHp:600,speed:2,damage:25,color:0x78bfc8,reward:'Stormheart Edge',power:49}
 ];
 export const ROADS=[
+ [[-462,-225],[-463,-220]], [[-157,-651],[-157,-650]],
  [[50,151],[50,118],[50,106],[0,83],[0,64]], [[0,83],[-35,97],[-75,97]],
  [[0,64],[-60,75],[-110,80],[-132,64],[-146,38],[-180,38]], [[-110,80],[-155,135],[-245,118],[-286,135]],
  [[-180,38],[-180,9+Math.sin(-180*.052)*7],[-190,-35],[-255,-80],[-288,-106]],
@@ -40,6 +45,8 @@ export const ROADS=[
  [[-465,-400],[-350,-440],[-240,-475],[-120,-460]],
  [[-430,-35],[-452,-44],[-474,-38],[-492,-30]]
 ];
+// Settlement streets share the terrain/map road field; no separate painted overlay.
+ROADS.push(...SETTLEMENTS.flatMap(s=>[[[s.x-14,s.z],[s.x+14,s.z]],[[s.x,s.z-17],[s.x,s.z+(s.kind==='city'?27:17)]]]));
 export function roadDistance(x,z){let best=Infinity;for(const r of ROADS)for(let i=1;i<r.length;i++){const [ax,az]=r[i-1],[bx,bz]=r[i],dx=bx-ax,dz=bz-az,t=Math.max(0,Math.min(1,((x-ax)*dx+(z-az)*dz)/(dx*dx+dz*dz)));best=Math.min(best,Math.hypot(x-ax-t*dx,z-az-t*dz))}return best}
 export function terrainColor(x,z){
  const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*(3-2*t)};
@@ -63,12 +70,23 @@ export function installFrontier(api){
  }
  function tower(x,z){let y=ground(x,z);prop('cyl',0x85938c,x,y+4,z,2.5,8,2.5);prop('cone',0x556e88,x,y+9.2,z,3,3,3);api.obstacle(x,z,2.7);structures.push({x,z,w:5,d:5,color:'#c0c8b0',kind:'tower'})}
  for(const s of SETTLEMENTS){
-  api.poi.push({name:s.name,x:s.x,z:s.z});const city=s.kind==='city';
-  const positions=city?[[-19,-15],[-8,-18],[8,-18],[19,-15],[-20,2],[20,2],[-18,18],[18,18]]:[[-9,-8],[9,-8],[-9,8],[9,8]];
+  if(!s.added)api.poi.push({name:s.name,x:s.x,z:s.z});const city=s.kind==='city';
+  const positions=city?[[-19,-15],[-8,-18],[8,-18],[19,-15],[-20,2],[20,2],[-18,18],[18,18],[-31,-15],[31,-15],[-31,2],[31,2],[-31,20],[31,20],[-30,37],[30,37],[-15,38],[15,38]]:[[-9,-8],[9,-8],[-9,8],[9,8]];
   for(const [dx,dz] of positions)house(s.x+dx,s.z+dz,s.color,city&&dz===-18);
   const y=ground(s.x,s.z);prop('cyl',0x9ca98d,s.x,y+.25,s.z,3,.5,3);prop('cyl',0x4cb6b5,s.x,y+.53,s.z,2.3,.12,2.3);prop('cyl',0x94a48b,s.x,y+1.2,s.z,.4,1.7,.4);prop('orb',0xcdb779,s.x,y+2.2,s.z,.6,.6,.6);api.obstacle(s.x,s.z,1.2);
   for(const dx of [-6,6])for(const dz of [-13,13]){prop('cyl',0x6b5742,s.x+dx,ground(s.x+dx,s.z+dz)+1.5,s.z+dz,.1,3,.1);prop('orb',mat(0xffd98c,{emissive:0xffb44c,emissiveIntensity:1}),s.x+dx,ground(s.x+dx,s.z+dz)+3,s.z+dz,.2,.3,.2)}
-  if(city){for(const dx of [-30,30])for(const dz of [-29,29])tower(s.x+dx,s.z+dz);for(let i=-24;i<=24;i+=4)for(const side of [-1,1]){if(Math.abs(i)<8)continue;const x=s.x+i,z=s.z+side*29;prop('box',0x89978c,x,ground(x,z)+2,z,4,4,1.6);api.obstacle(x,z,2);structures.push({x,z,w:4,d:1.6,color:'#c3cbb6',kind:'wall'});const xx=s.x+side*30,zz=s.z+i;prop('box',0x89978c,xx,ground(xx,zz)+2,zz,1.6,4,4);api.obstacle(xx,zz,2);structures.push({x:xx,z:zz,w:1.6,d:4,color:'#c3cbb6',kind:'wall'})}house(s.x+13,s.z-38,0x526d8a,true)}
+  if(city){
+   for(const dx of [-42,42])for(const dz of [-29,54])tower(s.x+dx,s.z+dz);
+   for(let i=-40;i<=40;i+=4)for(const dz of [-29,54]){if(Math.abs(i)<8)continue;const x=s.x+i,z=s.z+dz;prop('box',0x89978c,x,ground(x,z)+2.5,z,4,5,1.6);prop('box',0xb0b49d,x,ground(x,z)+5.3,z,1.5,.8,2);api.obstacle(x,z,2);structures.push({x,z,w:4,d:1.6,color:'#c3cbb6',kind:'wall'})}
+   for(let i=-25;i<=50;i+=4)for(const dx of [-42,42]){if(Math.abs(i)<7)continue;const x=s.x+dx,z=s.z+i;prop('box',0x89978c,x,ground(x,z)+2.5,z,1.6,5,4);prop('box',0xb0b49d,x,ground(x,z)+5.3,z,2,.8,1.5);api.obstacle(x,z,2);structures.push({x,z,w:1.6,d:4,color:'#c3cbb6',kind:'wall'})}
+   // The keep anchors the new southern district; its approach and city gates remain open.
+   const keep=house(s.x,s.z+39,0x405773,true);keep.name='Dawnwatch Crown Keep';
+   const ky=ground(s.x,s.z+39);prop('box',0x8b9285,s.x,ky+7,s.z+39,7.8,14,6.8);prop('box',0xa6ab96,s.x,ky+14.1,s.z+39,8.3,.45,7.3);
+   for(const side of [-1,1]){for(let i=-3;i<=3;i+=1.5)prop('box',0xa6ab96,s.x+i,ky+14.65,s.z+39+side*3.5,.8,1,1);for(let row=0;row<5;row++){prop('box',0x666f65,s.x,ky+2+row*2.4,s.z+39+side*3.46,7.8,.13,.12);for(const dx of [-2,2]){prop('box',0x303f3d,s.x+dx,ky+3+row*2,s.z+39+side*3.45,.55,1.25,.09);prop('box',0xb8ad8e,s.x+dx,ky+2.35+row*2,s.z+39+side*3.53,.8,.13,.22)}}}
+   prop('box',0x4c392c,s.x,ky+1.5,s.z+42.51,2.2,3,.1);prop('box',0x405970,s.x,ky+10,s.z+42.5,1.4,4,.1);
+   for(const dx of [-6,6])tower(s.x+dx,s.z+43);
+   for(const dx of [-6,6]){const y=ground(s.x+dx,s.z+39);prop('box',0x354c68,s.x+dx,y+5.6,s.z+39,1.5,3,.1)}
+  }
   if(s.id==='mill'){const x=s.x+19,z=s.z+14;prop('cyl',0xb7ad88,x,ground(x,z)+3,z,1.7,6,1.7);const hub=new THREE.Group();hub.position.set(x,ground(x,z)+5,z+1.8);root.add(hub);for(let i=0;i<4;i++){const sail=prop('box',0xe5d8b0,0,0,0,.55,7,.12,hub);sail.rotation.z=i*Math.PI/2}structures.push({x,z,w:4,d:4,color:'#d8cb9c',kind:'mill',hub})}
  }
  // Five distinct quest givers; city streets and village squares stay clear.
@@ -87,7 +105,7 @@ export function installFrontier(api){
   for(let k=0;k<7;k++){const a=k/7*Math.PI*2,x=f.bx+Math.cos(a)*10,z=f.bz+Math.sin(a)*10;prop(f.id==='elemental'?'cone':'orb',f.id==='elemental'?0x82bcc0:0x718279,x,ground(x,z)+1.5,z,1.2,3,1.2);api.obstacle(x,z,1)}
  });
  // Spatially grouped instancing permits view-distance culling of a much larger forest.
- let valeReady=false;const chunks=new Map();for(let i=0;i<14500;i++){const x=i<3400?-330+random(i*3)*510:BOUNDS.left+random(i*3)*WORLD_WIDTH,z=i<3400?-340+random(i*3+1)*520:BOUNDS.top+random(i*3+1)*WORLD_DEPTH;if(i>=3400&&x>=-330&&z>=-340)continue;if(x>30&&x<70&&z>115&&z<162||x>-90&&x<-20&&z>98&&z<138||Math.abs(x)<97&&Math.abs(z)<102||api.pathDist(x,z)<5||Math.abs(z-api.riverZ(x))<9||SETTLEMENTS.some(s=>Math.hypot(x-s.x,z-s.z)<(s.kind==='city'?48:23))||FAMILIES.some(f=>Math.hypot(x-f.x,z-f.z)<18||Math.hypot(x-f.bx,z-f.bz)<15))continue;
+ let valeReady=false;const chunks=new Map();for(let i=0;i<14500;i++){const x=i<3400?-330+random(i*3)*510:BOUNDS.left+random(i*3)*WORLD_WIDTH,z=i<3400?-340+random(i*3+1)*520:BOUNDS.top+random(i*3+1)*WORLD_DEPTH;if(i>=3400&&x>=-330&&z>=-340)continue;if(x>30&&x<70&&z>115&&z<162||x>-90&&x<-20&&z>98&&z<138||Math.abs(x)<97&&Math.abs(z)<102||api.pathDist(x,z)<5||Math.abs(z-api.riverZ(x))<9||SETTLEMENTS.some(s=>Math.hypot(x-s.x,z-s.z)<(s.kind==='city'?72:23))||FAMILIES.some(f=>Math.hypot(x-f.x,z-f.z)<18||Math.hypot(x-f.bx,z-f.bz)<15))continue;
   const key=Math.floor(x/48)+','+Math.floor(z/48)+','+inVale(x,z);if(!chunks.has(key))chunks.set(key,{vale:inVale(x,z),x:Math.floor(x/48)*48+24,z:Math.floor(z/48)*48+24,trunk:[],leaf:[],rock:[]});const chunk=chunks.get(key),y=ground(x,z),h=i<3400?4+random(i*3+2)*4:6+random(i*3+2)*5;
   if((z<-263&&x>=-330&&z>=-340)||z<-720||random(i+8000)>.9){chunk.rock.push([x,y+.7,z,1,.9,1.2]);vegetation.push({x,z,rock:true})}else{chunk.trunk.push([x,y+h*.35,z,.22,h*.7,.22]);for(let j=0;j<3;j++)chunk.leaf.push([x,y+h*(.45+j*.23),z,(2.15-j*.43)*(i<3400?1:1.25),h*.52,(2.15-j*.43)*(i<3400?1:1.25)]);api.obstacle(x,z,.5);vegetation.push({x,z})}
  }

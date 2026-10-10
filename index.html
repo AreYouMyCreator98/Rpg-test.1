@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><link rel="icon" href="data:,"><meta name="theme-color" content="#102f29"><title>Realm of the Fallen</title>
-<link rel="stylesheet" href="./ui.css?v=realm-arenas-1"></head><body>
+<link rel="stylesheet" href="./ui.css?v=realm-settlements-1"></head><body>
 <div id="shade"></div><section id="title"><div class="eyebrow">The Shattered Marches · World expansion</div><h1>Realm of<br>the <span>Fallen</span></h1><div class="rule"></div><p>Beyond the old forest, a kingdom awaits. Explore mountain villages, reclaim the roads, and challenge fourteen bosses, descend into ancient dungeons and ride with your companions.</p><div class="buttons"><button class="primary" id="play" disabled>Begin your journey &nbsp; →</button><button id="continue" class="hidden">Continue</button></div><div class="small-buttons"><button id="title-controls">Controls</button><button id="title-settings">Settings</button></div><div id="loading">Awakening the forest…</div></section><div id="brand">REALM OF THE FALLEN &nbsp; / &nbsp; THE SHATTERED MARCHES</div>
 <div id="hud" class="hidden">
  <section class="hero-card panel" aria-label="Character status"><span class="hero-emblem" data-icon="hero"></span><div class="hero-top"><span class="hero-name">The Wanderer</span><span class="level" id="level">Lv 1</span></div><div class="status-row health"><div class="bar"><i id="hpbar"></i></div><span id="hptext"></span></div><div class="status-row experience"><div class="bar xp"><i id="xpbar"></i></div><span id="xptext"></span></div><div class="status-row stamina-row"><div class="bar stamina"><i id="staminabar"></i></div><span id="stamtext">Stamina 100 / 100</span></div></section>
@@ -40,30 +40,32 @@
 </script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js"}}</script>
 <script type="module">
-import {graphics,normaliseGraphics} from './graphics.js?v=realm-arenas-1';
-import {batchScenery} from './scene-batch.js?v=realm-arenas-1';
-import {valeGroundColor,valeRiverProfile} from './emerald-vale.js?v=realm-arenas-1';
-import {createForestArt} from './environment-art.js?v=realm-arenas-1';
-import {installBossArenas} from './boss-arenas.js?v=realm-arenas-1';
-import {createCinematic} from './cinematic.js?v=realm-arenas-1';
-import {refineAdventurer} from './hero-detail.js?v=realm-arenas-1';
-import {loadScoutAsset,replaceScouts,animateScout} from './scout-model.js?v=realm-arenas-1';
+import {graphics,normaliseGraphics} from './graphics.js?v=realm-settlements-1';
+import {batchScenery} from './scene-batch.js?v=realm-settlements-1';
+import {valeGroundColor,valeRiverProfile} from './emerald-vale.js?v=realm-settlements-1';
+import {createForestArt} from './environment-art.js?v=realm-settlements-1';
+import {installBossArenas} from './boss-arenas.js?v=realm-settlements-1';
+import {createCinematic} from './cinematic.js?v=realm-settlements-1';
+import {refineAdventurer} from './hero-detail.js?v=realm-settlements-1';
+import {loadScoutAsset,replaceScouts,animateScout} from './scout-model.js?v=realm-settlements-1';
 const scoutAssetPromise=loadScoutAsset();
-let installLivingWorld,migrateSave;try{({installLivingWorld,migrateSave}=await import('./living-world.js?v=realm-arenas-1'))}catch(e){fatal('The Living World module could not load. Keep index.html and living-world.js together, then reload.');throw e}
-const {installFrontier,BOUNDS,WORLD_WIDTH,WORLD_DEPTH,roadDistance,terrainColor,extraHeight}=await import('./frontier.js?v=realm-arenas-1');
-import {installHomestead} from './homestead.js?v=realm-arenas-1';
-import {installAccounts} from './accounts.js?v=realm-arenas-1';
-let arenas=null,prologue=null,homestead=null,living=null,net=null,frontier=null,ui=null,visuals=null,progression=null,expansion=null,companions=null,accounts=null,accountActor=null,accountDrops=false,accountReward=null;let lastTownCombat=-Infinity,townReturnBusy=false;
-const {installPrologue}=await import('./prologue.js?v=realm-arenas-1');
-const {installUI,icon}=await import('./ui.js?v=realm-arenas-1');
-let installVisualWorld;try{({installVisualWorld}=await import('./visual-world.js?v=realm-arenas-1'))}catch(e){fatal('The scenery module could not load. Reload to retry; keep visual-world.js with the other game files. Your saved journey is safe.');throw e}
-const {installExpansionWorld}=await import('./expansion-world.js?v=realm-arenas-1');
-const {installCompanions,normaliseCompanions}=await import('./companions.js?v=realm-arenas-1');
+let installLivingWorld,migrateSave;try{({installLivingWorld,migrateSave}=await import('./living-world.js?v=realm-settlements-1'))}catch(e){fatal('The Living World module could not load. Keep index.html and living-world.js together, then reload.');throw e}
+const {installSettlementLife}=await import('./settlement-life.js?v=realm-settlements-1');
+const {installStrongholdArt}=await import('./stronghold-art.js?v=realm-settlements-1');
+const {installFrontier,BOUNDS,WORLD_WIDTH,WORLD_DEPTH,roadDistance,terrainColor,extraHeight}=await import('./frontier.js?v=realm-settlements-1');
+import {installHomestead} from './homestead.js?v=realm-settlements-1';
+import {installAccounts} from './accounts.js?v=realm-settlements-1';
+let settlementLife=null,strongholds=null,arenas=null,prologue=null,homestead=null,living=null,net=null,frontier=null,ui=null,visuals=null,progression=null,expansion=null,companions=null,accounts=null,accountActor=null,accountDrops=false,accountReward=null;let lastTownCombat=-Infinity,townReturnBusy=false;
+const {installPrologue}=await import('./prologue.js?v=realm-settlements-1');
+const {installUI,icon}=await import('./ui.js?v=realm-settlements-1');
+let installVisualWorld;try{({installVisualWorld}=await import('./visual-world.js?v=realm-settlements-1'))}catch(e){fatal('The scenery module could not load. Reload to retry; keep visual-world.js with the other game files. Your saved journey is safe.');throw e}
+const {installExpansionWorld}=await import('./expansion-world.js?v=realm-settlements-1');
+const {installCompanions,normaliseCompanions}=await import('./companions.js?v=realm-settlements-1');
 const $=id=>document.getElementById(id);let THREE;
 try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js')}catch(e){fatal('The forest could not load. Check your internet connection and reload. The game needs access to cdn.jsdelivr.net.');throw e}
 function fatal(message){const el=document.createElement('div');el.id='fatal';el.style.cssText='position:fixed;inset:0;z-index:100;background:#102f29;color:#f3e8d1;display:grid;place-content:center;padding:24px';el.innerHTML='<h2>Journey interrupted</h2><p></p><button onclick="location.reload()">Try again</button>';el.querySelector('p').textContent=message;document.body.append(el)}
-import {prepareRollRig,groundedRoll,resetRoll,normaliseCamera} from './adventure-motion.js?v=realm-arenas-1';
-import {normaliseProgression,characterStats,refreshVitals,xpForLevel,installProgression} from './progression.js?v=realm-arenas-1';
+import {prepareRollRig,groundedRoll,resetRoll,normaliseCamera} from './adventure-motion.js?v=realm-settlements-1';
+import {normaliseProgression,characterStats,refreshVitals,xpForLevel,installProgression} from './progression.js?v=realm-settlements-1';
 const forestArt=createForestArt(THREE);
 const TAU=Math.PI*2,clamp=THREE.MathUtils.clamp,lerp=THREE.MathUtils.lerp,rand=(a,b)=>a+Math.random()*(b-a),V=THREE.Vector3;
 const mobile=matchMedia('(pointer:coarse)').matches;if(mobile)document.body.classList.add('touch');
@@ -291,10 +293,10 @@ function updateCamera(dt){if(cameraView())firstPersonCamera();else{look.lerp(cam
 let last=performance.now(),autosave=0,hudTimer=0;function loop(now){requestAnimationFrame(loop);const frameSeconds=(now-last)/1000;let dt=Math.min(frameSeconds,.045);last=now;if(!panel||net?.active)gameTime+=dt;homestead?.update(dt);accounts?.update(dt);net?.update(dt);frontier?.update(dt);expansion?.update(panel&&!net?.active?0:dt,gameTime);if(net?.active&&net.host&&(panel||state!=='playing'))updateEnemies(dt);if(!panel){living?.update(dt,gameTime);if(state==='playing'){hitStop=Math.max(0,hitStop-dt);if(!hitStop){updateHero(dt);updateEnemies(dt)}companions?.update(dt,gameTime);prologue?.update(dt);player.playtime=(player.playtime||0)+dt;autosave+=dt;if(autosave>8){save();autosave=0}}else if(state==='dead'){deadTime+=dt;animate(hero,0,dt,null,deadTime);if(deadTime>1.6){modal('The fire still burns.','<p>You fell in battle. Your equipment and experience are safe. Return to camp and try again.</p><button class="primary" id="respawn">Return to camp</button>','death');$('close-modal').classList.add('hidden');$('respawn').onclick=()=>{living?.returnToVillage();companions?.dismount(true);hero.root.position.set(0,ground(0,64),64);prologue?.respawn();accounts?.event('respawn');player.hp=player.maxHp;state='playing';hero.rig.rotation.set(0,0,0);invulnerable=2;closeModal();cameraSnap();save()}}}else animate(hero,0,dt);
 }
 if(!panel||net?.active){for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.life-=dt;if(p.life<=0){scene.remove(p.m);particles.splice(i,1);continue}p.v.y-=7*dt;p.m.position.addScaledVector(p.v,dt);p.m.scale.multiplyScalar(Math.pow(.94,dt*60))}for(let i=numbers.length-1;i>=0;i--){const n=numbers[i];n.life-=dt;n.p.y+=dt*.9;n.el.style.opacity=Math.min(1,n.life*3);if(n.life<=0){n.el.remove();numbers.splice(i,1)}else project(n.p,n.el)}for(const l of loot){l.g.visible=l.g.position.distanceTo(hero.root.position)<45;l.age+=dt;if(l.age<1){l.vy-=9*dt;l.g.position.y=Math.max(l.base,l.g.position.y+l.vy*dt)}else l.g.position.y=l.base+Math.sin(gameTime*2+l.g.position.x)*.08;l.g.rotation.y+=dt*1.2}fires.forEach((g,i)=>{g.scale.y=.85+Math.sin(now*.008+i)*.15;g.rotation.y+=dt*.15});for(let i=0;i<wp.count;i++)wp.setY(i,-.36+Math.sin(wp.getX(i)*.4+now*.0015+wp.getZ(i)*.5)*.065);wp.needsUpdate=true;hitFlash=Math.max(0,hitFlash-dt);$('hurt').style.opacity=hitFlash>0?.5:0;}
-arenas?.update(dt,gameTime);homestead?.gathering.update(dt);updateCamera(dt);visuals?.update(dt,gameTime,frameSeconds);hudTimer+=dt;if(hudTimer>.08){updateHUD();living?.updateQuestHUD();prologue?.hud();ui?.update();hudTimer=0}cinematic.render(scene,camera,hero.root,settings)}
+settlementLife?.update(panel&&!net?.active?0:dt);strongholds?.update();arenas?.update(dt,gameTime);homestead?.gathering.update(dt);updateCamera(dt);visuals?.update(dt,gameTime,frameSeconds);hudTimer+=dt;if(hudTimer>.08){updateHUD();living?.updateQuestHUD();prologue?.hud();ui?.update();hudTimer=0}cinematic.render(scene,camera,hero.root,settings)}
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 living=installLivingWorld({THREE,scene,mesh,mat,hero,items,ground,character,obstacle,$,
-get player(){return player},get state(){return state},get panel(){return panel},get settings(){return settings},
+get player(){return player},get state(){return state},get panel(){return panel},get settings(){return settings},getAccounts(){return accounts},
 eligibleKill(e){return !accounts?.active||e.accountHits},getHomestead(){return homestead},getFrontier(){return frontier},getExpansion(){return expansion},accountStructure,accountEvent(action,body){return accounts?.event(action,body)},get visited(){return visited},enemies,loot,chests,poi,renderer,camera,sun,geo,
 addItem,equipVisual,save,sound,toast,modal,closeModal,animate,face,drop,awardXP,spawnEnemy,burst,number,hurtPlayer,move,project,
 clearAction(){attack=null;dodge=0;invulnerable=1;keysClear()},
@@ -307,8 +309,11 @@ prologue=installPrologue({THREE,scene,mesh,mat,hero,living,$,ground,spawnEnemy,f
 replaceScouts(THREE,await scoutAssetPromise,enemies,scene,{camera,get settings(){return settings}});
 visuals=installVisualWorld({startingScenery,startingTrees:trunks,landscapeColor,forestArt,BOUNDS,THREE,scene,renderer,camera,sun,hero,shield,geo,mat,ground,surface,pathDist,riverZ,obstacles,nearbyObstacles,living,frontier,enemies,terrain,water,get settings(){return settings},get active(){return state==='playing'&&!panel},get audioContext(){return audio}});
 arenas=installBossArenas({THREE,scene,enemies,hero,surface,mesh,mat,blocked,toast,save,dismount(){companions?.dismount(true)},setPosition(x,z){hero.root.position.set(x,surface(x,z),z);cameraSnap()}});
+settlementLife=installSettlementLife({THREE,scene,mesh,mat,ground,surface,hero,living,frontier,poi,blocked,obstacle,face,net(){return net},get state(){return state}});
+strongholds=installStrongholdArt({THREE,scene,mesh,mat,ground,hero,arenas,expansion,frontier});
+frontier.invalidateAtlas();
 living.restore(null);
-try{const {installMultiplayer}=await import('./multiplayer.js?v=realm-arenas-1');net=installMultiplayer({bounds:BOUNDS,$,THREE,scene,hero,enemies,loot,items,chests,living,frontier,expansion,companions,accountStructure,getAccounts(){return accounts},getHomestead(){return homestead},character,animate,groundedRoll,resetRoll,characterStats,normaliseProgression,face,project,drop,removeLoot,addItem,awardXP,burst,sound,toast,modal,closeModal,start,readSave,hurtPlayer,
+try{const {installMultiplayer}=await import('./multiplayer.js?v=realm-settlements-1');net=installMultiplayer({bounds:BOUNDS,$,THREE,scene,hero,enemies,loot,items,chests,living,frontier,expansion,companions,accountStructure,getAccounts(){return accounts},getHomestead(){return homestead},getSettlementLife(){return settlementLife},character,animate,groundedRoll,resetRoll,characterStats,normaliseProgression,face,project,drop,removeLoot,addItem,awardXP,burst,sound,toast,modal,closeModal,start,readSave,hurtPlayer,
 get player(){return player},get panel(){return panel},get state(){return state},get attack(){return attack},get dodge(){return dodge},get blocking(){return blocking},get bossDead(){return bossDead},setBossDead(value){bossDead=value},
 structureFrom(uid,fn){accountActor=uid===net?.id?null:uid;try{return fn()}finally{accountActor=null}},
 hitFrom(e,amount,heavy,ch,combatStats){const original=hero.root.position.clone();try{accountActor=ch.netId;hero.root.position.copy(ch.root.position);hurtEnemy(e,amount,heavy,combatStats)}finally{accountActor=null;hero.root.position.copy(original)}}
@@ -320,7 +325,7 @@ homestead=installHomestead({THREE,hero,scene,mesh,$,ground,burst,get attack(){re
 ui=installUI({returnTown:townReturnMenu,homestead,accounts,prologue,$,living,hero,items,inventory,stats,xpNeeded,progression,expansion,companions,modal,closeModal,settingsMenu,controls,systemPause,getNet(){return net},get player(){return player},get panel(){return panel},get blocking(){return blocking},get guardBreak(){return guardBreak},get dodgeCooldown(){return dodgeCooldown}});
 $('play').disabled=false;$('loading').textContent='A complete journey. No account required.';if(readSave()||accounts.hasRemembered)$('continue').classList.remove('hidden');
 frontier.registerWildlands();poi.push({name:"The Emerald Vale",x:-430,z:30},{name:"Vale Overlook",x:-492,z:-30});
-if(new URLSearchParams(location.search).has('test'))window.__realm={get arenas(){return arenas},townReturnMenu,townReturnReason,arriveTown,get prologue(){return prologue},get homestead(){return homestead},get accounts(){return accounts},get invulnerable(){return invulnerable},snapshot,get visuals(){return visuals},get expansion(){return expansion},get companions(){return companions},get frontier(){return frontier},get net(){return net},step(dt=1/60){if(state!=='playing'||panel)return;dt=clamp(dt,0,.05);gameTime+=dt;updateHero(dt);updateEnemies(dt);living.update(dt,gameTime);expansion?.update(dt,gameTime);companions?.update(dt,gameTime);arenas?.update(dt,gameTime);updateHUD();living.updateQuestHUD();ui?.update()},get living(){return living},THREE,scene,renderer,camera,hero,enemies,loot,items,stats,awardXP,progression,landscapeColor,setView(angle,elevation=.25){yaw=angle;pitch=elevation;cameraSnap()},groundedRoll,resetRoll,updateCamera,cameraSnap,get dodge(){return dodge},get player(){return player},get state(){return state},get blocking(){return blocking},get guardBreak(){return guardBreak},get attack(){return attack},get panel(){return panel},start,startAttack,startDodge,pickup,drop,hurtEnemy,hurtPlayer,addItem,equipVisual,inventory,save,readSave,closeModal,ground,surface,blocked,get visited(){return visited},setPosition(x,z){hero.root.position.set(x,surface(x,z),z);cameraSnap()},get bossDead(){return bossDead},get particles(){return particles},get settings(){return settings}};
+if(new URLSearchParams(location.search).has('test'))window.__realm={get settlementLife(){return settlementLife},get strongholds(){return strongholds},get arenas(){return arenas},townReturnMenu,townReturnReason,arriveTown,get prologue(){return prologue},get homestead(){return homestead},get accounts(){return accounts},get invulnerable(){return invulnerable},snapshot,get visuals(){return visuals},get expansion(){return expansion},get companions(){return companions},get frontier(){return frontier},get net(){return net},step(dt=1/60){if(state!=='playing'||panel)return;dt=clamp(dt,0,.05);gameTime+=dt;updateHero(dt);updateEnemies(dt);living.update(dt,gameTime);expansion?.update(dt,gameTime);companions?.update(dt,gameTime);arenas?.update(dt,gameTime);updateHUD();living.updateQuestHUD();ui?.update()},get living(){return living},THREE,scene,renderer,camera,hero,enemies,loot,items,stats,awardXP,progression,landscapeColor,setView(angle,elevation=.25){yaw=angle;pitch=elevation;cameraSnap()},groundedRoll,resetRoll,updateCamera,cameraSnap,get dodge(){return dodge},get player(){return player},get state(){return state},get blocking(){return blocking},get guardBreak(){return guardBreak},get attack(){return attack},get panel(){return panel},start,startAttack,startDodge,pickup,drop,hurtEnemy,hurtPlayer,addItem,equipVisual,inventory,save,readSave,closeModal,ground,surface,blocked,get visited(){return visited},setPosition(x,z){hero.root.position.set(x,surface(x,z),z);cameraSnap()},get bossDead(){return bossDead},get particles(){return particles},get settings(){return settings}};
 // Start the single frame loop only after assets and gameplay modules finish installing.
 last=performance.now();requestAnimationFrame(loop);
 </script></body></html>

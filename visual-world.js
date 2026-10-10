@@ -1,10 +1,10 @@
-import {dressVillage} from './village-art.js?v=realm-arenas-1';
-import {installRiverDetails} from './river-details.js?v=realm-arenas-1';
-import {installEnvironmentLife} from './environment-life.js?v=realm-arenas-1';
-import {graphics,retireInstances} from './graphics.js?v=realm-arenas-1';
-import {createTerrainStream} from './terrain-stream.js?v=realm-arenas-1';
-import {createWesternRange} from './emerald-landscape.js?v=realm-arenas-1';
-import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-arenas-1';
+import {dressVillage} from './village-art.js?v=realm-settlements-1';
+import {installRiverDetails} from './river-details.js?v=realm-settlements-1';
+import {installEnvironmentLife} from './environment-life.js?v=realm-settlements-1';
+import {graphics,retireInstances} from './graphics.js?v=realm-settlements-1';
+import {createTerrainStream} from './terrain-stream.js?v=realm-settlements-1';
+import {createWesternRange} from './emerald-landscape.js?v=realm-settlements-1';
+import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-settlements-1';
 // Presentation only. No save, item, enemy, network or collision ownership.
 // Repeated decoration is instanced by material in spatial cells; Vale assets are repository-hosted.
 export function installVisualWorld(api) {
@@ -72,7 +72,7 @@ export function installVisualWorld(api) {
   for(let i=0;i<38000;i++){
     const x=range(BOUNDS.left+3,BOUNDS.right-3),z=range(BOUNDS.top+3,BOUNDS.bottom-3),p=pathDist(x,z),bank=Math.abs(z-riverZ(x));
     if((z<-260&&z>=-340&&x>=-330)||z<-710||bank<5||p<2.5||!clear(x,z,.2))continue;
-    const town=settlements.find(s=>Math.hypot(x-s.x,z-s.z)<(s.kind==='city'?34:20));
+    const town=settlements.find(s=>Math.hypot(x-s.x,z-s.z)<(s.kind==='city'?72:20));
     if(town&&random()<.7)continue;
     const y=ground(x,z),a=range(0,6.28),h=range(.18,.55),leaf=i%3?0x5d904c:0x3f7945;
     for(let j=0;j<3;j++)add('blade',leaf,x+(j-1)*.12,y+h/2,z+(j%2)*.12,.055,h,.1,a+j,0,true);
@@ -127,7 +127,7 @@ export function installVisualWorld(api) {
     add('box',0x818a79,x+w*.3,y+h+1.25,z-.7,.62,2.3,.65);
     add('box',0x535d51,x+w*.3,y+h+2.4,z-.7,.8,.14,.83);
   }
-  dressVillage({THREE,buildings:living.buildings,ground,add,geometries:decorativeGeo});
+  dressVillage({THREE,buildings,ground,add,geometries:decorativeGeo});
   // Bake the existing static building surfaces together by spatial cell. Preserve signs,
   // glowing windows and all interactive/animated objects; no runtime geometry churn.
   const masonry=new Map(),v=new THREE.Vector3(),normal=new THREE.Vector3(),nm=new THREE.Matrix3();

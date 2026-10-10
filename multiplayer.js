@@ -1,5 +1,5 @@
-import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-arenas-1';
-import {connectSupabase} from './supabase-rooms.js?v=realm-arenas-1';
+import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-settlements-1';
+import {connectSupabase} from './supabase-rooms.js?v=realm-settlements-1';
 
 export function installMultiplayer(api) {
   const {$,THREE,hero,enemies,loot,items,living}=api;
@@ -79,7 +79,7 @@ export function installMultiplayer(api) {
   function sendPose(){if(active)send({type:'pose',data:pose()})}
   function sendSnapshot(){
     if(!active||!host)return;const data=living.serialize();
-    send({type:'snapshot',data:{enemies:enemies.map(e=>({x:e.root.position.x,y:e.root.position.y,z:e.root.position.z,yaw:e.root.rotation.y,hp:e.hp,maxHp:e.maxHp,xp:e.xp,dmg:e.dmg,state:e.state,dead:e.dead,generation:e.accountGeneration||0,recoil:e.recoil,pattern:e.pattern,attack:e.state==='attack'?{t:e.attack.t,duration:e.attack.duration,combo:e.attack.combo,range:e.attack.range,tx:e.attack.tx,tz:e.attack.tz}:null})),loot:loot.map(l=>({uid:l.netId||(l.netId=++sequence),id:l.id,qty:l.qty,x:l.g.position.x,z:l.g.position.z,reward:l.reward})),world:{estates:api.getHomestead()?.serializeNet(),expansion:data.expansion,frontierBosses:data.frontierBosses||[],gateOpen:!!data.gateOpen,keyChest:!!data.keyChest,hiddenChest:!!data.hiddenChest,guardianDead:!!data.guardianDead,sharedKey:!!data.sharedKey},chests:api.chests.map(c=>c.open),bossDead:api.bossDead}});
+    send({type:'snapshot',data:{enemies:enemies.map(e=>({x:e.root.position.x,y:e.root.position.y,z:e.root.position.z,yaw:e.root.rotation.y,hp:e.hp,maxHp:e.maxHp,xp:e.xp,dmg:e.dmg,state:e.state,dead:e.dead,generation:e.accountGeneration||0,recoil:e.recoil,pattern:e.pattern,attack:e.state==='attack'?{t:e.attack.t,duration:e.attack.duration,combo:e.attack.combo,range:e.attack.range,tx:e.attack.tx,tz:e.attack.tz}:null})),loot:loot.map(l=>({uid:l.netId||(l.netId=++sequence),id:l.id,qty:l.qty,x:l.g.position.x,z:l.g.position.z,reward:l.reward})),world:{citizens:api.getSettlementLife()?.serialize(),estates:api.getHomestead()?.serializeNet(),expansion:data.expansion,frontierBosses:data.frontierBosses||[],gateOpen:!!data.gateOpen,keyChest:!!data.keyChest,hiddenChest:!!data.hiddenChest,guardianDead:!!data.guardianDead,sharedKey:!!data.sharedKey},chests:api.chests.map(c=>c.open),bossDead:api.bossDead}});
   }
   function applySnapshot(s){
     if(s&&Array.isArray(s.enemies)&&s.enemies.length!==enemies.length){leave('Your party uses a different game update. Everyone should reload before joining.');return}if(!s||!Array.isArray(s.enemies)||!Array.isArray(s.loot)||s.loot.length>500)return;
@@ -87,7 +87,7 @@ export function installMultiplayer(api) {
       s.enemies.forEach((v,i)=>{if(!v||!['x','y','z','yaw','hp'].every(k=>Number.isFinite(v[k])))return;const e=enemies[i];if(e.hp>v.hp){api.burst(e.root.position,0xc2da78,5);e.recoil=.28;api.sound('hit')}if(Number.isInteger(v.generation)&&v.generation!==(e.accountGeneration||0)){e.accountHits=false;e.accountDamage=0;e.accountGeneration=v.generation}e.hp=v.hp;if(Number.isFinite(v.maxHp)&&v.maxHp>0)e.maxHp=v.maxHp;if(Number.isFinite(v.xp))e.xp=v.xp;if(Number.isFinite(v.dmg))e.dmg=v.dmg;e.state=v.state;e.dead=v.dead||0;e.pattern=v.pattern;e.attack=v.attack;e.netPose=v;e.recoil=Math.max(e.recoil||0,v.recoil||0);});
       const ids=new Set(s.loot.map(l=>l.uid));for(const l of [...loot])if(!ids.has(l.netId))api.removeLoot(l);
       for(const v of s.loot){if(!Number.isSafeInteger(v.uid)||!Number.isFinite(v.x)||!Number.isFinite(v.z)||!Number.isSafeInteger(v.qty)||v.qty<1||v.qty>99999||(!items[v.id]&&v.id!=='coin'))continue;if(!loot.some(l=>l.netId===v.uid)){api.drop(v.id,v.x,v.z,v.qty);loot.at(-1).netId=v.uid;loot.at(-1).reward=v.reward}}
-      api.getHomestead()?.receiveNet(s.world?.estates);
+      api.getHomestead()?.receiveNet(s.world?.estates);api.getSettlementLife()?.receive(s.world?.citizens);
       if(s.world?.expansion&&typeof s.world.expansion==='object')living.serialize().expansion={...api.expansion.state(),bosses:structuredClone(s.world.expansion.bosses||[]),dungeons:structuredClone(s.world.expansion.dungeons||{})};
       for(const key of ['gateOpen','keyChest','hiddenChest','guardianDead','sharedKey'])living.serialize()[key]=s.world?.[key]===true;
       living.serialize().frontierBosses=Array.isArray(s.world?.frontierBosses)?s.world.frontierBosses.filter(id=>api.frontier.families.some(f=>f.id===id)):[];

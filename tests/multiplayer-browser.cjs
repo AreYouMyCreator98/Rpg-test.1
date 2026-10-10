@@ -41,6 +41,11 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  await a.waitForFunction(()=>__realm.net.peers.size===1);await b.waitForFunction(()=>__realm.net.peers.size===1);
  assert.equal(await a.evaluate(()=>__realm.player.coins),45);assert.equal(await a.evaluate(()=>localStorage.getItem('realm-fallen-save-v1')),saved);
  console.log('PASS private room creation, hidden discovery, code join, remote hero and isolated solo save');
+ // Host-controlled citizens replicate instead of independently walking through each other’s shops.
+ await b.waitForFunction(()=>__realm.settlementLife.people.every(n=>n.remote));
+ await a.evaluate(()=>{const n=__realm.settlementLife.people.find(n=>n.id==='capital-watch1');n.wait=100;n.root.position.set(-155,__realm.surface(-155,65),65);n.walkSpeed=0});
+ await b.waitForFunction(()=>{const n=__realm.settlementLife.people.find(n=>n.id==='capital-watch1');return Math.abs(n.root.position.x+155)<.2&&Math.abs(n.root.position.z-65)<.2});
+ console.log('PASS host citizen positions replicate and guest interpolates guard movement');
  // Remote equipment and movement.
  await b.evaluate(()=>{__realm.setPosition(4,60);__realm.addItem('w2');__realm.player.weapon='w2';__realm.equipVisual()});
  await a.waitForFunction(()=>[...__realm.net.peers.values()][0]?.pose?.weapon==='w2');

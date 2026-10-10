@@ -4,9 +4,11 @@ export function dressVillage({THREE,buildings,ground,add,geometries}){
  const outline=new THREE.Shape();outline.moveTo(-.5,.5);outline.lineTo(.5,.5);outline.lineTo(.48,-.34);outline.quadraticCurveTo(0,-.64,-.48,-.34);outline.closePath();
  const tile=new THREE.ExtrudeGeometry(outline,{depth:.09,bevelEnabled:false});tile.rotateX(Math.PI/2);geometries.shingle=tile;
  const stone=new THREE.DodecahedronGeometry(1,0);geometries.cobble=stone;
+ const emit=add;
  const roof=[0x805d47,0x577e79,0x6a7653,0x91684e];
  for(const [bi,b] of buildings.entries()){
-  const {x,z}=b,y=ground(x,z),tint=roof[bi%4];
+  const {x,z}=b,y=ground(x,z),tint=roof[bi%4],wx=(b.w||5.4)/5.4,dz=(b.d||4.4)/4.4,h=b.h||3.3;
+  const add=(shape,c,px,py,pz,sx,sy,sz,...rest)=>emit(shape,c,x+(px-x)*wx,y+(py-y<=3.3?(py-y)*h/3.3:h+py-y-3.3),z+(pz-z)*dz,sx*wx,sy*(py-y<=3.3?h/3.3:1),sz*dz,...rest);
   // Individually lapped, round-ended shingles and overhanging carved bargeboards.
   for(const side of [-1,1]){
    for(let row=0;row<8;row++)for(let col=0;col<12;col++){

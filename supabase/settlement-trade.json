@@ -1,0 +1,256 @@
+[
+  {
+    "id": "capital-merchant",
+    "role": "merchant",
+    "points": [
+      [
+        -173,
+        35
+      ]
+    ]
+  },
+  {
+    "id": "capital-smith",
+    "role": "smith",
+    "points": [
+      [
+        -187,
+        35
+      ]
+    ]
+  },
+  {
+    "id": "capital-artisan",
+    "role": "merchant",
+    "points": [
+      [
+        -166,
+        65
+      ]
+    ]
+  },
+  {
+    "id": "mill-merchant",
+    "role": "merchant",
+    "points": [
+      [
+        -148,
+        132
+      ]
+    ]
+  },
+  {
+    "id": "mill-smith",
+    "role": "smith",
+    "points": [
+      [
+        -162,
+        132
+      ]
+    ]
+  },
+  {
+    "id": "snow-merchant",
+    "role": "merchant",
+    "points": [
+      [
+        -13,
+        -238
+      ]
+    ]
+  },
+  {
+    "id": "snow-smith",
+    "role": "smith",
+    "points": [
+      [
+        -27,
+        -238
+      ]
+    ]
+  },
+  {
+    "id": "marsh-merchant",
+    "role": "merchant",
+    "points": [
+      [
+        122,
+        -128
+      ]
+    ]
+  },
+  {
+    "id": "marsh-smith",
+    "role": "smith",
+    "points": [
+      [
+        108,
+        -128
+      ]
+    ]
+  },
+  {
+    "id": "amber-merchant",
+    "role": "merchant",
+    "points": [
+      [
+        -423,
+        67
+      ]
+    ]
+  },
+  {
+    "id": "amber-smith",
+    "role": "smith",
+    "points": [
+      [
+        -437,
+        67
+      ]
+    ]
+  },
+  {
+    "id": "cedar-merchant",
+    "role": "merchant",
+    "points": [
+      [
+        -455,
+        -228
+      ]
+    ]
+  },
+  {
+    "id": "cedar-smith",
+    "role": "smith",
+    "points": [
+      [
+        -469,
+        -228
+      ]
+    ]
+  },
+  {
+    "id": "hearth-merchant",
+    "role": "merchant",
+    "points": [
+      [
+        -343,
+        -443
+      ]
+    ]
+  },
+  {
+    "id": "hearth-smith",
+    "role": "smith",
+    "points": [
+      [
+        -357,
+        -443
+      ]
+    ]
+  },
+  {
+    "id": "sky-merchant",
+    "role": "merchant",
+    "points": [
+      [
+        -150,
+        -654
+      ]
+    ]
+  },
+  {
+    "id": "sky-smith",
+    "role": "smith",
+    "points": [
+      [
+        -164,
+        -654
+      ]
+    ]
+  },
+  {
+    "id": "caravan-west",
+    "role": "merchant",
+    "points": [
+      [
+        -430,
+        65
+      ],
+      [
+        -430,
+        43
+      ],
+      [
+        -430,
+        20
+      ],
+      [
+        -430,
+        43
+      ]
+    ]
+  },
+  {
+    "id": "caravan-south",
+    "role": "merchant",
+    "points": [
+      [
+        -155,
+        130
+      ],
+      [
+        -144,
+        116
+      ],
+      [
+        -132,
+        99
+      ],
+      [
+        -120,
+        84
+      ],
+      [
+        -132,
+        64
+      ],
+      [
+        -145,
+        38
+      ],
+      [
+        -163.70710678118655,
+        38.707106781186546
+      ],
+      [
+        -176,
+        38
+      ],
+      [
+        -163.70710678118655,
+        38.707106781186546
+      ],
+      [
+        -145,
+        38
+      ],
+      [
+        -132,
+        64
+      ],
+      [
+        -120,
+        84
+      ],
+      [
+        -132,
+        99
+      ],
+      [
+        -144,
+        116
+      ]
+    ]
+  }
+]
