@@ -218,3 +218,7 @@ Speak with Elowen for ten creature hunts and seven boss quests. The forest leads
 The large village bounty board offers repeatable elite and boss contracts. Account cooldowns use server time; local cooldowns count active playtime. Unique boss weapons cannot be repeatedly awarded to the same account character.
 
 **Journey → Companions** unlocks five pets with small passive bonuses. **Mount stable** unlocks the horse, dire wolf and Emberhorn. Summon/dismount there or with **R**; Attack/Dodge also dismount before combat. The stamina bar shows mount stamina while riding. Pets and mounted riders are visible to party members. No additional HUD panels are required.
+
+### Map navigation
+
+The open map has independent **− / +** zoom controls. Drag to pan, pinch with two fingers or use a mouse wheel to zoom. The pin button centers the hero; the expand-arrows button fits the entire map. Tap the terrain to place a waypoint at the displayed coordinates. More readable landmark labels appear as space becomes available while zooming. These controls also work in Hollowroot and the four expansion dungeons. Terrain is refreshed when opening the atlas or returning to the browser tab.

@@ -1,3 +1,13 @@
+# Map controls and terrain refresh — 10 October 2026
+
+Release `realm-map-20261010-2` fixes the full-map controls previously forwarding to the hidden minimap. The atlas now has its own 1–8× zoom, pointer drag, two-finger pinch, wheel zoom, player recenter and full-extent reset. Waypoint picking uses the displayed zoom/pan transform. Hollowroot and expansion dungeon maps use the same view controls. Labels scale for CSS display size and suppress overlaps.
+
+Terrain is drawn from the actual terrain/river/path functions, vegetation and building records. The cached terrain canvas now uses a CPU-backed source and is recreated on opening the atlas, returning to the tab, or losing its source context. The reported phone-only blank background did not reproduce in local Chromium; automated checks explicitly discard the source layer and confirm recovery instead of claiming a physical-phone reproduction.
+
+`tests/map-controls.cjs` passed at 360×650: terrain pixel coverage, actual +/− zoom, recenter, pointer pan, real CDP two-finger pinch, zoomed waypoint coordinates, full extent, moving enemy markers, discarded/lost terrain recovery, both cave map projections and desktop wheel input. No JavaScript exceptions were captured. `tests/map-orientation.cjs` passed all five bearings, independent hero direction, north-up and cave arrows. The actual mobile map screenshot was inspected. JavaScript syntax and the seventeen-file static release validator passed. Saves, economy and combat calculations are unchanged.
+
+---
+
 # Major expansion validation — 10 October 2026
 
 Release: `realm-expansion-20261010-1`. This section describes the current expansion; the earlier sections below are historical release records.

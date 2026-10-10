@@ -78,7 +78,6 @@ export function installUI(api){
  }
  function menu(){
   $('close-modal').innerHTML=icon('close');document.body.classList.add('menu-open');
-  if(api.panel==='map'){const bar=document.createElement('div');bar.className='map-tools';for(const [id,label,symbol]of [['mini-out','Minimap zoom out','minus'],['mini-in','Minimap zoom in','plus'],['mini-north','Toggle north-up','pin']]){const b=document.createElement('button');b.innerHTML=icon(symbol);b.setAttribute('aria-label',label);b.onclick=()=>$(id).click();bar.append(b)}$('modal').append(bar)}
  }
  return{update,menu,journeyMenu};
 }
