@@ -323,3 +323,5 @@ The return route is limited to Wanderer’s Village. Existing village discovery 
 Physical Android/iPhone/Safari behaviour remains unverified; mobile checks use Chromium emulation.
 
 - `town-return-account.cjs` passed with the actual browser account UI and PGlite RPCs: a party kill notification queued during return still awards its earned XP at the new position, and a server-denied return clears only that request without pausing unrelated account synchronization.
+
+- The deployed Pages smoke test passed, including the new return route, real CDN/WebGL initialization, map/attack controls and the existing expansion menus. The mobile return suite also passed automatic button re-enabling when its combat cooldown expires.

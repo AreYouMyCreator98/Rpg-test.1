@@ -1,5 +1,5 @@
-import {MATERIALS,RECIPES,workshopData,packFor,nodeSpec,station,stockOf,shelterReady} from './gathering-rules.js?v=realm-homeward-20261010-1';
-import {batchScenery} from './scene-batch.js?v=realm-homeward-20261010-1';
+import {MATERIALS,RECIPES,workshopData,packFor,nodeSpec,station,stockOf,shelterReady} from './gathering-rules.js?v=realm-homeward-20261010-2';
+import {batchScenery} from './scene-batch.js?v=realm-homeward-20261010-2';
 export function installGathering(api){
  const {THREE,hero,mesh,homestead:h,$}=api,nodes=[],stations=[],tools=new Map();let job=null,tab='craft',menuVersion='',menuTimer=0;
  const near=(p,r=3.6)=>Math.hypot(hero.root.position.x-p.x,hero.root.position.z-p.z)<r;

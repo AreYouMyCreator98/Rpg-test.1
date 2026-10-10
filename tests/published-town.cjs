@@ -1,0 +1,13 @@
+// Actual deployed Pages smoke test; optional HTTPS proxy verifies certificates.
+const assert=require('node:assert/strict'),fs=require('node:fs');const release=fs.readFileSync('index.html','utf8').match(/ui\.css\?v=([a-zA-Z0-9-]+)/)[1];const {chromium,request}=require(process.env.PLAYWRIGHT_PATH);
+(async()=>{const browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox','--enable-unsafe-swiftshader']});let http;try{
+const proxy=new URL(process.env.HTTPS_PROXY);http=await request.newContext({proxy:{server:proxy.origin,username:decodeURIComponent(proxy.username)||undefined,password:decodeURIComponent(proxy.password)||undefined}});
+const context=await browser.newContext({viewport:{width:390,height:740},isMobile:true,hasTouch:true});const errors=[];
+await context.route(/^https:\/\//,async route=>{try{const response=await http.fetch(route.request());const headers=response.headers();delete headers['content-encoding'];delete headers['content-length'];await route.fulfill({status:response.status(),headers,body:await response.body()})}catch(e){errors.push(e.message);await route.abort()}});
+await context.addInitScript(()=>localStorage.setItem('realm-fallen-settings',JSON.stringify({quality:'low',sound:false})));
+const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
+await page.goto('https://areyoumycreator98.github.io/Rpg-test.1/?test&release='+release);await page.waitForFunction(()=>window.__realm);assert((await page.locator('link[rel=stylesheet]').getAttribute('href')).includes(release));await page.tap('#play');await page.waitForFunction(()=>__realm.renderer.info.render.calls>0);
+assert.equal(await page.evaluate(()=>__realm.visuals.detailTextures.length),3);assert.equal(await page.evaluate(()=>__realm.enemies.length),109);
+assert.equal(await page.evaluate(()=>__realm.prologue.data().stage),0);assert.equal(await page.evaluate(()=>__realm.player.weapon),'w0');
+await page.evaluate(()=>{__realm.setPosition(0,64);__realm.step(.01);__realm.setPosition(-60,130)});await page.tap('#pause-touch');await page.tap('#journey-town');assert(await page.locator('#town-return-confirm').isEnabled());await page.tap('#town-return-confirm');assert.equal(await page.evaluate(()=>__realm.hero.root.position.z),64);assert.deepEqual(errors,[]);console.log('PASS published town-return release, real CDN/WebGL, mobile Journey button and fixed campfire arrival without browser errors');
+}finally{await http?.dispose();await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});
