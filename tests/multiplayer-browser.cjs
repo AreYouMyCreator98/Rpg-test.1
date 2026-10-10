@@ -19,7 +19,7 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  await context.addInitScript(()=>{const raf=window.requestAnimationFrame;window.requestAnimationFrame=fn=>raf(t=>{if(window.__realm)window.__realm.renderer.render=()=>{};fn(t)})});
  await context.route('**/@supabase/supabase-js@2.117.3/+esm',r=>r.fulfill({body:sdk,contentType:'application/javascript'}));
  if(process.env.THREE_TEST_MODULE)await context.route('**/three@0.160.1/build/three.module.js',r=>r.fulfill({path:process.env.THREE_TEST_MODULE,contentType:'application/javascript'}));
- if(process.env.SCOUT_TEST_CACHE)for(const file of ['loaders/GLTFLoader.js','utils/BufferGeometryUtils.js'])await context.route('**/examples/jsm/'+file,r=>r.fulfill({path:process.env.SCOUT_TEST_CACHE+'/'+file.split('/').pop(),contentType:'application/javascript'}));
+ if(process.env.SCOUT_TEST_CACHE)for(const file of ['loaders/GLTFLoader.js','utils/BufferGeometryUtils.js','utils/SkeletonUtils.js'])await context.route('**/examples/jsm/'+file,r=>r.fulfill({path:process.env.SCOUT_TEST_CACHE+'/'+file.split('/').pop(),contentType:'application/javascript'}));
  await context.addInitScript(()=>{localStorage.setItem('realm-fallen-settings',JSON.stringify({quality:'low',sound:false}));localStorage.setItem('realm-supabase',JSON.stringify({url:'https://realm-test.supabase.co',key:'sb_publishable_test'}))});
  await context.exposeBinding('__roomRpc',({page},uid,name,args)=>{
   if(name==='realm_create_room'){if(members.has(uid))throw Error('Already joined');const code=String(++serial).padStart(16,'0'),r={id:crypto.randomUUID(),code,host:uid,public:args.is_public,name:args.player_name+'’s world',players:[{id:uid,name:args.player_name}]};rooms.set(code,r);members.set(uid,code);return roomState(uid)}
@@ -59,6 +59,7 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  const before=await a.evaluate(()=>__realm.enemies[0].hp);
  await b.evaluate(()=>{const e=__realm.enemies[0];__realm.setPosition(e.root.position.x,e.root.position.z+1.5);__realm.startAttack()});
  await a.waitForFunction(hp=>__realm.enemies[0].hp<hp,before,{timeout:10000});
+ for(const page of [a,b])assert(await page.evaluate(()=>__realm.enemies[0].scoutModel?.skinned),'both clients load the skinned Scout');
  for(const page of [a,b])assert.equal(await page.evaluate(()=>__realm.enemies[0].scoutModel?.actions.Attack.getClip().name),'Attack');
  console.log('PASS host AI targets guest, guest takes damage, guest sword contact damages host enemy');
  // Kill with real queued sword swings; both clients converge and see the loot.

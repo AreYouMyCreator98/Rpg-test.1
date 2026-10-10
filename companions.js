@@ -1,5 +1,5 @@
-import {PETS,MOUNTS} from './expansion-data.js?v=realm-living-landscape-1';
-import {createExpansionModel,animateExpansionModel} from './expansion-models.js?v=realm-living-landscape-1';
+import {PETS,MOUNTS} from './expansion-data.js?v=realm-red-cowl-1';
+import {createExpansionModel,animateExpansionModel} from './expansion-models.js?v=realm-red-cowl-1';
 export function normaliseCompanions(p){p.pets=[...new Set((Array.isArray(p.pets)?p.pets:[]).filter(id=>PETS.some(p=>p.id===id)))];p.mounts=[...new Set((Array.isArray(p.mounts)?p.mounts:[]).filter(id=>MOUNTS.some(m=>m.id===id)))];if(!p.pets.includes(p.pet))p.pet=null;if(!p.mounts.includes(p.mount))p.mount=null;p.playtime=Number.isFinite(p.playtime)?Math.max(0,p.playtime):0;return p}
 export function installCompanions(api){
  const {THREE,hero,$}=api;let pet=null,mount=null,petId=null,mountId=null,mounted=false,transition=0,mountSpeed=0,mountStamina=130,rest=0,affection=0,clock=0;
