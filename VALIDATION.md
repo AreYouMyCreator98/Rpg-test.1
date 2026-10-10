@@ -156,3 +156,7 @@ Passed `visual-browser.cjs`: 241 draw calls / 148,920 triangles on Low at the vi
 ## Stage 3 database foundation (not deployed)
 
 `characters-foundation-sql.cjs` passed against PGlite: repeatable installation, anonymous-account rejection, five-slot limit, duplicate-slot rejection, owner-only reads, private backups, denied direct progression updates/deletes, stale/null revision rejection, renewable exclusive character leases, rejection of another session's release, active-character archive rejection and recoverable archive. No cloud-save UI, trusted reward validator or hosted account workflow is enabled. See `EXPANSION-STATUS.md` for the access blocker and remaining implementation.
+
+## Published Stages 1–2 smoke check
+
+GitHub validation run `38018240798` and Pages deployment `38018240598` succeeded for `2223273`. A mobile Chromium check loaded the actual Pages URL with release `realm-progression-20261010-1`, using the real pinned CDN and deployed modules through certificate-verified HTTPS. It passed WebGL rendering, quiet HUD/menu/equipment, attack/potion, live FOV and first-person visibility, 150 stamina, level-up, attribute confirmation, skill unlock and schema-3 save checks with no browser errors. All 49 existing enemies and 16 quests were present. The account foundation was not applied to Supabase; its checks remain local only.
