@@ -6,7 +6,7 @@ A procedural 3D browser action RPG with a continuous expanded overworld, five se
 
 ## GitHub Pages
 
-Upload **all twenty-three runtime files (including `supabase/game-catalog.json` in its folder)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
+Upload **all twenty-five runtime files (including `supabase/game-catalog.json` and `assets/goblin-scout.gltf` in their folders)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
@@ -275,3 +275,11 @@ After visiting **Wanderer’s Village**, open **Journey → Return to village** 
 Return is unavailable before your first village visit, while dead, inside dungeons, within 20 metres of living enemies, or for eight seconds after combat. Existing saved village discoveries are preserved. Cloud characters need a connection; the server validates discovery and safety, and retries reuse the same request. Co-op returns change only your current party position, preserving your separate solo position.
 
 Deploy the updated `supabase/character-runtime.sql` before this frontend release. The additive migration preserves existing discoveries once; new visits come from validated server positions. It does not reset characters or progression.
+
+### Goblin Scout asset
+
+`assets/goblin-scout.gltf` is an original, texture-free low-poly model loaded by Three.js 0.160.1 GLTFLoader. Seven ordinary scouts use cloned rigid-joint hierarchies with shared geometry and materials; other enemies keep their existing models. The asset has 3,399 triangles, 21 material/joint batches and Idle, Walk, Run, Attack, Damage, Stagger and Death clips. The dagger is a child of HandR. Combat contact, stats, loot, collision and respawn remain controlled by the original game logic.
+
+The reusable authoring source is `scripts/build-goblin-scout.py` (Python standard library only). Run it to regenerate the checked-in asset; players and GitHub Pages need no build step. `scout-model.js` adapts the clips to authoritative attack/death timing. If the asset/CDN fails, the existing procedural scout remains playable. Keep the import map pinned to the same Three.js version as the engine.
+
+Run `tests/scout-browser.cjs` with `PLAYWRIGHT_PATH` pointing to Playwright. In a browser-proxy-limited environment, `SCOUT_TEST_CACHE` may point to TLS-verified copies of `three.module.js`, `GLTFLoader.js` and `BufferGeometryUtils.js` from the pinned CDN version. `python scripts/stage-pages.py` validates the static release and includes the model.

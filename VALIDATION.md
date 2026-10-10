@@ -325,3 +325,11 @@ Physical Android/iPhone/Safari behaviour remains unverified; mobile checks use C
 - `town-return-account.cjs` passed with the actual browser account UI and PGlite RPCs: a party kill notification queued during return still awards its earned XP at the new position, and a server-denied return clears only that request without pausing unrelated account synchronization.
 
 - The deployed Pages smoke test passed, including the new return route, real CDN/WebGL initialization, map/attack controls and the existing expansion menus. The mobile return suite also passed automatic button re-enabling when its combat cooldown expires.
+
+## Custom Goblin Scout — realm-scout-20261010-1
+
+- Original glTF generated with `python scripts/build-goblin-scout.py`: 3,399 triangles, 21 joint/material batches, 589,228 bytes, seven rigid-joint animation clips. No texture/skin decoder dependencies. Geometry/materials shared between instances.
+- `tests/scout-browser.cjs` passed in touch-enabled 390 × 844 Chromium with actual WebGL and GLTFLoader: all seven scouts load; dagger attached to HandR; seven animation states produce valid/different joint poses; AI chases and damages hero; hero sword kills award XP and loot; timed respawn works; existing level/equipment/currency load; 109 enemies and 14 bosses preserved; no JavaScript exceptions. Captured and inspected WebGL close-up and gameplay screenshots.
+- `tests/multiplayer-browser.cjs` passed with both clients using the glTF asset: host AI, guest damage/attacks, atomic loot, boss/gate state, companion/mount replication, shared building/gathering, town return, host departure and reconnect. This uses the existing Supabase service double, not a new live-account test.
+- Local browser runs used TLS-verified cached Three.js/GLTFLoader/BufferGeometryUtils because Chromium cannot directly trust the environment HTTPS proxy certificate. No TLS verification was disabled. A loader failure also left the original procedural scouts playable during initial inspection.
+- Static staging, JavaScript syntax and `git diff --check` passed. Physical Android/iOS frame rate and Safari were not tested; mobile viewport coverage is not a hardware performance claim.
