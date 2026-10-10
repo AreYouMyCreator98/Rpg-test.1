@@ -6,7 +6,7 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-FILES = ['accounts.js', 'supabase/game-catalog.json', 'expansion-data.js', 'expansion-models.js', 'expansion-world.js', 'companions.js', 'progression.js', 'adventure-motion.js', 'index.html', 'visual-world.js', 'ui.css', 'ui.js', 'frontier.js', 'living-world.js',
+FILES = ['prologue.js', 'accounts.js', 'supabase/game-catalog.json', 'expansion-data.js', 'expansion-models.js', 'expansion-world.js', 'companions.js', 'progression.js', 'adventure-motion.js', 'index.html', 'visual-world.js', 'ui.css', 'ui.js', 'frontier.js', 'living-world.js',
          'multiplayer.js', 'multiplayer-config.js', 'supabase-rooms.js']
 html = (ROOT / 'index.html').read_text()
 match = re.search(r'ui\.css\?v=([a-zA-Z0-9-]+)', html)

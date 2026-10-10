@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - prologue.js
       - accounts.js
       - supabase/game-catalog.json
       - expansion-data.js

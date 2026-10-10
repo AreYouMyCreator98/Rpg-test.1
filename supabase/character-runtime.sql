@@ -117,7 +117,7 @@ declare c public.realm_characters;ctx public.realm_character_contexts;prior publ
   allowed:=sqrt((px-300)^2+pz^2)<5 and sqrt((ctx.x+46)^2+(ctx.z-38)^2)<5 or sqrt((px+46)^2+(pz-39)^2)<5 and sqrt((ctx.x-300)^2+(ctx.z-5)^2)<5;
   for entry in select value from jsonb_array_elements(cat->'dungeons') loop allowed:=allowed or (sqrt((ctx.x-(entry#>>'{entry,0}')::float8)^2+(ctx.z-(entry#>>'{entry,1}')::float8)^2)<6 and abs(px-(entry->>'origin')::float8)<3 and abs(pz-7)<3) or (abs(ctx.x-(entry->>'origin')::float8)<4 and abs(ctx.z-8)<4 and sqrt((px-(entry#>>'{entry,0}')::float8)^2+(pz-(entry#>>'{entry,1}')::float8)^2)<6);end loop;
  end if;
- if action='respawn' then allowed:=sqrt(px^2+(pz-64)^2)<3;end if;
+ if action='respawn' then allowed:=sqrt(px^2+(pz-64)^2)<3 or (world_id=c.id and coalesce((c.solo_world#>>'{living,prologue,stage}')::integer,3)<2 and sqrt((px-50)^2+(pz-151)^2)<3);end if;
  if not allowed then raise exception 'Travel exceeds movement allowance';end if;
  p:=jsonb_set(c.progression,'{playtime}',to_jsonb(coalesce((c.progression->>'playtime')::numeric,0)+least(30,seconds)));inv:=p->'inventory';item_id:=body->>'id';
  if action in ('buy','sell','equip','unequip','upgrade','consume','attribute','skill','respec') then

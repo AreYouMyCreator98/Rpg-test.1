@@ -4104,6 +4104,108 @@
           "unique": true
         }
       ]
+    },
+    {
+      "id": "106",
+      "name": "Grave-picker",
+      "x": 44,
+      "z": 140,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "107",
+      "name": "Lantern thief",
+      "x": 58,
+      "z": 132,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "id": "108",
+      "name": "Veyr · Keeper of the Pit",
+      "x": 50,
+      "z": 124,
+      "hp": 60,
+      "xp": 30,
+      "damage": 13,
+      "speed": 2.5,
+      "type": 1,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 8,
+          "unique": false
+        },
+        {
+          "id": "tooth",
+          "qty": 1,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ]
     }
   ],
   "quests": [
@@ -4605,7 +4707,7 @@
     },
     {
       "id": "merchant",
-      "x": 7.821279392226411,
+      "x": 7.873410374176801,
       "z": 54
     },
     {

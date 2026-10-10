@@ -23,6 +23,7 @@ export const FAMILIES=[
  {id:'elemental',name:'Stormbound Elemental',boss:'Astrax · The Stormheart',quest:'Stones that walk',bossQuest:'Break the stormheart',giver:'sage',npc:'Sage Orin',village:'snow',x:-40,z:-291,bx:-69,bz:-312,hp:155,bossHp:600,speed:2,damage:25,color:0x78bfc8,reward:'Stormheart Edge',power:49}
 ];
 export const ROADS=[
+ [[50,118],[50,106],[0,83],[0,64]], [[0,83],[-35,97],[-75,97]],
  [[0,64],[-60,75],[-110,80],[-132,64],[-146,38],[-180,38]], [[-110,80],[-155,135],[-245,118],[-286,135]],
  [[-180,38],[-180,9+Math.sin(-180*.052)*7],[-190,-35],[-255,-80],[-288,-106]],
  [[-190,-35],[-125,-140],[-159,-158]], [[-8,-66],[-40,-125],[-125,-140]],
@@ -71,7 +72,7 @@ export function installFrontier(api){
   for(let k=0;k<7;k++){const a=k/7*Math.PI*2,x=f.bx+Math.cos(a)*10,z=f.bz+Math.sin(a)*10;prop(f.id==='elemental'?'cone':'orb',f.id==='elemental'?0x82bcc0:0x718279,x,ground(x,z)+1.5,z,1.2,3,1.2);api.obstacle(x,z,1)}
  });
  // Spatially grouped instancing permits view-distance culling of a much larger forest.
- const chunks=new Map();for(let i=0;i<3400;i++){const x=BOUNDS.left+random(i*3)*510,z=BOUNDS.top+random(i*3+1)*520;if(Math.abs(x)<97&&Math.abs(z)<102||api.pathDist(x,z)<5||Math.abs(z-api.riverZ(x))<9||SETTLEMENTS.some(s=>Math.hypot(x-s.x,z-s.z)<(s.kind==='city'?48:23))||FAMILIES.some(f=>Math.hypot(x-f.x,z-f.z)<18||Math.hypot(x-f.bx,z-f.bz)<15))continue;
+ const chunks=new Map();for(let i=0;i<3400;i++){const x=BOUNDS.left+random(i*3)*510,z=BOUNDS.top+random(i*3+1)*520;if(x>30&&x<70&&z>115&&z<162||x>-90&&x<-20&&z>98&&z<138||Math.abs(x)<97&&Math.abs(z)<102||api.pathDist(x,z)<5||Math.abs(z-api.riverZ(x))<9||SETTLEMENTS.some(s=>Math.hypot(x-s.x,z-s.z)<(s.kind==='city'?48:23))||FAMILIES.some(f=>Math.hypot(x-f.x,z-f.z)<18||Math.hypot(x-f.bx,z-f.bz)<15))continue;
   const key=Math.floor(x/48)+','+Math.floor(z/48);if(!chunks.has(key))chunks.set(key,{x:Math.floor(x/48)*48+24,z:Math.floor(z/48)*48+24,trunk:[],leaf:[],rock:[]});const chunk=chunks.get(key),y=ground(x,z),h=4+random(i*3+2)*4;
   if(z<-263||random(i+8000)>.8){chunk.rock.push([x,y+.7,z,1,.9,1.2]);vegetation.push({x,z,rock:true})}else{chunk.trunk.push([x,y+h*.35,z,.22,h*.7,.22]);for(let j=0;j<3;j++)chunk.leaf.push([x,y+h*(.45+j*.23),z,2.15-j*.43,h*.52,2.15-j*.43]);api.obstacle(x,z,.5);vegetation.push({x,z})}
  }
