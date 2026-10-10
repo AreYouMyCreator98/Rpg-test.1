@@ -1,6 +1,6 @@
-import {icon} from './ui.js?v=realm-touch-20261010-4';
-import {EXPANSION_ENEMIES as TYPES,EXPANSION_DUNGEONS as DUNGEONS,EXPANSION_BOSSES as BOSSES} from './expansion-data.js?v=realm-touch-20261010-4';
-import {createExpansionModel,animateExpansionModel} from './expansion-models.js?v=realm-touch-20261010-4';
+import {icon} from './ui.js?v=realm-zoom-20261010-5';
+import {EXPANSION_ENEMIES as TYPES,EXPANSION_DUNGEONS as DUNGEONS,EXPANSION_BOSSES as BOSSES} from './expansion-data.js?v=realm-zoom-20261010-5';
+import {createExpansionModel,animateExpansionModel} from './expansion-models.js?v=realm-zoom-20261010-5';
 export function installExpansionWorld(api){
  const {THREE,scene,hero,mesh,mat,ground,living,items,$}=api,V=THREE.Vector3;
  const roots=[],creatures=[],tells=new Map(),projectiles=[],entrances=[],dungeonProps=new Map();let clock=0,hazardDelay=0,slow=0,poison=0,poisonTick=0;

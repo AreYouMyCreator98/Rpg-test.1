@@ -125,3 +125,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 /* Combat owns its touch gestures, including rapid taps on icon/label children. */
 .touch-actions button,.touch-actions button *{touch-action:none;-webkit-touch-callout:none}
 .touch-actions button>*{pointer-events:none}
+
+/* Temporary, gesture-only recovery for browser zoom retained across reloads. */
+html.zoom-recovery,html.zoom-recovery body{touch-action:pinch-zoom}
+#zoom-recovery{position:fixed;z-index:200;transform-origin:top left;display:grid;place-items:center;padding:24px;background:#102b25f7;color:var(--ui-ivory);touch-action:pinch-zoom;pointer-events:auto}
+#zoom-recovery>div{max-width:420px;pointer-events:none}
+#zoom-recovery h2{font:28px var(--ui-serif);color:var(--ui-gold)}
+#zoom-recovery p{font:16px/1.5 var(--ui-sans)}

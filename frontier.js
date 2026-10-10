@@ -1,8 +1,8 @@
-import {icon} from './ui.js?v=realm-touch-20261010-4';
+import {icon} from './ui.js?v=realm-zoom-20261010-5';
 // Recover older cached HTML before it can pair its obsolete HUD with this module.
 // This module must retain this guard while pre-design-system pages remain cached.
-if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-touch-20261010-4"]')){
- const fresh=new URL(location.href),release='realm-touch-20261010-4';
+if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-zoom-20261010-5"]')){
+ const fresh=new URL(location.href),release='realm-zoom-20261010-5';
  if(fresh.searchParams.get('v')!==release){fresh.searchParams.set('v',release);location.replace(fresh.href)}
  else{document.body.textContent='The game update could not load. Reopen the game to retry. Your saved journey is safe.'}
  await new Promise(()=>{}); // Navigation replaces this document; never initialize mixed UI.

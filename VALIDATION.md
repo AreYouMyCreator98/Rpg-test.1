@@ -1,3 +1,11 @@
+# Recovery from retained browser zoom — 10 October 2026
+
+Release `realm-zoom-20261010-5` handles a page that is already magnified, rather than only suppressing new combat double taps. An early, dependency-free VisualViewport listener displays a recovery surface inside the visible viewport at readable size. It temporarily permits native pinching through the normally gesture-blocking document. When scale returns to normal it removes the surface and restores the original viewport/touch rules. Gameplay pauses if recovery starts during play. No save or account migration is involved.
+
+`tests/zoom-recovery.cjs` passed on mobile Chromium at 390×844. The fixture relaxes the initial viewport maximum to emulate a browser allowing zoom despite the production restriction, then forces 2× page scale with CDP. It verifies recovery surface bounds and uses real two-finger CDP touch movements to pinch back to normal on the title screen and during play. It checks that the recovery surface disappears, document touch restrictions return, progression remains intact and attacks work after resuming. This is not a physical-device reproduction of Chrome retaining zoom across reloads; iPhone/Android browser settings that are not reflected by VisualViewport.scale remain outside this test.
+
+---
+
 # Combat double-tap protection — 10 October 2026
 
 Release `realm-touch-20261010-4` adds `touch-action: none` to combat buttons and their children, and routes icon/label hit testing to their button. Attack, dodge and block cancel native touchstart/touchend, double-click and context-menu defaults locally using non-passive listeners. Their existing pointer handlers remain the only gameplay triggers. Click-based healing, interaction, menu scrolling and custom map gestures are unchanged.
