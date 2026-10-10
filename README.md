@@ -24,9 +24,11 @@ The existing hero rig has a pleated cape, faceted pauldrons, hair and ear detail
 
 This is a playable visual upgrade, not a claim of pixel-identical reproduction of the reference. Physical Samsung/iPhone frame rates and thermal behaviour still need device testing. See `VALIDATION.md` for actual checks and measured rendering workloads.
 
-## Emerald glass interface
+## Quiet dark-fantasy interface
 
-The HUD follows the supplied portrait reference: separate gold pill, circular navigation, compass minimap/location pill, contextual talk action, illustrated equipment, concentric joystick and asymmetrical combat controls. Inventory, shops, journal, dialogue, settings and co-op menus use the same local design system. See [UI-DESIGN-SYSTEM.md](UI-DESIGN-SYSTEM.md) for tokens, SVG icons, integration points and validation limits. The previous interface is preserved by tag `v2.2-pre-reference-ui`.
+The default HUD keeps health/stamina, name/level, a single **Menu** action and mobile combat controls. **Menu → Journey** contains equipment, quests, world map, currency/XP, settings, multiplayer, controls and journey options. The minimap is off by default; enable **Minimap on HUD** in Journey to keep it visible. This preference is saved separately from your character. Heal shows potion quantity, and contextual interactions remain available beside nearby NPCs and loot.
+
+All menus share the charcoal, muted-gold design tokens and SVG icons in `ui.css` / `ui.js`. Keyboard shortcuts remain available. See [UI-DESIGN-SYSTEM.md](UI-DESIGN-SYSTEM.md). This layout supersedes the older screenshot-recreation HUD at the user's request.
 
 ## The Shattered Marches expansion
 

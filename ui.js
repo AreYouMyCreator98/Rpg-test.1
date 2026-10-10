@@ -1,5 +1,6 @@
 // Realm UI design system. All interface icons share this local SVG family.
 const paths={
+ menu:'<path d="M5 9h22M5 17h22M5 25h22"/>',
  hero:'<rect x="4" y="4" width="24" height="24" rx="3" transform="rotate(45 16 16)" class="icon-gold" stroke-width=".8" fill="var(--ui-pine)"/><path fill="currentColor" stroke="none" d="M16 5 19.4 12.6 27 16 19.4 19.4 16 27 12.6 19.4 5 16 12.6 12.6Z"/>',
  coin:'<circle cx="16" cy="16" r="12"/><circle cx="16" cy="16" r="8.5"/><path fill="currentColor" stroke="none" d="m16 10 4 6-4 6-4-6Z"/>',
  bag:'<path fill="currentColor" stroke="none" d="M7 9q9-4 18 0l2 18q-11 5-22 0Z"/><path d="M12 6V4q4-3 8 0v2"/><path stroke="var(--ui-forest)" d="M6 13q10 10 20 0"/><rect x="13.5" y="15" width="5" height="6" rx="2" fill="currentColor" stroke="var(--ui-forest)"/>',
@@ -28,11 +29,12 @@ const paths={
 export function icon(name,extra=''){return `<svg class="ui-icon ${extra}" viewBox="0 0 32 34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${paths[name]||paths.relic}</svg>`}
 export function itemIcon(id,item){return icon(item.type==='weapon'?'sword':item.type==='armour'?'armour':item.type==='consumable'?'potion':id==='tooth'?'tooth':id.includes('key')?'key':id==='supplies'?'crate':id==='gem'?'gem':'relic')}
 export function installUI(api){
- const {$,living}=api;
+ const {$,living}=api;document.body.classList.add('quiet-hud');
+ try{document.body.classList.toggle('mini-visible',localStorage.getItem('realm-ui-minimap')==='on')}catch{}
  document.querySelectorAll('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon));
  for(const [id,it]of Object.entries(api.items))it.icon=itemIcon(id,it);
  const button=(id,name,label)=>{const el=$(id);el.innerHTML=icon(name)+`<span>${label}</span>`;el.setAttribute('aria-label',label)};
- for(const [id,name,label]of [['bag-touch','bag','Satchel'],['pause-touch','cog','Pause'],['attack-touch','attack','Attack'],['block-touch','shield','Block'],['potion-touch','heal','Heal'],['dodge-touch','run','Dodge']])button(id,name,label);
+ for(const [id,name,label]of [['bag-touch','bag','Satchel'],['pause-touch','menu','Menu'],['attack-touch','attack','Attack'],['block-touch','shield','Block'],['potion-touch','heal','Heal'],['dodge-touch','run','Dodge']])button(id,name,label);
  $('hud').append(document.querySelector('.touch-top'));$('hud').append($('pickup-touch'));
  $('pickup-touch').className='context-action';$('pickup-touch').innerHTML=icon('talk')+'<span id="context-label"></span><i class="context-diamond"></i>';
  $('equipment-switch').onclick=api.inventory;$('hint').classList.add('sr-only');
@@ -42,6 +44,18 @@ export function installUI(api){
  $('mini-north').textContent='N';$('mini-north').setAttribute('aria-label','Toggle north-up minimap');
  $('mini-out').classList.add('sr-only');$('mini-out').tabIndex=-1;$('mini-in').tabIndex=-1;$('potion').tabIndex=-1;$('mini-in').classList.add('sr-only');$('map-bearing').classList.add('sr-only');
  for(const n of living.npcs){n.label.replaceChildren();n.label.insertAdjacentHTML('beforeend',icon('talk'));const text=document.createElement('span'),name=document.createElement('strong'),role=document.createElement('small');name.textContent=n.name;role.textContent=n.role;text.append(name,role);n.label.append(text);}
+ function journeyMenu(){
+  api.modal(api.getNet()?.active?'Journey · Online':'Journey','<div class="journey-summary" id="journey-summary"></div><div class="journey-objective"><div class="eyebrow">Current objective</div><p id="journey-objective"></p></div><div class="journey-grid" id="journey-grid"></div><button id="toggle-minimap" class="hud-preference"></button><button id="resume" class="primary journey-resume">Return to the world</button>','journey');
+  const p=api.player,weapon=api.items[p.weapon],armour=api.items[p.armour];
+  $('journey-summary').textContent=`Level ${p.level} · ${Math.ceil(p.hp)} / ${p.maxHp} HP · ${p.xp} / ${45+(p.level-1)*25} XP · ${p.coins} gold`;
+  const gear=document.createElement('p');gear.className='journey-gear';gear.textContent=`${weapon?.name||'Unarmed'} · ${4+p.level*2+(weapon?.damage||0)} ATK / ${armour?.defence||0} DEF`;$('journey-summary').append(gear);
+  $('journey-objective').textContent=$('objective').textContent;
+  for(const [id,label,symbol,action]of [['journey-equipment','Equipment','bag',api.inventory],['journey-journal','Quests','book',living.journal],['journey-map','World map','pin',living.worldMap],['menu-settings','Settings','cog',api.settingsMenu],['journey-party','Multiplayer','party',()=>api.getNet()?.lobby()],['journey-options','Journey options','hero',api.systemPause],['menu-controls','Controls','run',api.controls]]){
+   const b=document.createElement('button');b.id=id;b.innerHTML=icon(symbol)+`<span>${label}</span>`;b.onclick=action;if(id==='journey-party')b.disabled=!api.getNet();$('journey-grid').append(b);
+  }
+  const toggle=$('toggle-minimap'),sync=()=>{const on=document.body.classList.contains('mini-visible');toggle.textContent='Minimap on HUD · '+(on?'On':'Off');toggle.setAttribute('aria-pressed',String(on))};sync();toggle.onclick=()=>{document.body.classList.toggle('mini-visible');try{localStorage.setItem('realm-ui-minimap',document.body.classList.contains('mini-visible')?'on':'off')}catch{}sync()};
+  $('resume').onclick=api.closeModal;
+ }
  let lastGold=null,lastQuest='',lastWeapon='';
  function flash(el){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;el.animate([{filter:'brightness(1.35)'},{filter:'brightness(1)'}],{duration:300})}
  function update(){
@@ -53,18 +67,18 @@ export function installUI(api){
   $('quest-title').textContent=q?.name||'A Kingdom Reclaimed';const quest=$('objective').textContent;if(lastQuest&&lastQuest!==quest)flash(document.querySelector('.quest'));lastQuest=quest;
   const prompt=$('hint').classList.contains('hidden')?'':$('hint').textContent.replace(/^(Interact · |E · )/,'');
   $('pickup-touch').classList.toggle('hidden',!prompt||!!api.panel);$('context-label').textContent=prompt;
-  const potions=p.inventory.find(i=>i.id==='potion')?.qty||0;$('potion-touch').disabled=!potions;$('potion-touch').setAttribute('aria-label',`Heal · ${potions} potions`);$('potion-touch').title=potions?`${potions} potions`:'No potions';
+  const potions=p.inventory.find(i=>i.id==='potion')?.qty||0;$('potion-touch').disabled=!potions;$('potion-touch').setAttribute('aria-label',`Heal · ${potions} potions`);$('potion-touch').querySelector('span').textContent='Heal · '+potions;$('potion-touch').title=potions?`${potions} potions`:'No potions';
   const restricted=p.stamina<25||api.guardBreak>0||api.dodgeCooldown>0;$('dodge-touch').setAttribute('aria-disabled',String(restricted));$('dodge-touch').classList.toggle('unavailable',restricted);$('dodge-touch').style.setProperty('--cooldown',Math.min(1,Math.max(api.dodgeCooldown/1.05,api.guardBreak>0?1:0))*360+'deg');$('dodge-touch').title=p.stamina<25?'Requires 25 stamina':api.dodgeCooldown>0?'Dodge recovering':'Dodge';
   $('block-touch').classList.toggle('held',api.blocking);
   if(lastWeapon!==p.weapon){lastWeapon=p.weapon;const it=api.items[p.weapon];$('equipped-icon').innerHTML=it?itemIcon(p.weapon,it):icon('sword');$('equipped-icon').style.setProperty('--item-blade',it?.color?'#'+it.color.toString(16).padStart(6,'0'):'var(--ui-steel)')}
   document.body.classList.toggle('menu-open',!!api.panel);
   const taken=[],avoid=[...document.querySelectorAll('.hero-card,.quest,#frontier-mini,.touch-top,#gold-counter')].map(el=>el.getBoundingClientRect());
   const overlaps=(a,b)=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;
-  for(const n of [...living.npcs].sort((a,b)=>a.root.position.distanceToSquared(api.hero.root.position)-b.root.position.distanceToSquared(api.hero.root.position))){const d=n.root.position.distanceTo(api.hero.root.position),r=n.label.getBoundingClientRect();const visible=!api.panel&&n.label.style.display!=='none'&&d<17&&!avoid.some(a=>overlaps(r,a))&&!taken.some(a=>overlaps(r,a));n.label.style.visibility=visible?'visible':'hidden';n.label.style.opacity=Math.min(1,Math.max(0,(17-d)/7));n.label.classList.toggle('has-quest',living.questDefinitions.some(q=>q.giver===n.id&&data.quests[q.id]?.status!=='claimed'));if(visible)taken.push(r)}
+  for(const n of [...living.npcs].sort((a,b)=>a.root.position.distanceToSquared(api.hero.root.position)-b.root.position.distanceToSquared(api.hero.root.position))){const d=n.root.position.distanceTo(api.hero.root.position),r=n.label.getBoundingClientRect();const visible=!api.panel&&n.label.style.display!=='none'&&d<7&&!avoid.some(a=>overlaps(r,a))&&!taken.some(a=>overlaps(r,a));n.label.style.visibility=visible?'visible':'hidden';n.label.style.opacity=Math.min(1,Math.max(0,(7-d)/3));n.label.classList.toggle('has-quest',living.questDefinitions.some(q=>q.giver===n.id&&data.quests[q.id]?.status!=='claimed'));if(visible)taken.push(r)}
  }
  function menu(){
   $('close-modal').innerHTML=icon('close');document.body.classList.add('menu-open');
   if(api.panel==='map'){const bar=document.createElement('div');bar.className='map-tools';for(const [id,label,symbol]of [['mini-out','Minimap zoom out','minus'],['mini-in','Minimap zoom in','plus'],['mini-north','Toggle north-up','pin']]){const b=document.createElement('button');b.innerHTML=icon(symbol);b.setAttribute('aria-label',label);b.onclick=()=>$(id).click();bar.append(b)}$('modal').append(bar)}
  }
- return{update,menu};
+ return{update,menu,journeyMenu};
 }
