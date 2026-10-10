@@ -104,3 +104,5 @@
 .skill-node:not(:last-child)::after{content:'';position:absolute;height:17px;width:1px;left:50%;top:100%;background:var(--ui-gold)}
 .skill-node.unlocked{border-color:var(--ui-mint);background:var(--ui-skill-unlocked)}.skill-node.available{border-color:var(--ui-gold)}.skill-node.locked{opacity:.65}
 @media(max-width:540px){.skill-trees{grid-template-columns:1fr}.skill-node{min-height:60px}.stat-grid{font-size:12px}}
+
+input[type="range"],input[type="checkbox"]{accent-color:var(--ui-gold)}

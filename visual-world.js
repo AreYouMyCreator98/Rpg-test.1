@@ -12,6 +12,16 @@ export function installVisualWorld(api) {
     #include <colorspace_fragment>
     }`
   }));sky.frustumCulled=false;sky.renderOrder=-2;root.add(sky);
+  // Small, generated, mipmapped material textures. No image downloads or extra draws.
+  const detailTextures=[];
+  function grainTexture(kind){const c=document.createElement('canvas');c.width=c.height=128;const ctx=c.getContext('2d'),pixels=ctx.createImageData(128,128);let seed=kind==='wood'?904:kind==='stone'?138:273;
+    for(let y=0;y<128;y++)for(let x=0;x<128;x++){seed=(1664525*seed+1013904223)>>>0;const noise=(seed/4294967296-.5),row=Math.floor(y/32),brick=(x+(row%2)*32)%64;
+      let value=kind==='wood'?224+Math.sin(x*.65+Math.sin(y*.08)*1.3)*12+noise*10:kind==='stone'?(y%32<2||brick<2?185:236+noise*15):237+noise*17+Math.sin(x*.3)*Math.sin(y*.2)*7;
+      const i=(y*128+x)*4;pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=value;pixels.data[i+3]=255}
+    ctx.putImageData(pixels,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());detailTextures.push(t);return t;
+  }
+  const earthTexture=grainTexture('earth'),woodTexture=grainTexture('wood'),stoneTexture=grainTexture('stone');
+  api.terrain.material.onBeforeCompile=shader=>{shader.uniforms.earthDetail={value:earthTexture};shader.vertexShader='varying vec2 vEarthDetail;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvEarthDetail=position.xz*.65;');shader.fragmentShader='uniform sampler2D earthDetail;varying vec2 vEarthDetail;\n'+shader.fragmentShader;shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\ndiffuseColor.rgb*=mix(vec3(.48),vec3(1.08),texture2D(earthDetail,vEarthDetail).rgb);');};
   const batches=new Map(),chunks=[],dummy=new THREE.Object3D(),color=new THREE.Color();
   let seed=51984;const random=()=>((seed=(1664525*seed+1013904223)>>>0)/4294967296),range=(a,b)=>a+(b-a)*random();
   const bladeGeometry=new THREE.BufferGeometry();bladeGeometry.setAttribute('position',new THREE.Float32BufferAttribute([-.5,-.5,0,.5,-.5,0,.12,.5,.12],3));bladeGeometry.computeVertexNormals();
@@ -121,18 +131,23 @@ export function installVisualWorld(api) {
   for(const b of buildings)if(b.g)b.g.traverse(m=>{
     if(!m.isMesh||m.material.map||m.material.emissive?.getHex()||!m.geometry.attributes.normal)return;
     const key=Math.floor(b.x/64)+','+Math.floor(b.z/64);
-    if(!masonry.has(key))masonry.set(key,{x:Math.floor(b.x/64)*64+32,z:Math.floor(b.z/64)*64+32,p:[],n:[],c:[]});
+    if(!masonry.has(key))masonry.set(key,{x:Math.floor(b.x/64)*64+32,z:Math.floor(b.z/64)*64+32,p:[],n:[],c:[],kind:[]});
     const out=masonry.get(key),g=m.geometry,p=g.attributes.position,n=g.attributes.normal,index=g.index;
     nm.getNormalMatrix(m.matrixWorld);
     for(let j=0;j<(index?index.count:p.count);j++){
       const k=index?index.getX(j):j;v.fromBufferAttribute(p,k).applyMatrix4(m.matrixWorld);normal.fromBufferAttribute(n,k).applyNormalMatrix(nm);
-      out.p.push(v.x,v.y,v.z);out.n.push(normal.x,normal.y,normal.z);out.c.push(m.material.color.r,m.material.color.g,m.material.color.b);
+      out.p.push(v.x,v.y,v.z);out.n.push(normal.x,normal.y,normal.z);out.c.push(m.material.color.r,m.material.color.g,m.material.color.b);const tint=m.material.color;out.kind.push(tint.r<.4&&tint.r>tint.g*1.3&&tint.g>tint.b*1.3?1:0);
     }
     m.visible=false;
   });
   const masonryMat=new THREE.MeshStandardMaterial({vertexColors:true,flatShading:true,roughness:.9,side:THREE.DoubleSide});
+  masonryMat.onBeforeCompile=shader=>{shader.uniforms.woodDetail={value:woodTexture};shader.uniforms.stoneDetail={value:stoneTexture};shader.vertexShader='attribute float surfaceKind;varying float vSurfaceKind;varying vec2 vBuildingDetail;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+    vSurfaceKind=surfaceKind;vec3 n=abs(normal);vBuildingDetail=n.y>.7?position.xz:(n.x>n.z?position.zy:position.xy);`);
+    shader.fragmentShader='uniform sampler2D woodDetail;uniform sampler2D stoneDetail;varying float vSurfaceKind;varying vec2 vBuildingDetail;\n'+shader.fragmentShader;shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+    vec3 grain=vSurfaceKind>.5?texture2D(woodDetail,vBuildingDetail*vec2(1.5,.35)).rgb:texture2D(stoneDetail,vBuildingDetail*.4).rgb;
+    diffuseColor.rgb*=mix(vec3(.65),vec3(1.04),grain);`);};
   for(const b of masonry.values()){
-    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(b.p,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(b.n,3));g.setAttribute('color',new THREE.Float32BufferAttribute(b.c,3));g.computeBoundingSphere();
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(b.p,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(b.n,3));g.setAttribute('color',new THREE.Float32BufferAttribute(b.c,3));g.setAttribute('surfaceKind',new THREE.Float32BufferAttribute(b.kind,1));g.computeBoundingSphere();
     const m=new THREE.Mesh(g,masonryMat);m.castShadow=m.receiveShadow=true;root.add(m);chunks.push({m,x:b.x,z:b.z,detail:false,sky:false});
   }
   // Lanterns use emissive glass and a procedural halo, not a light for every post.
@@ -245,5 +260,5 @@ export function installVisualWorld(api) {
     lanternMaterial.emissiveIntensity=1.5+Math.sin(time*3)*.08;
     actors.forEach((a,i)=>{const p=a.root.position,on=a.root.visible&&(p.x>200)===inside&&p.distanceToSquared(hero.root.position)<2500;dummy.position.set(p.x,surface(p.x,p.z)+.035,p.z);dummy.rotation.set(0,0,0);dummy.scale.set(on?1.5*(a.scale||1):0,1,on?1.2*(a.scale||1):0);dummy.updateMatrix();shadows.setMatrixAt(i,dummy.matrix)});shadows.instanceMatrix.needsUpdate=true;
   }
-  return {root,chunks,lanterns,shadows,resetResolution,sampleFrame,update,get resolutionScale(){return scale}};
+  return {root,chunks,lanterns,shadows,detailTextures,resetResolution,sampleFrame,update,get resolutionScale(){return scale}};
 }

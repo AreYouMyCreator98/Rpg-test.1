@@ -160,3 +160,11 @@ Passed `visual-browser.cjs`: 241 draw calls / 148,920 triangles on Low at the vi
 ## Published Stages 1–2 smoke check
 
 GitHub validation run `38018240798` and Pages deployment `38018240598` succeeded for `2223273`. A mobile Chromium check loaded the actual Pages URL with release `realm-progression-20261010-1`, using the real pinned CDN and deployed modules through certificate-verified HTTPS. It passed WebGL rendering, quiet HUD/menu/equipment, attack/potion, live FOV and first-person visibility, 150 stamina, level-up, attribute confirmation, skill unlock and schema-3 save checks with no browser errors. All 49 existing enemies and 16 quests were present. The account foundation was not applied to Supabase; its checks remain local only.
+
+## Atlas and material detail — 2026-10-10
+
+`map-orientation.cjs` passed five camera bearings with deliberately opposing hero facing, camera-follow/north-up/cave orientation, actual atlas rendering and waypoint placement/clearing. The atlas and terrain now share the terrain colour/path function; the river width and bridge list come from the world, and village roofs provide their footprints. Inspected the rendered atlas screenshot.
+
+`visual-browser.cjs` passed after the final material changes: three varying 128×128 generated textures, wood/masonry assignments in merged geometry, six-location camera framing, adaptive resolution, cave lighting transitions, quality selection and save reload, with no JavaScript/shader/console errors. Low village workload remains 241 draw calls / 148,920 triangles; 49 enemies, 16 quests and 343 instanced scenery batches remain. Low and Medium screenshots were inspected. The sunlight is warmer with a small exposure adjustment; no new postprocessing passes were added.
+
+`v2-mobile.cjs` passed real CDP multitouch movement+attack/block, release, camera orbit, NPC/shop/equipment, journal/map/inventory/settings and portrait/landscape control bounds. These are Chromium tests; physical Samsung/iPhone frame rate and Safari remain unverified. This update does not claim completion of the remaining expansion stages.
