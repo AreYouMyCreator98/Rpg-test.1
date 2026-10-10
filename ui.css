@@ -121,3 +121,7 @@ input:not([type="range"]):not([type="checkbox"]),textarea,select,.room-input{fon
 #account-content button{max-width:100%;white-space:normal}
 
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+
+/* Combat owns its touch gestures, including rapid taps on icon/label children. */
+.touch-actions button,.touch-actions button *{touch-action:none;-webkit-touch-callout:none}
+.touch-actions button>*{pointer-events:none}

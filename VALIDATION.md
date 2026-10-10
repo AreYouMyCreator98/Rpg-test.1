@@ -1,3 +1,11 @@
+# Combat double-tap protection — 10 October 2026
+
+Release `realm-touch-20261010-4` adds `touch-action: none` to combat buttons and their children, and routes icon/label hit testing to their button. Attack, dodge and block cancel native touchstart/touchend, double-click and context-menu defaults locally using non-passive listeners. Their existing pointer handlers remain the only gameplay triggers. Click-based healing, interaction, menu scrolling and custom map gestures are unchanged.
+
+`tests/mobile-viewport.cjs` passed with actual Chromium CDP touch input at 390×844: rapid attack taps on icons and labels keep viewport scale 1, later taps queue combos, simultaneous joystick/attack moves the hero, native touch defaults are cancelled, and healing still consumes one potion. It also checks title/input zoom and invalid-save preservation. Physical Chrome on the reported phone remains unverified; the prior test covered generic double taps but did not exercise the attack button specifically.
+
+---
+
 # Continue, cloud recovery and mobile viewport — 10 October 2026
 
 Release `realm-recovery-20261010-3` preserves the existing gameplay and server reward rules. No player records or database schema were modified for this repair.

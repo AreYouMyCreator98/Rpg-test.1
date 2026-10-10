@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><link rel="icon" href="data:,"><meta name="theme-color" content="#102f29"><title>Realm of the Fallen</title>
-<link rel="stylesheet" href="./ui.css?v=realm-recovery-20261010-3"></head><body>
+<link rel="stylesheet" href="./ui.css?v=realm-touch-20261010-4"></head><body>
 <div id="shade"></div><section id="title"><div class="eyebrow">The Shattered Marches · World expansion</div><h1>Realm of<br>the <span>Fallen</span></h1><div class="rule"></div><p>Beyond the old forest, a kingdom awaits. Explore mountain villages, reclaim the roads, and challenge fourteen bosses, descend into ancient dungeons and ride with your companions.</p><div class="buttons"><button class="primary" id="play" disabled>Begin your journey &nbsp; →</button><button id="continue" class="hidden">Continue</button></div><div class="small-buttons"><button id="title-controls">Controls</button><button id="title-settings">Settings</button></div><div id="loading">Awakening the forest…</div></section><div id="brand">REALM OF THE FALLEN &nbsp; / &nbsp; THE SHATTERED MARCHES</div>
 <div id="hud" class="hidden">
  <section class="hero-card panel" aria-label="Character status"><span class="hero-emblem" data-icon="hero"></span><div class="hero-top"><span class="hero-name">The Wanderer</span><span class="level" id="level">Lv 1</span></div><div class="status-row health"><div class="bar"><i id="hpbar"></i></div><span id="hptext"></span></div><div class="status-row experience"><div class="bar xp"><i id="xpbar"></i></div><span id="xptext"></span></div><div class="status-row stamina-row"><div class="bar stamina"><i id="staminabar"></i></div><span id="stamtext">Stamina 100 / 100</span></div></section>
@@ -14,19 +14,19 @@
 <div id="world-ui"></div><div id="hurt"></div><div id="toasts"></div><div id="mobile" class="hidden"><div id="stick" aria-label="Movement joystick"><i class="joy-n"></i><i class="joy-e"></i><i class="joy-s"></i><i class="joy-w"></i><div id="nub"></div></div><div class="touch-actions"><button id="attack-touch" aria-label="Attack">⚔</button><button id="dodge-touch">Dodge</button><button id="pickup-touch">Interact</button><button id="potion-touch">Heal</button><button id="block-touch">Block</button></div><div class="touch-top"><button id="bag-touch">Satchel</button><button id="pause-touch">Pause</button></div></div>
 <div id="modal-wrap" class="modal-backdrop hidden"><section id="modal" class="modal panel"></section></div>
 <script type="module">
-let installLivingWorld,migrateSave;try{({installLivingWorld,migrateSave}=await import('./living-world.js?v=realm-recovery-20261010-3'))}catch(e){fatal('The Living World module could not load. Keep index.html and living-world.js together, then reload.');throw e}
-const {installFrontier,BOUNDS,roadDistance,terrainColor,extraHeight}=await import('./frontier.js?v=realm-recovery-20261010-3');
-import {installAccounts} from './accounts.js?v=realm-recovery-20261010-3';
+let installLivingWorld,migrateSave;try{({installLivingWorld,migrateSave}=await import('./living-world.js?v=realm-touch-20261010-4'))}catch(e){fatal('The Living World module could not load. Keep index.html and living-world.js together, then reload.');throw e}
+const {installFrontier,BOUNDS,roadDistance,terrainColor,extraHeight}=await import('./frontier.js?v=realm-touch-20261010-4');
+import {installAccounts} from './accounts.js?v=realm-touch-20261010-4';
 let living=null,net=null,frontier=null,ui=null,visuals=null,progression=null,expansion=null,companions=null,accounts=null,accountActor=null,accountDrops=false,accountReward=null;
-const {installUI,icon}=await import('./ui.js?v=realm-recovery-20261010-3');
-let installVisualWorld;try{({installVisualWorld}=await import('./visual-world.js?v=realm-recovery-20261010-3'))}catch(e){fatal('The scenery module could not load. Reload to retry; keep visual-world.js with the other game files. Your saved journey is safe.');throw e}
-const {installExpansionWorld}=await import('./expansion-world.js?v=realm-recovery-20261010-3');
-const {installCompanions,normaliseCompanions}=await import('./companions.js?v=realm-recovery-20261010-3');
+const {installUI,icon}=await import('./ui.js?v=realm-touch-20261010-4');
+let installVisualWorld;try{({installVisualWorld}=await import('./visual-world.js?v=realm-touch-20261010-4'))}catch(e){fatal('The scenery module could not load. Reload to retry; keep visual-world.js with the other game files. Your saved journey is safe.');throw e}
+const {installExpansionWorld}=await import('./expansion-world.js?v=realm-touch-20261010-4');
+const {installCompanions,normaliseCompanions}=await import('./companions.js?v=realm-touch-20261010-4');
 const $=id=>document.getElementById(id);let THREE;
 try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js')}catch(e){fatal('The forest could not load. Check your internet connection and reload. The game needs access to cdn.jsdelivr.net.');throw e}
 function fatal(message){const el=document.createElement('div');el.id='fatal';el.style.cssText='position:fixed;inset:0;z-index:100;background:#102f29;color:#f3e8d1;display:grid;place-content:center;padding:24px';el.innerHTML='<h2>Journey interrupted</h2><p></p><button onclick="location.reload()">Try again</button>';el.querySelector('p').textContent=message;document.body.append(el)}
-import {prepareRollRig,groundedRoll,resetRoll,normaliseCamera} from './adventure-motion.js?v=realm-recovery-20261010-3';
-import {normaliseProgression,characterStats,refreshVitals,xpForLevel,installProgression} from './progression.js?v=realm-recovery-20261010-3';
+import {prepareRollRig,groundedRoll,resetRoll,normaliseCamera} from './adventure-motion.js?v=realm-touch-20261010-4';
+import {normaliseProgression,characterStats,refreshVitals,xpForLevel,installProgression} from './progression.js?v=realm-touch-20261010-4';
 const TAU=Math.PI*2,clamp=THREE.MathUtils.clamp,lerp=THREE.MathUtils.lerp,rand=(a,b)=>a+Math.random()*(b-a),V=THREE.Vector3;
 const mobile=matchMedia('(pointer:coarse)').matches;if(mobile)document.body.classList.add('touch');
 let renderer;try{renderer=new THREE.WebGLRenderer({antialias:!mobile,powerPreference:'high-performance'});}catch(e){fatal('WebGL is unavailable. Please enable hardware acceleration or try another modern browser.');throw e}
@@ -175,6 +175,12 @@ function systemPause(){if(state!=='playing')return;if(net?.active){net.lobby();r
 function showTitle(){closeModal();state='title';$('hud').classList.add('hidden');$('mobile').classList.add('hidden');$('title').classList.remove('hidden');$('shade').classList.remove('hidden');$('brand').classList.remove('hidden');$('continue').classList.remove('hidden')}
 function showVictory(){modal('The realm remembers.','<div class="eyebrow">Chapter I complete</div><p>Gruk has fallen, and sunlight returns to the mountain ruins. The Ember Sword and Guardian Armour await among his treasures.</p><p>Your journey can continue. Explore the wilds, gather equipment, or reset the chief encounter from the pause menu.</p><button class="primary" id="explore">Return to the wilds</button>','victory');$('explore').onclick=closeModal}
 $('play').onclick=confirmNew;$('continue').onclick=()=>accounts.continueJourney();$('title-controls').onclick=controls;$('title-settings').onclick=settingsMenu;$('inventory-button').onclick=inventory;$('bag-touch').onclick=inventory;$('help-button').onclick=controls;$('pause-button').onclick=pause;$('pause-touch').onclick=pause;$('potion').onclick=usePotion;$('potion-touch').onclick=usePotion;$('attack-touch').onpointerdown=e=>{e.preventDefault();startAttack()};$('dodge-touch').onpointerdown=e=>{e.preventDefault();startDodge()};$('pickup-touch').onclick=pickup;
+// Pointer-driven combat must not also become a browser zoom gesture. Cancel
+// native touch defaults locally; leave click-driven healing and map pinch alone.
+for(const id of ['attack-touch','dodge-touch','block-touch']){
+ const button=$(id);
+ for(const type of ['touchstart','touchend','dblclick','contextmenu'])button.addEventListener(type,e=>{if(e.cancelable)e.preventDefault()},{passive:false});
+}
 const blockButton=$('block-touch');let blockPointer=null;
 blockButton.onpointerdown=e=>{e.preventDefault();if(state!=='playing'||panel||blockPointer!==null)return;blockPointer=e.pointerId;blockButton.setPointerCapture(e.pointerId);keys.KeyF=true};
 for(const name of ['pointerup','pointercancel','lostpointercapture'])blockButton.addEventListener(name,e=>{if(blockPointer===e.pointerId){delete keys.KeyF;blocking=false;blockPointer=null}});
@@ -220,7 +226,7 @@ expansion=installExpansionWorld({THREE,scene,hero,mesh,mat,geo,ground,surface,li
 companions=installCompanions({THREE,scene,mesh,mat,hero,$,blocked,surface,face,toast,sound,save,modal,closeModal,cameraSnap,setPosition(x,z){hero.root.position.set(x,surface(x,z),z)},accountStructure,accountEvent(action,body){return accounts?.event(action,body)},get player(){return player},get state(){return state},get panel(){return panel}});
 visuals=installVisualWorld({THREE,scene,renderer,camera,sun,hero,shield,geo,mat,ground,surface,pathDist,riverZ,obstacles,nearbyObstacles,living,frontier,enemies,terrain,water,get settings(){return settings},get active(){return state==='playing'&&!panel}});
 living.restore(null);
-try{const {installMultiplayer}=await import('./multiplayer.js?v=realm-recovery-20261010-3');net=installMultiplayer({$,THREE,scene,hero,enemies,loot,items,chests,living,frontier,expansion,companions,accountStructure,getAccounts(){return accounts},character,animate,groundedRoll,resetRoll,characterStats,normaliseProgression,face,project,drop,removeLoot,addItem,awardXP,burst,sound,toast,modal,closeModal,start,readSave,hurtPlayer,
+try{const {installMultiplayer}=await import('./multiplayer.js?v=realm-touch-20261010-4');net=installMultiplayer({$,THREE,scene,hero,enemies,loot,items,chests,living,frontier,expansion,companions,accountStructure,getAccounts(){return accounts},character,animate,groundedRoll,resetRoll,characterStats,normaliseProgression,face,project,drop,removeLoot,addItem,awardXP,burst,sound,toast,modal,closeModal,start,readSave,hurtPlayer,
 get player(){return player},get panel(){return panel},get state(){return state},get attack(){return attack},get dodge(){return dodge},get blocking(){return blocking},get bossDead(){return bossDead},setBossDead(value){bossDead=value},
 structureFrom(uid,fn){accountActor=uid===net?.id?null:uid;try{return fn()}finally{accountActor=null}},
 hitFrom(e,amount,heavy,ch,combatStats){const original=hero.root.position.clone();try{accountActor=ch.netId;hero.root.position.copy(ch.root.position);hurtEnemy(e,amount,heavy,combatStats)}finally{accountActor=null;hero.root.position.copy(original)}}
