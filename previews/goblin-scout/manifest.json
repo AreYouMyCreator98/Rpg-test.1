@@ -1,6 +1,6 @@
 {
   "blender": "4.3.2",
-  "triangles": 9396,
+  "triangles": 9925,
   "bones": 22,
   "clips": [
     "Idle",
@@ -12,5 +12,5 @@
   ],
   "materials": 11,
   "seed": 98,
-  "status": "draft \u2014 not integrated; animation ground-contact review pending"
+  "status": "refined skinned asset; see validation report for tested scope"
 }

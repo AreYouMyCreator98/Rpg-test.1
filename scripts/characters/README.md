@@ -1,90 +1,78 @@
-# Free character authoring — draft checkpoint
+# Free Blender character pipeline
 
-This is an original procedurally authored Blender mesh, based on the supplied
-front, side, three-quarter and rear Red Cowl goblin references. No external
-asset generation service, credits, paid tools, or purchased assets are used.
-It is a first review draft, not a claim of reference-level finish.
+The Red Cowl Scout is original mesh geometry authored with Blender Python from
+the supplied front, side, three-quarter and rear references. No paid tools,
+asset APIs, generation credits or external texture assets are used.
 
-## Reproduce on Codex's Linux workspace
+## Reproduce in Codex
 
-Blender 4.3.2 is installed at `/usr/bin/blender`. Headless Python, GLB export,
-and Cycles CPU rendering were executed successfully. This distribution lacks
-OpenImageDenoise: the scripts explicitly disable denoising. No GPU is required.
-No new installation or environment configuration was necessary.
+Blender **4.3.2** is installed at `/usr/bin/blender`. Headless Python, GLB export
+and Cycles CPU rendering have been executed successfully. This build lacks
+OpenImageDenoise and Draco libraries, so denoising is disabled and the GLB is
+uncompressed. Its optional extension-cache warning does not prevent export.
+No GPU, manual desktop operation or installation changes were required.
 
 From the repository root:
 
 ```sh
-mkdir -p /tmp/realm-character
 blender -b -t 4 --python scripts/characters/build_goblin.py
 blender -b /tmp/realm-character/goblin-scout.blend -t 4 --python scripts/characters/render_animation_review.py
 ```
 
-`-- --first-only` renders only the three-quarter view. `-- --no-render` rebuilds
-the GLB and editable temporary Blender checkpoint without studio rendering.
-Generated runtime geometry: `assets/models/goblin_scout.glb`.
-Review images and manifest: `previews/goblin-scout/`.
-The source of truth is the Python script and JSON palette/seed, not the temporary
-`.blend`. No authoring tools are needed by the eventual browser game.
+Generator options after `--`: `--first-only` renders only three-quarter;
+`--no-render` rebuilds the GLB and editable temporary Blender checkpoint.
+The animation review script accepts `-- --death-only` for focused iteration.
+The scripts and JSON configuration are the reproducible source; the temporary
+`.blend` need not be committed. Final GLB and review PNGs are checked in.
 
-The existing `assets/goblin-scout.gltf` and `scout-model.js` remain unchanged.
-The draft is not in the deployment manifest or connected to any enemy.
+## Geometry and skeleton
 
-## Model and rig
+`assets/models/goblin_scout.glb`: **9,925 triangles**, 22 bones, 11 shared PBR
+material primitives. Vertex colours provide variation without texture requests.
+Purpose-built cross sections, face planes, thick pointed ears, amber eyes,
+tusks, leather accessories, layered cloth, stitched hood and steel dagger are
+actual mesh geometry. This remains a stylized interpretation, not an exact
+reproduction of every painted reference detail.
 
-Authored cross sections, face planes, thick ear wedges, inset eyes, layered
-cloth, leather trim, belt hardware, boot soles, pouches, bedroll, and a steel
-dagger. Seeded vertex colours use eleven shared PBR materials; no texture
-requests. The mesh is joined before export and split into material primitives.
+`humanoid.py` provides a reusable scaled biped skeleton: root, pelvis,
+spine/chest, neck/head, shoulders, arms/forearms/hands, weapon sockets and
+thighs/shins/feet. Limb sections blend weights around knees and elbows;
+armour is rigidly weighted. The dagger is weighted to the right hand.
+Use this skeleton for future humanoid authoring; create separate skeletons and
+locomotion for quadrupeds or other non-humanoids. No animal generator is claimed.
 
-The 22-bone humanoid includes a root, pelvis, spine/chest, neck/head,
-shoulders, upper arms, forearms, hands, weapon sockets, thighs, shins and feet.
-Continuous limb sections blend weights around knees and elbows; hard accessories
-use rigid weights. The dagger follows the right hand.
+Six in-place clips: **Idle, Walk, Run, Attack, Hit, Death**. Poses are keyed at
+30 FPS with corrected support height. Death buckles the knees, falls forward
+and settles; the spine bends so the head reaches the floor rather than hanging
+above it. These are authored animation cycles, not physics or terrain-aware IK.
+Uneven-terrain foot planting and secondary cloth simulation are not implemented.
 
-Six in-place draft clips: Idle, Walk, Run, Attack, Hit, Death. Keyframe support
-height is corrected against the deformed mesh. This does not constitute an IK
-foot-lock system: gait sliding, intermediate contact, and cloth clipping require
-further review before gameplay integration. Death currently uses a simple fall
-and must receive a more articulated collapse pass.
+## Game integration
 
-## Browser review
+Seven ordinary Scouts use GLTFLoader, SkeletonUtils cloning and AnimationMixer.
+Each has an independent skeleton; geometry/materials stay shared. Its eleven
+primitives share one bone palette per character. The model is scaled to the old
+2.1-unit height before the original enemy scale. The head, arms, legs and weapon
+attachment remain accessible to the visual adapter.
 
-Serve the repository with a static server, then open
-`previews/goblin-scout/index.html` for GLTFLoader/AnimationMixer playback.
-It uses the game's pinned Three.js 0.160.1 and does not touch saves or game state.
+The original AI controls collision, stats, contact timing, HP, XP, drops and
+respawns. Visual attack time is remapped so the dagger slash contacts at the
+existing 58% gameplay hit frame. Damage/Stagger states use the Hit clip.
+The old `assets/goblin-scout.gltf` is the first fallback; the original procedural
+character remains if both files or CDN imports fail. Other enemies are unchanged.
 
-`tests/blender-scout.cjs` loads the actual GLB in Chromium WebGL at a mobile-sized
-viewport. It checks the triangle budget, skin weight sums, six clip names,
-finite sampled bounds and changing animation poses. Set `PLAYWRIGHT_PATH` to
-the installed Playwright module and `TEST_ARTIFACT_DIR` to a writable directory.
-`SCOUT_TEST_CACHE` optionally supplies TLS-verified copies of the pinned Three.js
-modules for cloud browser environments whose proxy cannot be used directly.
-This is an asset test, not a physical-phone performance or combat test.
+Browser preview: serve the repository and open `previews/goblin-scout/index.html`.
+It loads the real GLB with the game's pinned Three.js 0.160.1 and never touches
+saves. The game itself requires only static files; no Blender/Python/build step.
 
-## Next review pass
+## Validation
 
-- Refine face, hood profile, torn cloth and material detail toward the references.
-- Review all sampled poses, add grounded knee/hip death staging and foot locking.
-- Validate deformation through entire clips, not just selected frames.
-- Extract proportions/rig definitions for future humanoids after this design settles.
-  Animals will need a separate rig; a quadruped generator is not implemented here.
-- Only after visual review: adapt gameplay state names (Damage/Stagger -> Hit),
-  clone skinned skeletons with SkeletonUtils, scale to the original Scout hitbox,
-  then run live combat, fallback, multiplayer and mobile regression tests.
+See `docs/RED-COWL-VALIDATION.md` for executed checks and limitations.
+For browser tests, set `PLAYWRIGHT_PATH` to the installed module and
+`TEST_ARTIFACT_DIR` to a writable artifact folder. In proxy-limited environments,
+`SCOUT_TEST_CACHE` can contain TLS-verified pinned copies of `three.module.js`,
+`GLTFLoader.js`, `BufferGeometryUtils.js`, and `SkeletonUtils.js`.
 
-Do not directly substitute this GLB into the current rigid-joint clone path.
-
-## Validation recorded for this draft
-
-- Blender 4.3.2 headless Python, GLB export and CPU PNG render passed.
-- Export: 9,396 triangles, 22 bones, 11 material primitives, six named clips.
-- Chromium/Three.js asset test passed at 390 × 844 with touch emulation.
-- Five studio views and eighteen animation-pose PNGs were actually rendered.
-- Front, side, rear and representative movement/attack/hit/death poses were inspected.
-- Review found remaining hood/nape seams, simple cloth surfaces, a stiff fall,
-  and gait refinement needs. These are draft limitations, not completed polish.
-- The browser test does not establish combat compatibility, four-player safety,
-  hardware performance, or Android/iOS rendering. None of those is claimed.
-- Current gameplay files, release identity, original Scout asset and saves were
-  not modified. This checkpoint has not been deployed.
+Future model changes must regenerate the GLB, inspect renders and rerun asset,
+combat and fallback tests. Rotate the shared release query identity for deployment
+so cached modules cannot mix incompatible asset adapters.

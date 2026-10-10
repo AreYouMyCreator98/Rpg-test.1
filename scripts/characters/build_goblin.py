@@ -124,8 +124,8 @@ for j,(y,rx,rz,cz) in enumerate([(-.29,.405,.49,2.49),(-.14,.43,.50,2.49),(.065,
 sheet('Pointed open hood',hood,'rust','Head')
 line('Hood leather binding',hood[0],.024,'edge','Head',6)
 # Seal the rear crown; only the intentional face opening remains open.
-cap=hood[-1]+[(0,.36,2.45)]
-mesh('Rear hood closure',cap,[(i,i+1,17) for i in range(16)]+[(16,0,17)],'rust','Head')
+cap=hood[-1]+[(0,.36,2.45),(0,.40,2.13)]
+mesh('Rear hood closure',cap,[(i,i+1,17) for i in range(16)]+[(16,0,17),(0,16,18)],'rust','Head')
 # Close rear lower hood without sealing the face.
 sheet('Hood nape',[[hood[j][0],(0,hood[j][0][1]+.08,2.13),hood[j][-1]] for j in range(5)],'rust','Head')
 # Stitches along crown seam.
@@ -145,8 +145,8 @@ for j in range(3):
 for k in range(2):
  rows=[]
  for j in range(7):
-  z=2.08-j*.135;cx=-.12-k*.13-j*.045;y=.22+j*.033
-  rows.append([(cx-.1,y,z),(cx,y+.024,z-.025),(cx+.1,y,z-(.12 if j==6 else 0))])
+  z=2.08-j*.135;cx=-.12-k*.13-j*.045;y=.22+j*.033+math.sin(j*1.7+k)*.025
+  rows.append([(cx-.1+(.03 if j%2 else 0),y,z+(.045 if j==6 else 0)),(cx,y+.044,z-(.18 if j==6 else .025)),(cx+.1,y,z-(.04 if j==6 else 0))])
  sheet('Torn scarf tail',rows,'rust','Chest')
 # Belt / separated skirt tassets retain leg clearance.
 tube('Waist belt',[(0,0,1.295),(0,0,1.39)],[(.292,.195),(.285,.19)],'leather','Pelvis',20)
@@ -209,6 +209,14 @@ for s,side in [(-1,'R'),(1,'L')]:
 # Asymmetrical articulated shoulder armour.
 sheet('Left layered pauldron',[[ (.27,-.13,2.04),(.37,-.17,2.08),(.45,-.12,2.0)],[ (.31,.02,2.09),(.43,.01,2.11),(.54,.0,1.95)],[ (.29,.14,2.03),(.42,.16,2.06),(.5,.13,1.93)]],'leather','UpperArm.L')
 for x,z in [(.34,2.055),(.44,2.035),(.49,1.978)]:oval('Shoulder stud',(x,-.13,z),(.013,.013,.013),'steel','UpperArm.L',6,3)
+# Tailoring stitches follow the actual cloth and leather contours.
+for sign in [-1,1]:
+ for k in range(10):
+  t=k/9;x=sign*(.12+.12*t);z=1.63+.31*t
+  line('Jerkin stitch',[(x,-.199,z),(x+sign*.01,-.199,z+.015)],.0035,'edge','Chest',4)
+ for k in range(6):
+  a=.12+k*.13
+  line('Hood seam',[(sign*(.405*math.cos(a)),-.314,2.49+.49*math.sin(a)),(sign*(.385*math.cos(a)),-.317,2.49+.47*math.sin(a))],.005,'ivory','Head',4)
 # Pack, pouches and a bedroll give the rear silhouette real geometry.
 for x,z,b in [(-.3,1.21,'Pelvis'),(.32,1.22,'Pelvis'),(.11,1.77,'Chest')]:
  y=.21 if b=='Chest' else -.04
@@ -223,23 +231,20 @@ for side in [-1,1]:
  for i in range(40):
   a=i*.43;r=.006+i*.00165;pts.append((x,.37+r*math.cos(a),1.8+r*math.sin(a)))
  line('Bedroll spiral',pts,.006,'cloth','Chest',5)
+# Three compact travel shafts behind one shoulder, as in the rear reference.
+for k in range(3):
+ x=.03+k*.065
+ line('Travel shaft',[(x,.30,1.78),(x+.11,.30,2.23+k*.035)],.014,'edge','Chest',7)
+ tube('Wrapped shaft tip',[(x+.08,.30,2.12+k*.035),(x+.11,.30,2.23+k*.035)],[.023,.006],'leather','Chest',7)
 # Proper steel dagger in the right hand, weighted to Hand.R.
 line('Dagger grip',[(-.80,-.08,1.38),(-.80,-.08,1.20)],.028,'leather','Hand.R',10)
 line('Dagger guard',[(-.9,-.08,1.19),(-.70,-.08,1.19)],.018,'steel','Hand.R',8)
 mesh('Dagger blade',[(-.86,-.08,1.18),(-.74,-.08,1.18),(-.80,-.107,1.10),(-.80,-.08,.86),(-.80,-.055,1.10)],[(0,2,1),(0,3,2),(2,3,1),(0,4,3),(1,3,4),(0,1,4)],'steel','Hand.R')
 
 # Reusable humanoid armature. Blender Z-up, exported glTF Y-up / +Z forward.
-arm=bpy.data.armatures.new('Humanoid');rig=bpy.data.objects.new('ScoutRig',arm);bpy.context.collection.objects.link(rig);bpy.context.view_layer.objects.active=rig;rig.select_set(True);bpy.ops.object.mode_set(mode='EDIT')
-def bone(n,h,t,parent=None):
- b=arm.edit_bones.new(n);b.head=h;b.tail=t
- if parent:b.parent=arm.edit_bones[parent]
- return b
-bone('Root',(0,0,0),(0,0,.2));bone('Pelvis',(0,0,1.28),(0,0,1.45),'Root');bone('Spine',(0,0,1.45),(0,0,1.73),'Pelvis');bone('Chest',(0,0,1.73),(0,0,2.04),'Spine');bone('Neck',(0,0,2.04),(0,0,2.24),'Chest');bone('Head',(0,0,2.24),(0,0,2.8),'Neck')
-for s,side in [(-1,'R'),(1,'L')]:
- bone('Shoulder.'+side,(0,0,2.01),(s*.30,0,1.99),'Chest');bone('UpperArm.'+side,(s*.30,0,1.99),(s*.62,-.005,1.64),'Shoulder.'+side);bone('Forearm.'+side,(s*.62,-.005,1.64),(s*.76,-.05,1.38),'UpperArm.'+side);bone('Hand.'+side,(s*.76,-.05,1.38),(s*.80,-.06,1.24),'Forearm.'+side)
- bone('Weapon.'+side,(s*.80,-.08,1.26),(s*.80,-.08,1.06),'Hand.'+side)
- bone('Thigh.'+side,(s*.17,0,1.28),(s*.22,-.034,.77),'Pelvis');bone('Shin.'+side,(s*.22,-.034,.77),(s*.225,.015,.23),'Thigh.'+side);bone('Foot.'+side,(s*.225,.015,.23),(s*.225,-.23,.09),'Shin.'+side)
-bpy.ops.object.mode_set(mode='OBJECT');rig.select_set(False)
+sys.path.insert(0,str(Path(__file__).parent))
+from humanoid import create_humanoid
+rig,arm=create_humanoid()
 # Join into one weighted mesh; glTF splits only by the shared material palette.
 for o in objects:o.select_set(True)
 bpy.context.view_layer.objects.active=objects[0];bpy.ops.object.join();body=bpy.context.object;body.name='ScoutSkinnedMesh'
@@ -252,7 +257,7 @@ s=bpy.context.scene;s.render.fps=30
 clips={}
 for name,frames in [('Idle',60),('Walk',30),('Run',20),('Attack',24),('Hit',15),('Death',48)]:
  rig.animation_data_create();act=bpy.data.actions.new(name);rig.animation_data.action=act
- for f in range(0,frames+1,2):
+ for f in range(frames+1):
   t=f/frames;wave=math.sin(t*math.tau)
   for p in rig.pose.bones:p.location=(0,0,0);p.rotation_euler=(0,0,0);p.scale=(1,1,1)
   p=rig.pose.bones
@@ -272,8 +277,18 @@ for name,frames in [('Idle',60),('Walk',30),('Run',20),('Attack',24),('Hit',15),
   elif name=='Hit':
    a=math.sin(math.pi*t)**2;p['Chest'].rotation_euler.x=-.25*a;p['Head'].rotation_euler.x=-.18*a;p['UpperArm.L'].rotation_euler.z=-.15*a
   else:
-   a=min(1,t*1.3);p['Root'].location.y=0;p['Root'].rotation_euler.x=-1.48*a
-   p['Thigh.L'].rotation_euler.x=.55*a;p['Shin.L'].rotation_euler.x=-.8*a;p['Thigh.R'].rotation_euler.x=.35*a;p['Shin.R'].rotation_euler.x=-.7*a;p['Chest'].rotation_euler.x=.15*a
+   # Knees buckle first, then the torso falls forward and settles on its side.
+   def ease(v):
+    v=max(0,min(1,v));return v*v*(3-2*v)
+   fall=ease((t-.22)/.6);kneel=math.sin(math.pi*ease(t/.78))
+   p['Root'].rotation_euler.x=1.49*fall;p['Root'].rotation_euler.z=.16*fall
+   p['Pelvis'].location.y=-.22*kneel
+   for side,offset in [('L',1),('R',.72)]:
+    p['Thigh.'+side].rotation_euler.x=-.7*kneel*offset-.3*fall
+    p['Shin.'+side].rotation_euler.x=1.15*kneel*offset+.12*fall
+    p['UpperArm.'+side].rotation_euler.x=0
+    p['Forearm.'+side].rotation_euler.x=0
+   p['Spine'].rotation_euler.x=.30*fall;p['Chest'].rotation_euler.x=.18*kneel+.08*fall;p['Head'].rotation_euler.x=-.05*fall
   # Match the support plane after each sampled pose; the root stays in-place.
   if name in ['Walk','Run','Death']:
    bpy.context.view_layer.update()
@@ -309,6 +324,7 @@ for name,pos in views.items():
  if '--no-render' in args:continue
  if '--first-only' in args and name!='three-quarter':continue
  cam.location=pos;cam.rotation_euler=(Vector((0,0,1.48))-cam.location).to_track_quat('-Z','Y').to_euler();s.render.filepath=str(PRE/(name+'.png'));bpy.ops.render.render(write_still=True)
-manifest={'blender':bpy.app.version_string,'triangles':triangles,'bones':len(arm.bones),'clips':list(clips),'materials':len(M),'seed':CFG['seed'],'status':'draft — not integrated; animation ground-contact review pending'}
+manifest={'blender':bpy.app.version_string,'triangles':triangles,'bones':len(arm.bones),'clips':list(clips),'materials':len(M),'seed':CFG['seed'],'status':'refined skinned asset; see validation report for tested scope'}
 (PRE/'manifest.json').write_text(json.dumps(manifest,indent=2));print('CHARACTER REPORT',json.dumps(manifest))
+Path('/tmp/realm-character').mkdir(parents=True,exist_ok=True)
 bpy.ops.wm.save_as_mainfile(filepath='/tmp/realm-character/goblin-scout.blend')
