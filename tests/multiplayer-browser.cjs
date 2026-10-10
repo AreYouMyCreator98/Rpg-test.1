@@ -108,6 +108,9 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  const hostPosition=await a.evaluate(()=>__realm.hero.root.position.toArray());await b.evaluate(()=>__realm.townReturnMenu());await b.click('#town-return-confirm');assert.equal(await b.evaluate(()=>__realm.hero.root.position.z),64);assert.deepEqual(await a.evaluate(()=>__realm.hero.root.position.toArray()),hostPosition);console.log('PASS guest town return leaves host position and party intact');
 
 
+ // Both participants cross their own fog gate; defeat comes from host world state.
+ for(const page of [a,b]){await page.evaluate(()=>{const g=__realm,c=g.arenas.arenas.find(a=>a.id==='gruk');g.closeModal();g.setPosition(c.x,c.gateZ+1.8);g.pickup()});assert(await page.evaluate(()=>{const g=__realm,c=g.arenas.arenas.find(a=>a.id==='gruk');return g.hero.root.position.z<c.gateZ&&g.arenas.blocked(c.x,c.gateZ)}))}
+ await a.evaluate(()=>{const g=__realm,c=g.arenas.arenas.find(a=>a.id==='gruk');g.hurtEnemy(c.e,100000)});await b.waitForFunction(()=>{const g=__realm,c=g.arenas.arenas.find(a=>a.id==='gruk');return c.e.hp<=0&&!g.arenas.blocked(c.x,c.gateZ)});console.log('PASS both clients traverse Gruk fog and host defeat releases the shared gate');await a.evaluate(()=>__realm.net.lobby());
  await a.click('#leave-room');await b.waitForFunction(()=>!__realm.net.active,{},{timeout:12000});
  assert.equal(await a.evaluate(()=>__realm.player.coins),321);assert.equal(await b.evaluate(()=>__realm.player.coins),321);
  // Public discovery uses the same working join flow.

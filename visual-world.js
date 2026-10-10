@@ -1,10 +1,10 @@
-import {dressVillage} from './village-art.js?v=realm-forest-1';
-import {installRiverDetails} from './river-details.js?v=realm-forest-1';
-import {installEnvironmentLife} from './environment-life.js?v=realm-forest-1';
-import {graphics,retireInstances} from './graphics.js?v=realm-forest-1';
-import {createTerrainStream} from './terrain-stream.js?v=realm-forest-1';
-import {createWesternRange} from './emerald-landscape.js?v=realm-forest-1';
-import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-forest-1';
+import {dressVillage} from './village-art.js?v=realm-arenas-1';
+import {installRiverDetails} from './river-details.js?v=realm-arenas-1';
+import {installEnvironmentLife} from './environment-life.js?v=realm-arenas-1';
+import {graphics,retireInstances} from './graphics.js?v=realm-arenas-1';
+import {createTerrainStream} from './terrain-stream.js?v=realm-arenas-1';
+import {createWesternRange} from './emerald-landscape.js?v=realm-arenas-1';
+import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-arenas-1';
 // Presentation only. No save, item, enemy, network or collision ownership.
 // Repeated decoration is instanced by material in spatial cells; Vale assets are repository-hosted.
 export function installVisualWorld(api) {
@@ -190,14 +190,7 @@ export function installVisualWorld(api) {
     const z=riverZ(x);add('box',0x5b4c35,x+side*1.8,.08,z,.25,.38,16.8);
     for(const dz of [-6,0,6]){add('cyl',0x64513a,x+side*2,-.05,z+dz,.23,2.4,.23);add('box',0xb29c6a,x+side*2,1.65,z+dz,.36,.12,.36)}
   }
-  // Extend existing ruin pillars upward, preserving their exact footprint and boss arena.
-  for(const x of [-16,0]){const z=-73,y=ground(x,z),h=x===0?29:22;
-    add('cyl',0x8e9e92,x,y+h/2,z,.9,h,.9);add('cyl',0x8e9e92,x,y+h-4,z,1.8,8,1.8);add('cone',0x45665e,x,y+h+2.3,z,2.4,5,2.4);
-    for(let j=0;j<4;j++)add('box',0xabc0ac,x,y+4+j*4,z,2,.25,2);
-    for(let j=0;j<3;j++)add('box',0x394c45,x,y+7+j*4,z+1,.28,1.1,.05);
-  }
-  add('box',0x8d9d90,-8,ground(-8,-73)+11,-73,16,2,1.3);
-  for(let i=0;i<9;i++)add('box',0xa4b6a0,-16+i*2,ground(-8,-73)+12.5,-73,1,.9,1.5);
+  // Gruk’s skyline and battlements are owned by boss-arenas.js.
   // Scenic trail markers are appended to the POI list after every existing content module.
   for(const p of frontier.wildlands){const y=ground(p.x,p.z);
     for(const side of [-1,1]){add('cyl',0x9cae9f,p.x+side*4,y+2.5,p.z, .55,5,.55);add('orb',0xc8d6b4,p.x+side*4,y+5,p.z,.85,.45,.85)}
