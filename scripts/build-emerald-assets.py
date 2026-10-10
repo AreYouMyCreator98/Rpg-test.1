@@ -26,15 +26,15 @@ class Model:
    for j in range(n): self.face([rings[i][j],rings[i][(j+1)%n],rings[i+1][(j+1)%n],rings[i+1][j]],tuple(c*(.85+.15*j/n) for c in col))
   self.face(rings[-1],col)
  def crown(self,p,size,col,seed,detail=1):
-  rng=random.Random(seed);n=8 if detail else 5;rings=[]
+  rng=random.Random(seed);n=10 if detail else 6;rings=[]
   for k,(z,r) in enumerate([(-.75,.35),(-.3,.88),(.25,1),(.7,.66)]):
-   rings.append([Vector((p[0]+size[0]*r*math.cos(j*math.tau/n)*(1+rng.uniform(-.2,.2)),p[1]+size[1]*r*math.sin(j*math.tau/n)*(1+rng.uniform(-.2,.2)),p[2]+size[2]*(z+rng.uniform(-.09,.09)))) for j in range(n)])
+   rings.append([Vector((p[0]+size[0]*r*math.cos(j*math.tau/n)*(1+.17*math.sin(j*2.7+k*.8)+rng.uniform(-.07,.07)),p[1]+size[1]*r*math.sin(j*math.tau/n)*(1+.17*math.sin(j*2.7+k*.8)+rng.uniform(-.07,.07)),p[2]+size[2]*(z+rng.uniform(-.09,.09)))) for j in range(n)])
   bottom=Vector((p[0],p[1],p[2]-size[2]));top=Vector((p[0]+.1,p[1],p[2]+size[2]))
   for j in range(n):
-   self.face([bottom,rings[0][(j+1)%n],rings[0][j]],tuple(c*.65 for c in col))
+   self.face([bottom,rings[0][(j+1)%n],rings[0][j]],tuple(c*.72 for c in col))
    for k in range(3):
     a,b,c,d=rings[k][j],rings[k][(j+1)%n],rings[k+1][(j+1)%n],rings[k+1][j]
-    shade=.72+k*.12+rng.random()*.1;cc=tuple(t*shade for t in col)
+    shade=.76+k*.10+rng.random()*.12;cc=tuple(t*shade for t in col)
     self.face([a,b,c],cc);self.face([a,c,d],cc)
    self.face([rings[-1][j],rings[-1][(j+1)%n],top],col)
  def finish(self):
@@ -63,21 +63,31 @@ for name,seed,kind in [('oak-a',14,'oak'),('oak-b',43,'oak'),('oak-c',71,'oak'),
      if near:m.tube([(lean*t,0,z),(dx*radius*.5,dy*radius*.5,z-.25),(dx*radius,dy*radius,z-.5)],[.075,.045,.008],wood,4)
      # Broad asymmetric, serrated needles around a downward-curved branch, not stacked cones.
      origin=Vector((lean*t,0,z+.55));tip=Vector((dx*radius,dy*radius,z-.4));side=Vector((-dy,dx,0))*radius*.65
-     ridge=(origin+tip)*.5+Vector((0,0,.4));cc=(.032+t*.012,.16+t*.08,.055+t*.015)
+     ridge=(origin+tip)*.5+Vector((0,0,.4));cc=(.055+t*.032,.235+t*.13,.095+t*.035)
      edge=[origin,origin*.4+tip*.6+side*.85,tip*.85+origin*.15+side*.45,tip,tip*.8+origin*.2-side*.4,origin*.45+tip*.55-side*.85]
-     if not near:edge=[origin,origin*.45+tip*.55+side,tip,origin*.45+tip*.55-side]
+     if not near:edge=[origin,origin*.45+tip*.55+side*.8,tip*.8+origin*.2+side*.35,tip,tip*.8+origin*.2-side*.35,origin*.45+tip*.55-side*.8]
      for k in range(len(edge)):
       m.face([ridge,edge[k],edge[(k+1)%len(edge)]],tuple(v*(.8+(k%3)*.13) for v in cc))
-      m.face([ridge-Vector((0,0,.9)),edge[(k+1)%len(edge)],edge[k]],tuple(v*.7 for v in cc))
-   m.crown((lean*.7,0,h-.1),(.35,.4,.8),(.07,.32,.14),seed,0)
+      m.face([ridge-Vector((0,0,.9)),edge[(k+1)%len(edge)],edge[k]],tuple(v*.72 for v in cc))
+   # Connected needle spire replaces the isolated oval cap above a bare trunk.
+   for tier in range(3):
+    z=h*.83+tier*.49;r=.83-tier*.23;upper=max(.015,r-.29)
+    for j in range(8):
+     a=j*math.tau/8;b=(j+1)*math.tau/8
+     m.face([(lean*.7+math.cos(a)*r,math.sin(a)*r,z),(lean*.7+math.cos(b)*r,math.sin(b)*r,z),(lean*.7+math.cos(b)*upper,math.sin(b)*upper,z+.64),(lean*.7+math.cos(a)*upper,math.sin(a)*upper,z+.64)],(.07+tier*.018,.30+tier*.028,.13))
   else:
-   count=10 if near else 5
+   count=10 if near else 6
    for j in range(count):
     a=j*2.4;radius=(1.2+(j%3)*.5)*(1.25 if name=='ancient-oak' else 1);z=h*(.63+(j%4)*.07)
     endpoint=(math.cos(a)*radius,math.sin(a)*radius,z)
     m.tube([(lean*.5,0,h*.44),(endpoint[0]*.55,endpoint[1]*.55,z-.65),endpoint],[.12,.075,.025],bark,5 if near else 4)
-    pal=(.36,.5,.095) if kind=='birch' else (.19,.38,.065) if kind=='willow' else (.16+(j%3)*.025,.34+(j%3)*.035,.045)
+    pal=(.36,.5,.095) if kind=='birch' else (.19,.38,.065) if kind=='willow' else (.18+(j%3)*.035,.39+(j%3)*.045,.065+(j%2)*.02)
     m.crown(endpoint,(1.65,1.55,1.85 if kind!='willow' else 1.0),pal,seed+j,near)
+    if near and kind not in ['willow','sapling'] and j%2==0:
+     # Broken terminal foliage masses and sun-catching young shoots, not a smooth ball.
+     tip=(endpoint[0]*1.32,endpoint[1]*1.32,z+.48)
+     m.tube([endpoint,tip],[.025,.006],bark,4)
+     m.crown(tip,(.75,.68,.65),tuple(c*1.08 for c in pal),seed+j+100,0)
     if kind=='willow' and near:
      for k in range(3):
       xx=endpoint[0]+math.sin(k*2)*.7;yy=endpoint[1]+math.cos(k*2)*.7
@@ -96,7 +106,9 @@ for name in ['fern','flowers','reeds','grass','tall-grass','bush','mushrooms','m
      for side in [-1,1]:m.face([center,center+Vector((-dy*width*side,dx*width*side,-.025)),center+Vector((dx*.16,dy*.16,.045))],(.10+k*.012,.28+k*.013,.055))
    else:
     center=Vector((dx*.12,dy*.12,0));width=.07 if name=='grass' else .035
-    m.face([center+Vector((-dy*width,dx*width,0)),center-Vector((-dy*width,dx*width,0)),center+Vector((dx*.3,dy*.3,h))],(.24,.4,.065))
+    left=center+Vector((-dy*width,dx*width,0));right=center-Vector((-dy*width,dx*width,0))
+    bend=center+Vector((dx*.10,dy*.10,h*.62));tip=center+Vector((dx*.34,dy*.34,h))
+    m.face([left,right,bend],(.16,.32,.06));m.face([left,bend,tip],(.29,.46,.095))
     if name=='reeds':m.tube([(dx*.3,dy*.3,h*.7),(dx*.3,dy*.3,h)],[.04,.028],(.23,.15,.05),5)
  elif name=='flowers':
   for j in range(4):

@@ -1,6 +1,6 @@
-import {icon} from './ui.js?v=realm-village-1';
-import {EXPANSION_ENEMIES as TYPES,EXPANSION_DUNGEONS as DUNGEONS,EXPANSION_BOSSES as BOSSES} from './expansion-data.js?v=realm-village-1';
-import {createExpansionModel,animateExpansionModel} from './expansion-models.js?v=realm-village-1';
+import {icon} from './ui.js?v=realm-forest-1';
+import {EXPANSION_ENEMIES as TYPES,EXPANSION_DUNGEONS as DUNGEONS,EXPANSION_BOSSES as BOSSES} from './expansion-data.js?v=realm-forest-1';
+import {createExpansionModel,animateExpansionModel} from './expansion-models.js?v=realm-forest-1';
 export function installExpansionWorld(api){
  const {THREE,scene,hero,mesh,mat,ground,living,items,$}=api,V=THREE.Vector3;
  const roots=[],creatures=[],tells=new Map(),projectiles=[],entrances=[],dungeonProps=new Map();let clock=0,hazardDelay=0,slow=0,poison=0,poisonTick=0;

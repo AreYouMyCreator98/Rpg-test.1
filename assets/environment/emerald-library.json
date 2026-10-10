@@ -4,92 +4,92 @@
   "units": "metres",
   "models": {
     "oak-a-near": {
-      "triangles": 1032,
-      "vertices": 2686
+      "triangles": 1482,
+      "vertices": 3986
     },
     "oak-a-far": {
-      "triangles": 337,
-      "vertices": 871
+      "triangles": 443,
+      "vertices": 1171
     },
     "oak-b-near": {
-      "triangles": 1032,
-      "vertices": 2686
+      "triangles": 1482,
+      "vertices": 3986
     },
     "oak-b-far": {
-      "triangles": 337,
-      "vertices": 871
+      "triangles": 443,
+      "vertices": 1171
     },
     "oak-c-near": {
-      "triangles": 1032,
-      "vertices": 2686
+      "triangles": 1482,
+      "vertices": 3986
     },
     "oak-c-far": {
-      "triangles": 337,
-      "vertices": 871
+      "triangles": 443,
+      "vertices": 1171
     },
     "birch-b-near": {
-      "triangles": 1032,
-      "vertices": 2686
+      "triangles": 1482,
+      "vertices": 3986
     },
     "birch-b-far": {
-      "triangles": 337,
-      "vertices": 871
+      "triangles": 443,
+      "vertices": 1171
     },
     "pine-b-near": {
-      "triangles": 1462,
-      "vertices": 3460
+      "triangles": 1470,
+      "vertices": 3436
     },
     "pine-b-far": {
-      "triangles": 327,
-      "vertices": 931
+      "triangles": 455,
+      "vertices": 1267
     },
     "pine-c-near": {
-      "triangles": 1462,
-      "vertices": 3460
+      "triangles": 1470,
+      "vertices": 3436
     },
     "pine-c-far": {
-      "triangles": 327,
-      "vertices": 931
+      "triangles": 455,
+      "vertices": 1267
     },
     "birch-a-near": {
-      "triangles": 1032,
-      "vertices": 2686
+      "triangles": 1482,
+      "vertices": 3986
     },
     "birch-a-far": {
-      "triangles": 337,
-      "vertices": 871
+      "triangles": 443,
+      "vertices": 1171
     },
     "ancient-oak-near": {
-      "triangles": 1032,
-      "vertices": 2686
+      "triangles": 1482,
+      "vertices": 3986
     },
     "ancient-oak-far": {
-      "triangles": 337,
-      "vertices": 871
+      "triangles": 443,
+      "vertices": 1171
     },
     "pine-a-near": {
-      "triangles": 1462,
-      "vertices": 3460
+      "triangles": 1470,
+      "vertices": 3436
     },
     "pine-a-far": {
-      "triangles": 327,
-      "vertices": 931
+      "triangles": 455,
+      "vertices": 1267
     },
     "fir-a-near": {
-      "triangles": 1462,
-      "vertices": 3460
+      "triangles": 1470,
+      "vertices": 3436
     },
     "fir-a-far": {
-      "triangles": 327,
-      "vertices": 931
+      "triangles": 455,
+      "vertices": 1267
     },
     "willow-a-near": {
-      "triangles": 2232,
-      "vertices": 6286
+      "triangles": 2632,
+      "vertices": 7486
     },
     "willow-a-far": {
-      "triangles": 337,
-      "vertices": 871
+      "triangles": 443,
+      "vertices": 1171
     },
     "dead-tree-near": {
       "triangles": 277,
@@ -100,12 +100,12 @@
       "vertices": 271
     },
     "sapling-near": {
-      "triangles": 1032,
-      "vertices": 2686
+      "triangles": 1192,
+      "vertices": 3166
     },
     "sapling-far": {
-      "triangles": 337,
-      "vertices": 871
+      "triangles": 443,
+      "vertices": 1171
     },
     "fern": {
       "triangles": 161,
@@ -116,56 +116,56 @@
       "vertices": 120
     },
     "reeds": {
-      "triangles": 98,
-      "vertices": 196
+      "triangles": 105,
+      "vertices": 217
     },
     "grass": {
-      "triangles": 7,
-      "vertices": 21
+      "triangles": 14,
+      "vertices": 42
     },
     "tall-grass": {
-      "triangles": 7,
-      "vertices": 21
+      "triangles": 14,
+      "vertices": 42
     },
     "bush": {
-      "triangles": 160,
-      "vertices": 480
-    },
-    "mushrooms": {
-      "triangles": 159,
-      "vertices": 435
-    },
-    "moss": {
-      "triangles": 240,
-      "vertices": 720
-    },
-    "ivy": {
-      "triangles": 240,
-      "vertices": 720
-    },
-    "river-rock": {
-      "triangles": 40,
-      "vertices": 120
-    },
-    "moss-rock": {
-      "triangles": 80,
-      "vertices": 240
-    },
-    "stepping-stone": {
-      "triangles": 40,
-      "vertices": 120
-    },
-    "outcrop": {
       "triangles": 192,
       "vertices": 576
+    },
+    "mushrooms": {
+      "triangles": 183,
+      "vertices": 507
+    },
+    "moss": {
+      "triangles": 288,
+      "vertices": 864
+    },
+    "ivy": {
+      "triangles": 288,
+      "vertices": 864
+    },
+    "river-rock": {
+      "triangles": 48,
+      "vertices": 144
+    },
+    "moss-rock": {
+      "triangles": 96,
+      "vertices": 288
+    },
+    "stepping-stone": {
+      "triangles": 48,
+      "vertices": 144
+    },
+    "outcrop": {
+      "triangles": 240,
+      "vertices": 720
     },
     "fallen-log": {
       "triangles": 56,
       "vertices": 106
     },
     "stump": {
-      "triangles": 83,
-      "vertices": 201
+      "triangles": 91,
+      "vertices": 225
     },
     "branch": {
       "triangles": 36,

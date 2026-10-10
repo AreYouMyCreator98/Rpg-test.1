@@ -1,4 +1,4 @@
-import {graphics,retireInstances} from './graphics.js?v=realm-village-1';
+import {graphics,retireInstances} from './graphics.js?v=realm-forest-1';
 // A bounded presentation layer. Original tree roots, terrain, roads and collision remain authoritative.
 export const VALE={left:-535,right:-335,top:-120,bottom:80};
 export const inVale=(x,z)=>x>=VALE.left&&x<=VALE.right&&z>=VALE.top&&z<=VALE.bottom;
@@ -57,7 +57,7 @@ export function installEmeraldVale(api){
   farForest.count=count;farForest.instanceMatrix.needsUpdate=true;if(farForest.instanceColor)farForest.instanceColor.needsUpdate=true;
  }
  const material=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.95,side:THREE.DoubleSide});
- material.onBeforeCompile=s=>{s.uniforms.valeTime=time;s.uniforms.windStrength=windStrength;s.vertexShader='uniform float valeTime;uniform float windStrength;\n'+s.vertexShader;s.vertexShader=s.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+ material.onBeforeCompile=s=>{s.fragmentShader=s.fragmentShader.replace('#include <opaque_fragment>', 'outgoingLight+=diffuseColor.rgb*.18*step(diffuseColor.r*1.18,diffuseColor.g);\n#include <opaque_fragment>');s.uniforms.valeTime=time;s.uniforms.windStrength=windStrength;s.vertexShader='uniform float valeTime;uniform float windStrength;\n'+s.vertexShader;s.vertexShader=s.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
  #ifdef USE_INSTANCING
  vec3 origin=instanceMatrix[3].xyz;
  float foliage=step(color.r*1.18,color.g)*step(.06,color.g);
@@ -66,7 +66,7 @@ export function installEmeraldVale(api){
  transformed.x+=sin(valeTime*1.15+origin.x*.31+origin.z*.21+position.y*.4)*strength*distanceFade;
  transformed.z+=cos(valeTime*.83+origin.z*.27)*strength*.45*distanceFade;
  #endif`)};
- const readyPromise=import('https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/GLTFLoader.js').then(({GLTFLoader})=>new GLTFLoader().loadAsync(new URL('./assets/environment/emerald-library.glb?v=realm-village-1',import.meta.url).href)).then(gltf=>{
+ const readyPromise=import('https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/GLTFLoader.js').then(({GLTFLoader})=>new GLTFLoader().loadAsync(new URL('./assets/environment/emerald-library.glb?v=realm-forest-1',import.meta.url).href)).then(gltf=>{
   gltf.scene.updateMatrixWorld(true);const oldMaterials=new Set();gltf.scene.traverse(o=>{if(!o.isMesh)return;const geometry=o.geometry.clone().applyMatrix4(o.matrixWorld);geometry.computeBoundingSphere();models.set(o.name,geometry);oldMaterials.add(o.material);o.geometry.dispose()});for(const m of oldMaterials)m.dispose();
   for(const name of placements.values())if(!models.has(name.name)&&!models.has(name.name+'-near'))throw Error('Incomplete Emerald Vale library: '+name.name);
   for(const p of placements.values())cells.push({p,m:null,near:models.get(p.name+'-near')||models.get(p.name),far:models.get(p.name+'-far')||models.get(p.name+'-near')||models.get(p.name),x:p.cx*40+20,z:p.cz*40+20,detail:p.detail,lod:'far',last:0});loaded=true;
@@ -79,7 +79,7 @@ export function installEmeraldVale(api){
   }
   if(ambience){const p=hero.root.position,on=ready&&api.active&&api.settings.sound&&!document.hidden&&p.x<200;ambience[0].gain.setTargetAtTime(on ? .008*(api.settings.environmentVolume??.7) : 0,audio.currentTime,.5);ambience[1].gain.setTargetAtTime(on ? .023*(api.settings.environmentVolume??.7)*Math.max(0,1-Math.abs(p.z-riverZ(p.x))/22) : 0,audio.currentTime,.4)}
   root.visible=ready&&hero.root.position.x<200;tick+=dt;if(tick<.15)return;tick=0;
-  const profile=graphics(api.settings);distantForest(.15,profile);const nearLimit=api.settings.quality==='low'?24:profile.distance*.3,reach=profile.distance,p=hero.root.position;
+  const profile=graphics(api.settings);distantForest(.15,profile);const nearLimit=api.settings.quality==='low'?18:profile.distance*.3,reach=profile.distance,p=hero.root.position;
   const wanted=[];
   if(loaded&&hero.root.position.x<200){const cx=Math.floor(p.x/40),cz=Math.floor(p.z/40),radius=Math.ceil(reach*.36/40),missing=[];
    for(let x=cx-radius;x<=cx+radius;x++)for(let z=cz-radius;z<=cz+radius;z++){const key=x+','+z,d=Math.hypot(x*40+20-p.x,z*40+20-p.z);if(d>reach*.36+28)continue;if(detailTiles.has(key))detailTiles.get(key).last=clock;else missing.push({x,z,d})}
@@ -88,13 +88,13 @@ export function installEmeraldVale(api){
   for(const [key,t]of detailTiles)if(clock-t.last>8){for(const c of t.cells){if(c.m){root.remove(c.m);c.m.dispose()}cells.splice(cells.indexOf(c),1)}detailTiles.delete(key)}
   for(const c of cells){const d=Math.hypot(c.x-p.x,c.z-p.z),visible=loaded&&hero.root.position.x<200&&d<(c.detail?reach*.36:reach+45);
    if(visible){c.last=clock;if(!c.m)wanted.push({c,d});}
-   if(c.m){retireInstances(c.m,visible,clock);c.m.castShadow=profile.shadow>0&&!c.detail&&d<55;const count=Math.max(1,Math.floor(c.p.entries.length*(c.detail?profile.density:1)));if(c.m.count!==count){c.m.count=count;c.m.computeBoundingSphere()}const next=d>nearLimit+12?'far':d<nearLimit-12?'near':c.lod;if(next!==c.lod){c.lod=next;c.m.geometry=next==='near'?c.near:c.far;c.m.computeBoundingSphere()}
+   if(c.m){retireInstances(c.m,visible,clock);c.m.castShadow=profile.shadow>0&&!c.detail&&d<55;const count=Math.max(1,Math.floor(c.p.entries.length*(c.detail?profile.density:1)));if(c.m.count!==count){c.m.count=count;c.m.computeBoundingSphere()}const treeDistance=nearestTreeDistance(c.p.entries,p.x,p.z);const next=treeDistance>nearLimit+5?'far':treeDistance<nearLimit-5?'near':c.lod;if(next!==c.lod){c.lod=next;c.m.geometry=next==='near'?c.near:c.far;c.m.computeBoundingSphere()}
     if(!visible&&(clock-c.last>8||d>reach+160)){root.remove(c.m);c.m.dispose();c.m=null;}
    }
   }
   wanted.sort((a,b)=>a.d-b.d);const begin=performance.now();let built=0;
-  for(const {c,d}of wanted){if(built>=4||performance.now()-begin>3)break;const m=new THREE.InstancedMesh(d<nearLimit?c.near:c.far,material,c.p.entries.length);m.name='Forest '+c.p.name;
-   c.p.entries.forEach(([x,y,z,s,a],i)=>{dummy.position.set(x,y,z);dummy.scale.setScalar(s);dummy.rotation.set(0,a,0);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix)});m.computeBoundingSphere();m.receiveShadow=true;m.castShadow=profile.shadow>0&&!c.detail&&d<55;root.add(m);c.m=m;c.lod=d<nearLimit?'near':'far';built++;
+  for(const {c,d}of wanted){if(built>=4||performance.now()-begin>3)break;const near=nearestTreeDistance(c.p.entries,p.x,p.z)<nearLimit;const m=new THREE.InstancedMesh(near?c.near:c.far,material,c.p.entries.length);m.name='Forest '+c.p.name;
+   c.p.entries.forEach(([x,y,z,s,a],i)=>{dummy.position.set(x,y,z);dummy.scale.setScalar(s);dummy.rotation.set(0,a,0);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix)});m.computeBoundingSphere();m.receiveShadow=true;m.castShadow=profile.shadow>0&&!c.detail&&d<55;root.add(m);c.m=m;c.lod=near?'near':'far';built++;
   }
   if(loaded&&!ready&&wanted.slice(built).every(job=>job.d>65)){ready=true;frontier.setValeAssetsReady(true)}
  }
@@ -117,3 +117,6 @@ export function valeRiverProfile(x,z,d,original){
  const edge=Math.max(0,Math.min(1,Math.min(x-VALE.left,VALE.right-x,z-VALE.top,VALE.bottom-z)/18));
  const t=Math.max(0,Math.min(1,(d-3.2)/16));return original+(t*t*(3-2*t)-original)*edge*edge*(3-2*edge);
 }
+
+// LOD follows real instances, not the centre of their spatial batch.
+export function nearestTreeDistance(entries,x,z){let squared=Infinity;for(const e of entries){const dx=e[0]-x,dz=e[2]-z;squared=Math.min(squared,dx*dx+dz*dz)}return Math.sqrt(squared)}
