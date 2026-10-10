@@ -1,9 +1,9 @@
-import {installRiverDetails} from './river-details.js?v=realm-red-cowl-2';
-import {installEnvironmentLife} from './environment-life.js?v=realm-red-cowl-2';
-import {graphics,retireInstances} from './graphics.js?v=realm-red-cowl-2';
-import {createTerrainStream} from './terrain-stream.js?v=realm-red-cowl-2';
-import {createWesternRange} from './emerald-landscape.js?v=realm-red-cowl-2';
-import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-red-cowl-2';
+import {installRiverDetails} from './river-details.js?v=realm-red-cowl-3';
+import {installEnvironmentLife} from './environment-life.js?v=realm-red-cowl-3';
+import {graphics,retireInstances} from './graphics.js?v=realm-red-cowl-3';
+import {createTerrainStream} from './terrain-stream.js?v=realm-red-cowl-3';
+import {createWesternRange} from './emerald-landscape.js?v=realm-red-cowl-3';
+import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-red-cowl-3';
 // Presentation only. No save, item, enemy, network or collision ownership.
 // Repeated decoration is instanced by material in spatial cells; Vale assets are repository-hosted.
 export function installVisualWorld(api) {
