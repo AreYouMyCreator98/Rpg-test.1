@@ -140,3 +140,5 @@ html.zoom-recovery,html.zoom-recovery body{touch-action:pinch-zoom}
 #build-controls button{min-height:44px;padding:8px;font-size:14px}
 .building-mode .touch-actions{visibility:hidden}
 .estate-choices{display:flex;gap:8px;flex-wrap:wrap}
+
+.workshop-options{display:flex;flex-wrap:wrap;gap:8px}.workshop-options button{min-height:44px;flex:1;padding:9px;font-size:14px}#work-content .quest-entry{margin:12px 0;padding:12px}#work-content h3{font-size:18px;margin:0 0 8px}#work-content p{font-size:14px;line-height:1.5}

@@ -118,8 +118,8 @@ export function installLivingWorld(api) {
   }
   function portrait(n){return `<svg class="portrait" viewBox="0 0 80 90" aria-hidden="true"><path fill="#${n.color.toString(16)}" d="M7 90V62L25 50H55L73 62V90Z"/><path fill="#d4a676" d="M23 18L40 10L57 18V43L48 56H31L23 43Z"/><path fill="#67503a" d="M20 27V16L38 5L59 16V27L42 19Z"/><path fill="#273f32" d="M29 30H34V35H29ZM46 30H51V35H46Z"/><path stroke="#7d543b" d="M34 45H46"/></svg>`}
   function dialogue(n) {
-    vendor=n;api.modal(n.name+' · '+n.role,`<div class="dialogue-intro">${portrait(n)}<p>${n.intro|| (n.id==='smith'?'A good blade grows with its bearer. Bring me coins, goblin teeth, and moonstones; I will temper your steel.':n.id==='merchant'?'Welcome home, traveller. I trade armour and healing draughts, and pay fairly for trophies from the wilds.':'Our village needs you. The forest grows restless, and something ancient stirs beneath the hills.')}</p></div><div class="menu-buttons">${['smith','merchant'].includes(n.id)?'<button id="open-shop" class="primary">'+(n.id==='smith'?'Browse swords & upgrades':'Buy & sell goods')+'</button>':''}<button id="npc-quests">Ask about village work</button><button id="npc-leave">Farewell</button></div>`,'dialogue');
-    if($('open-shop'))$('open-shop').onclick=()=>shop(n);
+    vendor=n;api.modal(n.name+' · '+n.role,`<div class="dialogue-intro">${portrait(n)}<p>${n.intro|| (n.id==='smith'?'A good blade grows with its bearer. Bring me coins, goblin teeth, and moonstones; I will temper your steel.':n.id==='merchant'?'Welcome home, traveller. I trade armour and healing draughts, and pay fairly for trophies from the wilds.':'Our village needs you. The forest grows restless, and something ancient stirs beneath the hills.')}</p></div><div class="menu-buttons">${['smith','merchant'].includes(n.id)?'<button id="open-shop" class="primary">'+(n.id==='smith'?'Browse swords & upgrades':'Buy & sell goods')+'</button>':''}${n.id==='smith'?'<button id="npc-shelter">Learn to gather &amp; build a shelter</button>':''}<button id="npc-quests">Ask about village work</button><button id="npc-leave">Farewell</button></div>`,'dialogue');
+    if($('open-shop'))$('open-shop').onclick=()=>shop(n);if($('npc-shelter'))$('npc-shelter').onclick=()=>api.getHomestead()?.gathering.menu('quest');
     $('npc-quests').onclick=()=>questDialogue(n);$('npc-leave').onclick=api.closeModal;
   }
   function shop(n) {
@@ -190,12 +190,12 @@ export function installLivingWorld(api) {
   }
   function journal() {
     if(api.state!=='playing')return;
-    api.modal('Journal of the wilds','<div class="journal-tabs"><button id="journal-map">World map</button></div><div id="journal-quests"></div>','journal');
+    api.modal('Journal of the wilds','<div class="journal-tabs"><button id="journal-map">World map</button><button id="journal-shelter">Bram’s shelter contract</button></div><div id="journal-quests"></div>','journal');
     for(const kind of ['Main','Side'])for(const q of questDefinitions.filter(q=>q.kind===kind)){
       const state=data.quests[q.id],n=npcs.find(n=>n.id===q.giver),row=document.createElement('section');row.className='quest-entry';
       row.innerHTML=`<div class="eyebrow">${kind} · ${state.status}</div><h3>${q.name}</h3><p>${q.description}</p><small>${state.status==='claimed'?'Completed':progress(q)+' / '+q.goal} · ${q.gold} coins / ${q.xp} XP · Speak to ${n.name}</small>`;
       if(state.status==='active'){const b=document.createElement('button');b.textContent=data.tracked===q.id?'Tracked':'Track objective';b.onclick=()=>{data.tracked=q.id;api.save();journal()};row.append(b)}$('journal-quests').append(row);
-    }$('journal-map').onclick=worldMap;
+    }$('journal-map').onclick=worldMap;$('journal-shelter').onclick=()=>api.getHomestead()?.gathering.menu('quest');
   }
   function worldMap() {
     if(api.getFrontier?.())return api.getFrontier().worldMap();

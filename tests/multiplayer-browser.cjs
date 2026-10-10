@@ -91,6 +91,16 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  await a.waitForFunction(()=>__realm.homestead.states.coop.pieces.length===1);await b.waitForFunction(()=>__realm.homestead.states.coop.pieces.length===1);
  assert.equal(await b.evaluate(()=>__realm.homestead.states.home.canEdit),false);
  console.log('PASS anonymous guest builds shared foundation through host, with private home read-only');
+ await b.evaluate(()=>__realm.setPosition(-59,133));await b.waitForTimeout(500);await b.evaluate(()=>__realm.homestead.change({action:'craft',recipe:'axe'},'coop'));
+ await b.waitForFunction(()=>__realm.homestead.states.coop.workshop.packs[__realm.net.id]?.tools.axe===1);
+ assert.equal(await a.evaluate(()=>__realm.homestead.states.coop.workshop.packs.owner?.tools.axe||0),0);
+ await b.evaluate(()=>__realm.setPosition(-86,142));await b.waitForTimeout(500);
+ for(let i=0;i<3;i++){await b.evaluate(()=>__realm.pickup());await b.waitForFunction(()=>!!__realm.homestead.gathering.animation);await b.waitForFunction(()=>!__realm.homestead.gathering.animation);await b.waitForTimeout(250)}
+ await b.waitForFunction(()=>__realm.homestead.states.coop.workshop.packs[__realm.net.id]?.bag.logs===6);
+ await b.evaluate(()=>__realm.setPosition(-59,129));await b.waitForTimeout(500);await b.evaluate(()=>__realm.homestead.change({action:'transfer',direction:'deposit',resource:'all'},'coop'));
+ await a.waitForFunction(()=>__realm.homestead.states.coop.workshop.stock.logs===6);
+ console.log('PASS anonymous guest tools remain personal; animated gathering deposits into shared host storage');
+
  await a.click('#leave-room');await b.waitForFunction(()=>!__realm.net.active,{},{timeout:12000});
  assert.equal(await a.evaluate(()=>__realm.player.coins),321);assert.equal(await b.evaluate(()=>__realm.player.coins),321);
  // Public discovery uses the same working join flow.

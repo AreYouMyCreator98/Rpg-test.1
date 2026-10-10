@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict');
+(async()=>{const {applyWorkshop,packFor,shelterReady,cleanWorkshop}=await import('../gathering-rules.js'),{freshEstate,applyBuild}=await import('../building-rules.js');let s=freshEstate(),now=1000000,seq=0;const run=op=>s=applyWorkshop(s,op,'owner',now+=1000);
+assert.equal(cleanWorkshop(null).quest.status,'available');run({action:'shelter_accept'});run({action:'craft',recipe:'axe'});run({action:'craft',recipe:'pickaxe'});assert.equal(s.wood,72);assert.throws(()=>run({action:'craft',recipe:'axe'}),/already own/);
+for(const node of [0,4])for(let n=0;n<3;n++)run({action:'gather',node});assert.equal(packFor(s,'owner').bag.logs,6);assert.equal(packFor(s,'owner').bag.rubble,6);assert.throws(()=>run({action:'gather',node:0}),/regrowing/);
+run({action:'transfer',direction:'deposit',resource:'all'});assert.equal(packFor(s,'owner').bag.logs,0);run({action:'craft',recipe:'timber'});run({action:'craft',recipe:'blocks'});
+for(const [type,rotation]of [['foundation',0],['wall',0],['wall',1],['window',2],['door',3],['roof',0]])s=applyBuild(s,{action:'place',piece:{id:'part'+seq++,type,x:0,z:0,level:0,rotation}});
+assert(shelterReady(s));const before=s.wood;run({action:'shelter_claim'});assert.equal(s.wood,before+80);assert.throws(()=>run({action:'shelter_claim'}),/already claimed/);
+const unchanged=JSON.stringify(s);assert.throws(()=>run({action:'transfer',direction:'withdraw',resource:'wood',qty:-5}),/whole quantity/);assert.equal(JSON.stringify(s),unchanged);assert.throws(()=>run({action:'transfer',direction:'deposit',resource:'ore',qty:1}),/Not enough/);
+for(let i=0;i<3;i++)run({action:'gather',node:6});run({action:'transfer',direction:'deposit',resource:'all'});run({action:'craft',recipe:'nails'});run({action:'craft',recipe:'ironaxe'});run({action:'gather',node:1});run({action:'gather',node:1});assert.equal(packFor(s,'owner').bag.logs,6);assert.equal(packFor(s,'stranger').tools.axe,0);
+now+=120000;run({action:'gather',node:0});assert.equal(s.workshop.nodes[0].hits,2);assert.throws(()=>applyWorkshop(s,{action:'gather',node:2},'owner',now+1),/previous/);assert.throws(()=>applyBuild(s,{action:'harvest'}),/replaced/);
+console.log('PASS gathering depletion/regrowth/cooldown, recipe costs and upgrades, isolated packs, atomic storage validation, all shelter objectives, one-time reward, legacy-state defaults and retired supply-pile action');
+})().catch(e=>{console.error(e);process.exitCode=1});

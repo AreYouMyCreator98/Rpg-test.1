@@ -1,5 +1,5 @@
-import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-hearth-20261010-2';
-import {connectSupabase} from './supabase-rooms.js?v=realm-hearth-20261010-2';
+import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-gathering-20261010-1';
+import {connectSupabase} from './supabase-rooms.js?v=realm-gathering-20261010-1';
 
 export function installMultiplayer(api) {
   const {$,THREE,hero,enemies,loot,items,living}=api;
@@ -41,7 +41,7 @@ export function installMultiplayer(api) {
     status(c.url&&c.key?'Connect or refresh to find worlds.':'Solo is ready. Online rooms need your Supabase project connection.');
   }
   function renderRoster(){const el=$('party-list');if(el){el.replaceChildren();for(const p of roster){const row=document.createElement('p');row.textContent=p.name+(p.id===id?' · you':'')+(p.id===roster.host?' · host':'');el.append(row)}}party.textContent=`Party ${roster.length}/4`}
-  function removePeer(uid){const p=peers.get(uid);if(!p)return;api.companions?.removeRemote(uid);api.scene.remove(p.ch.root);p.ch.bodyMat.dispose();p.ch.bladeMat.dispose();p.label.remove();peers.delete(uid)}
+  function removePeer(uid){const p=peers.get(uid);if(!p)return;api.companions?.removeRemote(uid);api.getHomestead()?.gathering.removeRemote(p.ch);api.scene.remove(p.ch.root);p.ch.bodyMat.dispose();p.ch.bladeMat.dispose();p.label.remove();peers.delete(uid)}
   function getPeer(uid){
     if(peers.has(uid))return peers.get(uid);if(peers.size>=3)return null;
     const ch=api.character(),plate=new THREE.Mesh(shieldGeometry,shieldMaterial),label=document.createElement('div');plate.rotation.x=Math.PI/2;plate.position.set(-.08,-.4,.18);ch.arms[0].add(plate);label.className='party-label';$('world-ui').append(label);ch.root.visible=false;
@@ -75,7 +75,7 @@ export function installMultiplayer(api) {
     if(!active)return;active=false;host=false;for(const uid of [...peers.keys()])removePeer(uid);roster=[];seen.clear();party.hidden=true;
     try{if(api.getAccounts()?.active)await api.getAccounts().leave();else api.start(!!api.readSave())}catch(e){status(e.message);if(api.getAccounts()?.active)void api.getAccounts().menu()}finally{if(notify)send({type:'leave'});api.toast(reason)}
   }
-  function pose(){const p=hero.root.position;return {x:p.x,y:p.y,z:p.z,yaw:hero.root.rotation.y,hp:api.player.hp,level:api.player.level,attributes:api.player.attributes,skills:api.player.skills,pet:api.player.pet,mount:api.player.mount,mounted:api.companions?.mounted,moving:api.companions?.speed>0.2,weapon:api.player.weapon,armour:api.player.armour,blocking:api.blocking,dodge:api.dodge,away:!!api.panel||api.state!=='playing',attack:api.attack?{t:api.attack.t,duration:api.attack.duration,combo:api.attack.combo,whirlwind:api.attack.whirlwind}:null}}
+  function pose(){const p=hero.root.position;return {x:p.x,y:p.y,z:p.z,yaw:hero.root.rotation.y,hp:api.player.hp,level:api.player.level,attributes:api.player.attributes,skills:api.player.skills,pet:api.player.pet,mount:api.player.mount,mounted:api.companions?.mounted,moving:api.companions?.speed>0.2,weapon:api.player.weapon,armour:api.player.armour,blocking:api.blocking,dodge:api.dodge,away:!!api.panel||api.state!=='playing',gathering:api.getHomestead()?.gathering.animation,attack:api.attack?{t:api.attack.t,duration:api.attack.duration,combo:api.attack.combo,whirlwind:api.attack.whirlwind}:null}}
   function sendPose(){if(active)send({type:'pose',data:pose()})}
   function sendSnapshot(){
     if(!active||!host)return;const data=living.serialize();
@@ -111,7 +111,7 @@ export function installMultiplayer(api) {
     if(d.kind==='attack'){
       const peer=peers.get(uid),combat=api.characterStats(p.pose,items);if(!peer||clock-peer.lastAttack<.43/combat.attackSpeed)return;peer.lastAttack=clock;const combo=Number.isInteger(d.combo)&&d.combo>=0&&d.combo<3?d.combo:0;peer.attack={t:0,duration:(combo===2?.72:.48)/combat.attackSpeed,whirlwind:combo===2&&combat.whirlwind,combat,combo,hit:new Set()};return;
     }
-    if(d.kind==='build'){try{api.getHomestead()?.remoteCommand(d.baseKind,d.op,p.pose)}catch(e){event({kind:'notice',text:e.message},uid)}sendSnapshot();return}
+    if(d.kind==='build'){try{api.getHomestead()?.remoteCommand(d.baseKind,d.op,p.pose,uid)}catch(e){event({kind:'notice',text:e.message},uid)}sendSnapshot();return}
     if(d.kind==='exp-structure'){if(!api.structureFrom(uid,()=>api.expansion.structure(p.pose,d.action||{})))event({kind:'notice',text:'Check the glyphs, key and nearby guardians.'},uid);sendSnapshot();return}if(d.kind==='exp-bounty'){api.expansion.respawnBounty(d.target,p.pose);sendSnapshot();return}
     if(d.kind==='pickup'){
       for(const l of [...loot])if(Math.hypot(l.g.position.x-p.pose.x,l.g.position.z-p.pose.z)<2.8&&(!Array.isArray(d.ids)||d.ids.includes(l.netId))){
@@ -148,7 +148,7 @@ export function installMultiplayer(api) {
     if(!host&&clock-lastSnapshot>20){leave('The host stopped responding. Your solo save is unchanged.');return}
     for(const [uid,p] of peers){
       if(!p.pose)continue;const d=p.pose,old=p.ch.root.position.clone();p.ch.root.position.lerp(new THREE.Vector3(d.x,d.y,d.z),1-Math.exp(-dt*18));api.face(p.ch,d.yaw,dt);
-      const speed=Math.min(7,old.distanceTo(p.ch.root.position)/Math.max(dt,.001));api.resetRoll(p.ch);api.animate(p.ch,speed,dt,d.attack,d.hp<=0?2:0);
+      const speed=Math.min(7,old.distanceTo(p.ch.root.position)/Math.max(dt,.001));api.resetRoll(p.ch);api.animate(p.ch,speed,dt,d.attack,d.hp<=0?2:0);p.ch.weapon.visible=!!d.weapon;api.getHomestead()?.gathering.remote(p.ch,d.hp>0&&!d.attack?d.gathering:null);
       if(d.blocking)p.ch.arms[0].rotation.x=-1.35;
       if(d.dodge>0)api.groundedRoll(p.ch,d.dodge/.58);
       p.ch.root.visible=clock-p.last<5&&(d.x>200)===(hero.root.position.x>200)&&p.ch.root.position.distanceTo(hero.root.position)<55;

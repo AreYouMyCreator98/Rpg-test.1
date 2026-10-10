@@ -2,7 +2,7 @@
 
 A procedural 3D browser action RPG with a continuous expanded overworld, five settlements, thirty-three quests, fourteen bosses, five dungeons, pets, mounts and optional persistent four-player Supabase co-op. The original forest, hero, equipment, goblins, village and Goblin Chief remain playable.
 
-**Game files:** `prologue.js`, `homestead.js`, `building-rules.js`, `scene-batch.js`, `accounts.js`, `expansion-data.js`, `expansion-models.js`, `expansion-world.js`, `companions.js`, `supabase/game-catalog.json`, `progression.js`, `adventure-motion.js`, `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
+**Game files:** `gathering.js`, `gathering-rules.js`, `prologue.js`, `homestead.js`, `building-rules.js`, `scene-batch.js`, `accounts.js`, `expansion-data.js`, `expansion-models.js`, `expansion-world.js`, `companions.js`, `supabase/game-catalog.json`, `progression.js`, `adventure-motion.js`, `visual-world.js`, `ui.css`, `ui.js`, `index.html`, `frontier.js`, `living-world.js`, `multiplayer.js`, `supabase-rooms.js` and `multiplayer-config.js`. Keep them together. No frontend build is required. Solo needs no backend or credentials; optional multiplayer uses Supabase. Three.js remains pinned to **0.160.1** on jsDelivr; every model, effect and sound is generated locally.
 
 ## GitHub Pages
 
@@ -240,8 +240,29 @@ Open **Journey → Build / foundations** (desktop **B**). Choose **Home Base fou
 
 Both bases support foundations, walls, window walls, working doors, stairs, upper floors and pitched roofs. New foundations attach to existing ones; upper floors need stairs, and roofs need two supporting walls. Closed doors block passage; use Interact to open them. Storeys are selected in the construction menu. Salvage returns half the material cost and cannot remove occupied supports.
 
-Each base has separate timber/stone supplies and a 64-piece limit. Supply piles at the south-east corner replenish every five seconds; Interact gathers 24 timber and 12 stone, capped at 500 each. These supplies are separate from equipment, currency and progression.
+Each base has separate supplies and a 64-piece limit. Existing buildings and stock are preserved. The old replenishing supply pile is now a workbench and storage chest; gather raw materials to replenish construction supplies. These supplies are separate from equipment, currency and progression.
 
 A Home Base belongs to its owner; visitors cannot edit it. The Co-op Base belongs to the host’s character and is shared by that host’s parties, not duplicated for every room. Account bases persist in Supabase across devices. Server commands enforce membership, ownership, material costs, placement/support rules, proximity, version conflicts and idempotent retries. Anonymous parties use host-authoritative construction; their base remains on the host’s browser. Solo local homes remain in the existing save. Account and anonymous base stores are intentionally separate; existing character imports do not automatically import browser-built structures.
 
 For a new Supabase installation, apply the complete schema sequence above. On an existing configured project, install the updated runtime/catalog and the additive prologue/homesteads migrations. They change the default for future characters and add protected estate tables; they do not reset existing characters.
+
+
+## Gathering, tools and the first shelter
+
+Speak to Bram and choose **Learn to gather & build a shelter**, or open **Journey → Gather & craft**. Each Home/Co-op plot has a fixed workbench and storage chest on its eastern edge. The workshop can mark these stations and resource deposits on the real map.
+
+Craft a stone axe (4 timber, 2 stone) and pickaxe (4 timber, 3 stone) from existing stored supplies. At marked trees, stone deposits and iron veins, use **Interact / E** to swing the appropriate tool. Three strikes collect 6 logs, 6 rough stone or 4 ore into your builder pack. Deposits regenerate after two minutes. If supplies run out before making tools, collect loose branches and stones by hand; iron needs a pickaxe. Ordinary attack remains sword combat.
+
+Deposit gathered materials at the chest, then use the workbench:
+
+- 2 logs → 8 timber planks.
+- 2 rough stone → 6 stone blocks.
+- 2 iron ore → 6 nails.
+- 8 timber + 6 nails → iron axe upgrade.
+- 8 timber + 8 nails → iron pickaxe upgrade.
+
+Iron tools deplete a deposit in two strikes. Tools and carried materials belong to each builder **at that base**; they do not automatically travel between bases. Co-op stored supplies are shared, while each builder has their own pack. Each material is capped at 500. Transfers, recipes and building consume actual stock atomically.
+
+Accept **A roof of your own** before gathering. Collect 6 logs and 6 rough stone, craft 8 timber and 6 blocks, then build a foundation with four wall edges including a door and window, plus a roof. Claim 80 timber and 40 stone once per base at Bram or the workbench. Home and Co-op track separate contracts; party contributions count together for the shared base.
+
+Account-backed gathering uses server time, position checks, character identity, version checks and request replay protection. Install the updated `supabase/homesteads.sql` on an existing project before serving this release. It adds protected commands without resetting buildings or character progression. Anonymous co-op remains host-authoritative.

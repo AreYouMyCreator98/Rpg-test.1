@@ -22,9 +22,9 @@ await as(2);await assert.rejects(()=>rpc('realm_estate_read',[host.id,host.id,ui
 const visit=await rpc('realm_estate_read',[guest.id,room,uid(8),'home']);assert.equal(visit.canEdit,false);await assert.rejects(()=>rpc('realm_estate_change',[guest.id,room,uid(8),'home',visit.version,uid(++seq),{action:'harvest'}]),/Only the owner/);
 await db.exec('reset role');await db.query('update realm_character_contexts set world_id=$1,x=-74,z=118 where character_id=$2',[room,guest.id]);await as(2);
 const shared=await rpc('realm_estate_read',[guest.id,room,uid(8),'coop']);assert(shared.canEdit);const cf=piece('foundation');const built=await rpc('realm_estate_change',[guest.id,room,uid(8),'coop',0,cf.id,{action:'place',piece:cf}]);assert.equal(built.pieces.length,1);
-await assert.rejects(()=>rpc('realm_estate_change',[guest.id,room,uid(8),'coop',1,uid(++seq),{action:'harvest'}]),/Visit the supply/);
+await assert.rejects(()=>rpc('realm_estate_change',[guest.id,room,uid(8),'coop',1,uid(++seq),{action:'harvest'}]),/replaced/);
 await db.exec('reset role');await db.query('update realm_character_contexts set x=-59,z=133 where character_id=$1',[guest.id]);await as(2);
-const gathered=await rpc('realm_estate_change',[guest.id,room,uid(8),'coop',1,uid(++seq),{action:'harvest'}]);assert.equal(gathered.wood,92);await assert.rejects(()=>rpc('realm_estate_change',[guest.id,room,uid(8),'coop',2,uid(++seq),{action:'harvest'}]),/replenishing/);
+const crafted=await rpc('realm_estate_change',[guest.id,room,uid(8),'coop',1,uid(++seq),{action:'craft',recipe:'axe'}]);assert.equal(crafted.wood,64);assert.equal(crafted.workshop.packs[guest.id].tools.axe,1);
 await as(1);assert.equal((await rpc('realm_estate_read',[host.id,host.id,uid(9),'coop'])).pieces.length,1);
-console.log('PASS SQL reinstall, new-character graveyard default, home privacy, shared guest edits, independent supplies, duplicate request idempotency, stale versions, support/edge validation, supply proximity/cooldown, RLS and persistent host ownership');
+console.log('PASS SQL reinstall, new-character graveyard default, home privacy, shared guest edits, independent supplies, duplicate request idempotency, stale versions, support/edge validation, retired supply piles and guest tool crafting, RLS and persistent host ownership');
 }finally{await db.close()}})().catch(e=>{console.error(e);process.exitCode=1});

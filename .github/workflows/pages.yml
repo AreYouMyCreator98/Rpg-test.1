@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - scene-batch.js
+      - gathering.js
+      - gathering-rules.js
       - homestead.js
       - building-rules.js
       - prologue.js
