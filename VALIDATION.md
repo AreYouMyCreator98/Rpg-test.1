@@ -287,3 +287,24 @@ A mobile Chromium smoke check then loaded the actual Pages URL and pinned CDN ov
 - Stairwell rules were exercised in both SQL and browser tests. Actual movement steps climbed the stairs to an adjacent upper floor; restoring that local snapshot retained height 3.6. The final hosted construction functions include those same tested support rules.
 
 - Release review aligned prologue enemy scaling with the existing trusted encounter formula for level-21+ visitors. The level-26 legacy regression now asserts the expected scaled enemy HP as well as preserving player progression; it passed. Fresh level-1 difficulty is unchanged.
+
+
+## Gathering and workbenches — October 10, 2026
+
+The gathering release adds marked resource deposits, per-builder packs/tools, fixed workbenches and chests at both plots, and Bram’s estate-scoped shelter contract. Existing character progression and construction remain separate from this economy.
+
+- `gathering-rules.cjs`: depletion, two-minute regrowth, stroke cooldown, exact recipes, iron upgrades, separate packs, atomic transfers, invalid quantities, shelter requirements, one-time rewards and legacy defaults passed.
+- `gathering-sql.cjs` and updated `homesteads-sql.cjs` passed in PGlite: trusted proximity, server-time cooldowns, depletion, recipe costs, replay protection, stale revisions, insufficient stock, owner isolation, denied direct helper/table access, shared construction and once-only rewards.
+- The additive `supabase/homesteads.sql` migration was applied to the existing hosted project. Existing estate rows and character saves were not reset. Old replenishing supply-pile commands are intentionally rejected.
+- `gathering-browser.cjs` exercised real mobile interaction swings, wood/stone/ore collection, chest deposit, crafting, faster iron tools, Bram’s dialogue, shelter construction/reward, workshop reload and migration of a pre-workshop home (same stock and pieces) at 390×844 without JavaScript exceptions. Rendering was throttled during logic tests; screenshots use actual WebGL rendering.
+- Updated `homesteads-browser.cjs` passed touch placement, all seven construction parts, material costs, salvage, doors, stairs, upper-floor support, separate Home/Co-op persistence, map footprints and waypoints.
+
+Physical Samsung/iPhone/Safari testing and hardware FPS measurements are unavailable in this environment. Browser emulation does not prove performance on every phone. Workbenches/chests are fixed stations; tools and carried materials are base-specific, not universal inventory equipment.
+
+- `multiplayer-browser.cjs` passed two-client guest crafting, separate personal tools, animated tree harvesting and deposit into host storage, alongside its existing combat, loot, dungeon, companion and leave/rejoin checks. This suite uses a deterministic Supabase SDK service double; hosted checks are reported separately.
+
+- `mobile-viewport.cjs` passed attack-icon/label double taps, simultaneous joystick/combo, touch-default cancellation, healing, 390px layout, account input sizing and invalid-Continue preservation.
+- Attempts to extend the full hosted combat suite were interrupted first by overly large test position jumps conflicting with automatic movement samples, then by a combat synchronization timeout. These interrupted full runs are not counted as passes; the unchanged combat suite remains in the repository. A focused hosted gathering suite separates the new economy checks from combat timing.
+
+- `gathering-live.cjs` passed against the real hosted Supabase project with two disposable confirmed accounts: email/password sign-in, private character isolation, duplicate-session denial, persistent-character room join, guest axe crafting, timed tree depletion, shared chest deposit visible to the host, clean host departure, restored independent solo worlds and retained shared storage. No browser exceptions or cloud conflicts occurred. Temporary accounts were removed afterward.
+- All runtime JavaScript syntax checks and the 23-file versioned static release validator passed.
