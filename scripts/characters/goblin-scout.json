@@ -1,0 +1,17 @@
+{
+  "name": "Goblin Scout \u2014 Red Cowl",
+  "seed": 98,
+  "palette": {
+    "skin": "7f9e36",
+    "skin_light": "a1b749",
+    "ear": "bd7336",
+    "cloth": "37332b",
+    "leather": "67432d",
+    "edge": "936746",
+    "rust": "91483c",
+    "ivory": "e8d6a5",
+    "steel": "9caaa7",
+    "amber": "e5a52b",
+    "dark": "182015"
+  }
+}

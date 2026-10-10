@@ -1,0 +1,16 @@
+{
+  "blender": "4.3.2",
+  "triangles": 9396,
+  "bones": 22,
+  "clips": [
+    "Idle",
+    "Walk",
+    "Run",
+    "Attack",
+    "Hit",
+    "Death"
+  ],
+  "materials": 11,
+  "seed": 98,
+  "status": "draft \u2014 not integrated; animation ground-contact review pending"
+}
