@@ -7,7 +7,7 @@ The game initializes with **106 enemies, 14 bosses, 33 quests, five dungeons inc
 | Executed suite | Checks |
 | --- | --- |
 | `character-runtime-sql.cjs` | Actual PostgreSQL functions via PGlite: reinstall, owner isolation, exclusive leases, one-time legacy import, protected checkpoints, movement/cooldown/damage bounds, encounter participation, idempotent reward claims, quest requirements, server-clock bounty cooldowns, equipped-item drop/recollection escrow. |
-| `persistent-rooms-sql.cjs` | Selected-character ownership, leases, four-player limit, guest/persistent-room separation, unauthorized world rejection and solo-world separation after host departure. |
+| `persistent-rooms-sql.cjs` | Selected-character ownership, leases, four-player limit, guest/persistent-room separation, unauthorized world rejection, runtime reinstall after room SQL, bounded final-event grace and solo-world separation after host departure. |
 | `accounts-browser.cjs` | Actual account UI and PostgreSQL RPCs with an Auth service double: legacy backup, purchases/equipment, real sword contacts and rewards, offline queue replay after lease expiry, conflicting-revision recovery without overwriting the original local save. |
 | `accounts-live.cjs` | Two disposable email/password accounts against hosted Supabase Auth, RLS, RPCs and private Realtime: owned slots, foreign-owner denial, duplicate-session denial, persistent room join, guest combat XP/loot, no XP for a nonparticipating host, and restoration of separate solo state. |
 | `expansion-browser.cjs` | Distinct roster/model registration, four dungeon transitions/collision/gates, boss combat and phases, unique loot, bounty claim/cooldown, companion purchase/equip, mounting/movement/rider attachment and reload persistence. |
@@ -21,6 +21,8 @@ The game initializes with **106 enemies, 14 bosses, 33 quests, five dungeons inc
 Runtime JavaScript syntax and the seventeen-file Pages staging/version validator passed. Local browser tests can use the exact pinned Three.js downloaded through certificate-verified HTTPS. Hosted tests also use certificate-verified HTTP/WebSocket proxies; no TLS checks are disabled. Layout and network regression suites throttle or suppress repeated drawing after initialization to keep software-GPU timing manageable; the separate rendering suite exercises real drawing.
 
 Test fixtures explicitly advance some combat frames or arrange positions/health to isolate behavior. A background host tab initially made the multiplayer timing check time out; bringing that host tab to the foreground allowed the unchanged damage assertion to pass. Progression attack targets were given a larger health fixture to avoid random critical kills changing the level before the respec assertion.
+
+The first published hosted disconnect test exposed a SQL installation-order regression: reinstalling the runtime removed the room-departure grace helper. The runtime now preserves equivalent ownership and grace rules; the SQL regression also checks that access expires after that grace.
 
 Physical Samsung/iPhone hardware, Safari/WebKit, battery/thermal behavior, audible sound quality, real email inbox delivery and long-duration balance remain unverified. Email confirmation/recovery call real Supabase APIs with the Pages callback configured. The account server validates reward events and economy operations while the host still simulates physics; this is not a claim of cheat-proof browser combat.
 

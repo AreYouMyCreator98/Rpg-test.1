@@ -29,7 +29,7 @@ declare c public.realm_characters;begin
  return c;
 end$$;
 create or replace function public.realm_character_world_allowed(character_id uuid,world_id uuid) returns boolean
-language sql stable security definer set search_path=pg_catalog,public as $$select world_id=character_id or exists(select 1 from public.realm_members m join public.realm_rooms r on r.id=m.room where m.uid=auth.uid() and m.room=world_id and r.touched>clock_timestamp()-interval '45 seconds')$$;
+language sql stable security definer set search_path=pg_catalog,public as $$select world_id=character_id or exists(select 1 from public.realm_character_contexts ctx where ctx.character_id=realm_character_world_allowed.character_id and ctx.world_id=realm_character_world_allowed.world_id and ctx.room_grace_until>clock_timestamp()) or exists(select 1 from public.realm_members m join public.realm_rooms r on r.id=m.room where m.uid=auth.uid() and to_jsonb(m)->>'character_id'=realm_character_world_allowed.character_id::text and m.room=world_id and to_jsonb(r)->>'persistent'='true' and r.touched>clock_timestamp()-interval '45 seconds')$$;
 create or replace function public.realm_award_experience(p jsonb,amount integer) returns jsonb
 language plpgsql immutable set search_path=pg_catalog,public as $$
 declare level_no integer:=(p->>'level')::integer; xp integer:=(p->>'xp')::integer+amount; required integer; spent integer; max_hp integer;max_stamina integer;
