@@ -1,5 +1,5 @@
-import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-red-cowl-3';
-import {connectSupabase} from './supabase-rooms.js?v=realm-red-cowl-3';
+import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-cinematic-1';
+import {connectSupabase} from './supabase-rooms.js?v=realm-cinematic-1';
 
 export function installMultiplayer(api) {
   const {$,THREE,hero,enemies,loot,items,living}=api;
