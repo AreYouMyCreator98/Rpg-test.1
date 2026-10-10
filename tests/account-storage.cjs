@@ -1,0 +1,7 @@
+const assert=require('node:assert/strict'),fs=require('node:fs');
+(async()=>{const {writeAccountCache}=await import('data:text/javascript;base64,'+Buffer.from(fs.readFileSync('account-storage.js')).toString('base64'));
+function store(entries,limit){const map=new Map(Object.entries(entries));return{map,getItem:k=>map.get(k)??null,removeItem:k=>map.delete(k),setItem(k,v){const size=[...map].reduce((n,[key,val])=>n+(key===k?0:val.length),v.length);if(size>limit)throw new DOMException('Full','QuotaExceededError');map.set(k,v)}}}
+let s=store({save:'old'},7);assert(writeAccountCache(s,'save','newdata'));assert.equal(s.getItem('save'),'newdata');console.log('PASS optional backup quota failure does not block primary persistence');
+s=store({save:'old','save:backup':'old'},9);writeAccountCache(s,'save','newdata');assert.equal(s.getItem('save'),'newdata');console.log('PASS only duplicate backup is reclaimed to fit latest outbox');
+s=store({save:'old','save:backup':'distinct','other':'hero'},16);assert.throws(()=>writeAccountCache(s,'save','largedata'));assert.equal(s.getItem('save'),'old');assert.equal(s.getItem('save:backup'),'distinct');assert.equal(s.getItem('other'),'hero');console.log('PASS real storage failure keeps old save, distinct recovery copy and other characters');
+s=store({save:'old'},2);assert.throws(()=>writeAccountCache(s,'save','new'));s=store({save:'old'},20);writeAccountCache(s,'save','new');assert.equal(s.getItem('save:backup'),'old');console.log('PASS recovery retry and normal rolling backup');})();
