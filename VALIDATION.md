@@ -153,9 +153,9 @@ Passed `v2-combat.cjs`, `v2-browser.cjs` and two-client `multiplayer-browser.cjs
 
 Passed `visual-browser.cjs`: 241 draw calls / 148,920 triangles on Low at the village; 49 enemies, 16 quests and 343 instanced scenery batches retained; third-person framing across six locations, adaptive resolution, cave visibility/lighting, quality changes and save reload. No JavaScript, shader or console errors. This measures rendering workload, not physical-phone FPS. Full expansion QA, live account tests, real-device Android/iOS tests, pets/mounts and new content remain outstanding.
 
-## Stage 3 database foundation (not deployed)
+## Stage 3 database foundation (initial local validation)
 
-`characters-foundation-sql.cjs` passed against PGlite: repeatable installation, anonymous-account rejection, five-slot limit, duplicate-slot rejection, owner-only reads, private backups, denied direct progression updates/deletes, stale/null revision rejection, renewable exclusive character leases, rejection of another session's release, active-character archive rejection and recoverable archive. No cloud-save UI, trusted reward validator or hosted account workflow is enabled. See `EXPANSION-STATUS.md` for the access blocker and remaining implementation.
+`characters-foundation-sql.cjs` passed against PGlite: repeatable installation, anonymous-account rejection, five-slot limit, duplicate-slot rejection, owner-only reads, private backups, denied direct progression updates/deletes, stale/null revision rejection, renewable exclusive character leases, rejection of another session's release, active-character archive rejection and recoverable archive. No cloud-save UI, trusted reward validator or hosted account workflow is enabled. See `EXPANSION-STATUS.md` and the hosted checks below for current deployment status and remaining implementation.
 
 ## Published Stages 1–2 smoke check
 
@@ -168,3 +168,13 @@ GitHub validation run `38018240798` and Pages deployment `38018240598` succeeded
 `visual-browser.cjs` passed after the final material changes: three varying 128×128 generated textures, wood/masonry assignments in merged geometry, six-location camera framing, adaptive resolution, cave lighting transitions, quality selection and save reload, with no JavaScript/shader/console errors. Low village workload remains 241 draw calls / 148,920 triangles; 49 enemies, 16 quests and 343 instanced scenery batches remain. Low and Medium screenshots were inspected. The sunlight is warmer with a small exposure adjustment; no new postprocessing passes were added.
 
 `v2-mobile.cjs` passed real CDP multitouch movement+attack/block, release, camera orbit, NPC/shop/equipment, journal/map/inventory/settings and portrait/landscape control bounds. These are Chromium tests; physical Samsung/iPhone frame rate and Safari remain unverified. This update does not claim completion of the remaining expansion stages.
+
+## Hosted Stage 3 database and protected commands — 2026-10-10
+
+Verified Management API access to the existing Supabase project. Installed the additive `characters-foundation.sql` and `character-commands.sql` migrations; existing rooms, Realtime policies and Auth configuration were not modified. Browser account features remain disabled pending integration.
+
+`characters-foundation-sql.cjs` passed again in PGlite. `character-commands-sql.cjs` passed repeat installation, fixed server prices, inventory ownership, equip/sell restrictions, atomic upgrade costs and replacement, potion use, attribute budgets, skill prerequisites, respec charges, duplicate request replay, changed-payload rejection, stale revisions, wrong/expired leases, private ledger reads and denied direct writes. Experience/material fixture grants use the privileged test connection; no browser reward-grant endpoint exists.
+
+`python scripts/check-hosted-characters.py --apply` passed on the actual hosted PostgreSQL database: owner isolation for characters/backups/ledger, protected progression writes, server-priced purchase, idempotent retry, insufficient-funds rejection, exclusive lease and anonymous-account rejection. The test used temporary users and `SET LOCAL ROLE authenticated` with JWT claims inside a transaction; all fixtures were rolled back. It is a real hosted RLS/RPC check, **not** an email sign-in or two-browser account test.
+
+Login/recovery UI, cloud save synchronization, legacy imports, encounter/reward validation and persistent-character co-op are not implemented. Existing solo/local and session-only co-op behaviour is unchanged. The old missing-management-access blocker is resolved; remaining work is implementation, not another key request.

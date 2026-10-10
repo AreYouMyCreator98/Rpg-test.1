@@ -192,3 +192,15 @@ Open **Menu → Settings → Camera & accessibility** for live FOV (45–100°, 
 All 18 nodes change combat calculations. Whirlwind Slash changes the third attack in the existing combo into a circular sweep, so it uses the same desktop/touch attack control. Other nodes improve damage, criticals, stagger, defence, potion healing, stamina, movement, dodge or blocking. Skills can be reset for 50 + 10 × level gold. Resetting does not refill health or stamina. Attribute allocation is permanent for this stage.
 
 Saves use schema 3 under the original storage key. Before continuing an older save, the exact original is retained under `realm-fallen-save-v1-pre-progression`; if that backup cannot be written, migration stops instead of overwriting it. Original quest/boss state and equipment remain separate from character attributes. Co-op still uses session-only heroes; their earned levels/builds work within the room, but account-backed character transfer is not enabled yet.
+
+## Accurate atlas and material detail
+
+The minimap follows the camera with a white view arrow and fan. A small gold tick shows the hero's facing direction separately. North-up and the full atlas retain compass orientation. Terrain colours and paths share the world's terrain function; river width, bridges and village building footprints use the world data. Map waypoints, quest targets, NPCs and party markers remain interactive.
+
+The presentation uses three generated 128×128 detail textures for ground, timber and masonry, merged building materials, warmer sunlight and adjusted filmic exposure. No image downloads or additional drawing batches are needed. These are subtle material improvements, not a replacement world or a promise of reference-image parity.
+
+## Account backend development
+
+The hosted Stage 3 database foundation and protected economy commands are installed, but account login/cloud character selection and persistent co-op are **not enabled in the game yet**. See `EXPANSION-STATUS.md`. Local saves and session-only co-op remain the playable path.
+
+Run `tests/characters-foundation-sql.cjs` and `tests/character-commands-sql.cjs` with PGlite for local permission/economy checks. `python scripts/check-hosted-characters.py` uses the securely injected `SUPABASE_ACCESS_TOKEN` only against the Supabase Management API and runs a rollback-only hosted database test. `--apply` first installs the two additive migrations. Never use that token in browser code. Hosted SQL checks do not certify email delivery, Auth UI or live two-account multiplayer.
