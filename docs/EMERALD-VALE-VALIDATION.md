@@ -1,3 +1,5 @@
+> Historical Phase 1 checkpoint. For the subsequent implementation, current tests and outstanding physical-device gates, see [Living Landscape validation](LIVING-LANDSCAPE-VALIDATION.md).
+
 # Emerald Vale — playable benchmark checkpoint
 
 ## Scope and status

@@ -260,7 +260,7 @@ export function installVisualWorld(api) {
   const ambient=new THREE.DirectionalLight(0xa7c9be,.36);ambient.position.set(35,20,-40);scene.add(ambient);
   const timings=[];let diagnosticTimer=0;const diagnostic=new URLSearchParams(location.search).has('diagnostics')?document.createElement('pre'):null;if(diagnostic){diagnostic.style.cssText='position:fixed;left:8px;bottom:8px;z-index:99;background:#081c18df;color:#d9e4cd;padding:8px;font:11px monospace;pointer-events:none';document.body.append(diagnostic)}
   let elapsed=0,timer=1,sampleTime=0,samples=0,slow=0,fast=0,scale=1,quality='';
-  const baseRatio=()=>Math.min(devicePixelRatio,graphics(api.settings).ratio);
+  const baseRatio=()=>{const p=graphics(api.settings);return Math.min(devicePixelRatio,p.ratio)*p.renderScale};
   function resetResolution(){meadowCell='';scale=1;quality=api.settings.quality;sampleTime=samples=slow=fast=0;renderer.setPixelRatio(baseRatio());}
   // Hysteresis prevents oscillation. Resolution only; combat and input continue every RAF.
   function sampleFrame(seconds){

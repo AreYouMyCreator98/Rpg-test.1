@@ -1,7 +1,7 @@
 // Sculpted western horizon: continuous ridges extend from the actual world edge.
 // Outside the playable bounds; never a second source of collision or terrain height.
 export function createWesternRange(THREE,ground,bounds,side='west'){
- const positions=[],colors=[],indices=[],nx=28,nz=100;
+ const positions=[],colors=[],indices=[],nx=20,nz=72;
  for(let j=0;j<=nz;j++)for(let i=0;i<=nx;i++){
   const u=i/nx,along=j/nz;
   const x=side==='west'?bounds.left-u*410:side==='east'?bounds.right+u*410:bounds.left-180+along*(bounds.right-bounds.left+360);

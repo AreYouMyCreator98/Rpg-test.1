@@ -38,6 +38,24 @@ export function installEmeraldVale(api){
   }
   const set=[];for(const [name,list]of entries){const c={p:{name,entries:list},m:null,near:models.get(name),far:models.get(name),x:cx*40+20,z:cz*40+20,detail:true,lod:'near',last:clock,tile:key};cells.push(c);set.push(c)}detailTiles.set(key,{cells:set,last:clock});
  }
+ // One coarse canopy draw maintains forest silhouettes beyond the authored-tree range.
+ // This is visual LOD only: authoritative roots and collision remain unchanged.
+ const crownGeometry=new THREE.BufferGeometry(),crownVertices=[0,2.3,0,0,-1.8,0],crownIndices=[];
+ for(let i=0;i<5;i++)crownVertices.push(Math.cos(i*Math.PI*2/5)*3.5,0,Math.sin(i*Math.PI*2/5)*3.5);
+ for(let i=0;i<5;i++){const a=2+i,b=2+(i+1)%5;crownIndices.push(0,b,a,1,a,b)}
+ const crownColors=Array(crownVertices.length).fill(1),trunkStart=crownVertices.length/3;
+ for(const y of [-7.8,-.7])for(let i=0;i<3;i++){const a=i*Math.PI*2/3;crownVertices.push(Math.cos(a)*.15,y,Math.sin(a)*.15);crownColors.push(.5,.32,.16)}
+ for(let i=0;i<3;i++){const a=trunkStart+i,b=trunkStart+(i+1)%3;crownIndices.push(a,a+3,b,b,a+3,b+3)}
+ crownGeometry.setAttribute('color',new THREE.Float32BufferAttribute(crownColors,3));
+ crownGeometry.setAttribute('position',new THREE.Float32BufferAttribute(crownVertices,3));crownGeometry.setIndex(crownIndices);crownGeometry.computeVertexNormals();
+ const farForest=new THREE.InstancedMesh(crownGeometry,new THREE.MeshStandardMaterial({color:0xffffff,vertexColors:true,roughness:1,flatShading:true}),trees.length);farForest.name='Distant forest canopy';farForest.frustumCulled=false;farForest.count=0;root.add(farForest);let farTimer=1;
+ const farColor=new THREE.Color(),view=new THREE.Vector3();
+ function distantForest(dt,profile){farTimer+=dt;if(farTimer<.3)return;farTimer=0;let count=0;const p=hero.root.position,stride=api.settings.quality==='low'?6:api.settings.quality==='ultra'?2:3;api.camera.getWorldDirection(view);
+  for(let i=0;i<trees.length;i+=stride){const t=trees[i],dx=t.x-p.x,dz=t.z-p.z,d=Math.hypot(dx,dz);if(d<profile.distance+30||d>1150||dx*view.x+dz*view.z<-d*.15)continue;
+   dummy.position.set(t.x,ground(t.x,t.z)+8,t.z);dummy.scale.set(Math.sqrt(stride)*(t.z<-450?.8:1.2),t.z<-450?2.8:1.7,Math.sqrt(stride)*(t.z<-450?.7:1));dummy.rotation.set(0,i*2.4,0);dummy.updateMatrix();farForest.setMatrixAt(count,dummy.matrix);farColor.setHex(t.z<-650?0x779489:t.z<-450?0x37634d:0x447c42).multiplyScalar(.9+hash(t.x,t.z)*.2);farForest.setColorAt(count++,farColor);
+  }
+  farForest.count=count;farForest.instanceMatrix.needsUpdate=true;if(farForest.instanceColor)farForest.instanceColor.needsUpdate=true;
+ }
  const material=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.95,side:THREE.DoubleSide});
  material.onBeforeCompile=s=>{s.uniforms.valeTime=time;s.uniforms.windStrength=windStrength;s.vertexShader='uniform float valeTime;uniform float windStrength;\n'+s.vertexShader;s.vertexShader=s.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
  #ifdef USE_INSTANCING
@@ -61,7 +79,7 @@ export function installEmeraldVale(api){
   }
   if(ambience){const p=hero.root.position,on=ready&&api.active&&api.settings.sound&&!document.hidden&&p.x<200;ambience[0].gain.setTargetAtTime(on ? .008*(api.settings.environmentVolume??.7) : 0,audio.currentTime,.5);ambience[1].gain.setTargetAtTime(on ? .023*(api.settings.environmentVolume??.7)*Math.max(0,1-Math.abs(p.z-riverZ(p.x))/22) : 0,audio.currentTime,.4)}
   root.visible=ready&&hero.root.position.x<200;tick+=dt;if(tick<.15)return;tick=0;
-  const profile=graphics(api.settings),nearLimit=api.settings.quality==='low'?24:profile.distance*.3,reach=profile.distance,p=hero.root.position;
+  const profile=graphics(api.settings);distantForest(.15,profile);const nearLimit=api.settings.quality==='low'?24:profile.distance*.3,reach=profile.distance,p=hero.root.position;
   const wanted=[];
   if(loaded&&hero.root.position.x<200){const cx=Math.floor(p.x/40),cz=Math.floor(p.z/40),radius=Math.ceil(reach*.36/40),missing=[];
    for(let x=cx-radius;x<=cx+radius;x++)for(let z=cz-radius;z<=cz+radius;z++){const key=x+','+z,d=Math.hypot(x*40+20-p.x,z*40+20-p.z);if(d>reach*.36+28)continue;if(detailTiles.has(key))detailTiles.get(key).last=clock;else missing.push({x,z,d})}
@@ -81,7 +99,7 @@ export function installEmeraldVale(api){
   if(loaded&&!ready&&wanted.slice(built).every(job=>job.d>65)){ready=true;frontier.setValeAssetsReady(true)}
  }
 
- return{root,update,readyPromise,trees,cells,models,bounds:VALE,get ready(){return ready},get failed(){return failed},get instanceCount(){return instanceCount},get activeInstances(){return cells.reduce((n,c)=>n+(c.m?.visible?c.m.count:0),0)},get detailTiles(){return detailTiles.size},get resident(){return cells.filter(c=>c.m).length},get pending(){return cells.filter(c=>!c.m&&Math.hypot(c.x-hero.root.position.x,c.z-hero.root.position.z)<graphics(api.settings).distance).length}};
+ return{farForest,root,update,readyPromise,trees,cells,models,bounds:VALE,get ready(){return ready},get failed(){return failed},get instanceCount(){return instanceCount},get activeInstances(){return cells.reduce((n,c)=>n+(c.m?.visible?c.m.count:0),0)},get detailTiles(){return detailTiles.size},get resident(){return cells.filter(c=>c.m).length},get pending(){return cells.filter(c=>!c.m&&Math.hypot(c.x-hero.root.position.x,c.z-hero.root.position.z)<graphics(api.settings).distance).length}};
 }
 
 // The atlas and rendered terrain consume this same feathered colour field.

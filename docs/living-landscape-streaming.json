@@ -1,0 +1,114 @@
+{
+  "reports": [
+    {
+      "x": -430,
+      "z": 30,
+      "terrain": 14,
+      "forest": 329,
+      "detail": 13,
+      "instances": 2293,
+      "geometries": 76,
+      "draws": 161,
+      "triangles": 153975
+    },
+    {
+      "x": -465,
+      "z": -400,
+      "terrain": 13,
+      "forest": 253,
+      "detail": 14,
+      "instances": 1843,
+      "geometries": 84,
+      "draws": 115,
+      "triangles": 201262
+    },
+    {
+      "x": -190,
+      "z": -590,
+      "terrain": 13,
+      "forest": 171,
+      "detail": 13,
+      "instances": 1873,
+      "geometries": 87,
+      "draws": 109,
+      "triangles": 147516
+    },
+    {
+      "x": -70,
+      "z": -795,
+      "terrain": 13,
+      "forest": 43,
+      "detail": 14,
+      "instances": 448,
+      "geometries": 86,
+      "draws": 73,
+      "triangles": 19435
+    },
+    {
+      "x": 0,
+      "z": 64,
+      "terrain": 14,
+      "forest": 283,
+      "detail": 14,
+      "instances": 1463,
+      "geometries": 90,
+      "draws": 279,
+      "triangles": 218369
+    },
+    {
+      "x": -430,
+      "z": 30,
+      "terrain": 14,
+      "forest": 329,
+      "detail": 13,
+      "instances": 2293,
+      "geometries": 90,
+      "draws": 164,
+      "triangles": 153999
+    },
+    {
+      "x": 300,
+      "z": 5,
+      "terrain": 0,
+      "forest": 0,
+      "detail": 0,
+      "instances": 0,
+      "geometries": 84,
+      "draws": 28,
+      "triangles": 934
+    },
+    {
+      "x": -430,
+      "z": 30,
+      "terrain": 14,
+      "forest": 329,
+      "detail": 13,
+      "instances": 2293,
+      "geometries": 90,
+      "draws": 161,
+      "triangles": 153975
+    }
+  ],
+  "continuity": [
+    0.0000026843986979940837,
+    3.5392715069804126e-7,
+    0.000003876895913634826,
+    0.000006648616240889638,
+    3.426014405505384e-8,
+    0.000004141086919151604,
+    0.00004754397385831055,
+    5.317088991318997e-9,
+    0.00005079991413126095,
+    0.000035382545732431936,
+    0.000003516735162634177,
+    0.00003494407853565917
+  ],
+  "settings": {
+    "fov": 83,
+    "mode": "shoulder",
+    "quality": "ultra",
+    "vegetation": 0.5,
+    "scale": 0.8,
+    "shadows": false
+  }
+}

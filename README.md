@@ -6,7 +6,7 @@ A procedural 3D browser action RPG with a continuous expanded overworld, five se
 
 ## GitHub Pages
 
-Upload **all thirty runtime files (including `supabase/game-catalog.json` `assets/goblin-scout.gltf`, and `assets/environment/emerald-library.glb` in their folders)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
+Upload **all thirty-four runtime files (including `supabase/game-catalog.json` `assets/goblin-scout.gltf`, and `assets/environment/emerald-library.glb` in their folders)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
@@ -18,7 +18,9 @@ The working V2 baseline is preserved by tag **`v2.0-pre-multiplayer`** (`645f83e
 
 Follow the western road beyond Briarfield to the bridge at x −430. **The Emerald Vale** covers a 200 × 200 area around that crossing, on the southern edge of Verdant Reach. Its forest uses a repository-hosted Blender-authored GLB library, instancing, near/far tree geometry, wind and moisture-based ground cover. Riverbanks use the shared terrain function; the atlas uses the same colour field. The original tree collision roots, bridge, settlements, quests and saves remain in place.
 
-Asset generation (development only): `blender -b --python scripts/build-emerald-assets.py`. The exported GLB is committed; GitHub Pages needs no Blender or build process. Optional `?diagnostics` shows render workload and rolling frame statistics. See [architecture](docs/ENVIRONMENT-ARCHITECTURE.md) and [benchmark validation](docs/EMERALD-VALE-VALIDATION.md) for scope, measurements and unfinished phases.
+The authored library now serves 7,171 existing tree roots across the overworld. Nearby terrain and undergrowth stream in bounded cells; a coarse forest/terrain layer keeps the horizon continuous. **Settings → Environment & rendering** provides render scale, vegetation, view distance, shadows, water, effects and separate audio volumes. Low/Medium/High/Ultra/Auto preserve camera preferences and character saves.
+
+Asset generation (development only): `blender -b --python scripts/build-emerald-assets.py`. The exported GLB is committed; GitHub Pages needs no Blender or build process. Optional `?diagnostics` shows render workload and rolling frame statistics. See [architecture](docs/ENVIRONMENT-ARCHITECTURE.md) and [benchmark validation](docs/EMERALD-VALE-VALIDATION.md) for the historical checkpoint. The current [Living Landscape validation](docs/LIVING-LANDSCAPE-VALIDATION.md) documents the wider rollout, tests and remaining device-validation limits.
 
 ## Cinematic world presentation
 
@@ -38,7 +40,7 @@ All menus share the charcoal, muted-gold design tokens and SVG icons in `ui.css`
 
 ## The Shattered Marches expansion
 
-The playable overworld is approximately **eight times its previous area**, bounded by x −330…180 and z −340…180. Follow the western road from the original village to **Dawnwatch City**, then explore **Briarfield**, **Frostmere** and **Reedhaven**. Northern roads climb into the mountains; a third bridge links Dawnwatch to the northern territories. Village fountains restore health and stamina through Interact. Terrain, trees, buildings, enemies and combat remain genuine WebGL geometry.
+The playable overworld covers **795,600 square world units**, three times the preceding frontier map, bounded by x −585…180 and z −860…180. Follow the western road from the original village to **Dawnwatch City**, then explore **Briarfield**, **Frostmere** and **Reedhaven**. Northern roads climb into the mountains; four bridges connect the riverbanks, including the western crossing into the Emerald Vale. Village fountains restore health and stamina through Interact. Terrain, trees, buildings, enemies and combat remain genuine WebGL geometry.
 
 | Territory / quest giver | New enemies | Boss / unique weapon |
 | --- | --- | --- |
