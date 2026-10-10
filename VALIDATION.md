@@ -1,3 +1,25 @@
+# Continue, cloud recovery and mobile viewport — 10 October 2026
+
+Release `realm-recovery-20261010-3` preserves the existing gameplay and server reward rules. No player records or database schema were modified for this repair.
+
+- Title Continue routes a remembered account to character selection instead of silently starting the separate local hero. Continue from an active account's title resumes that character. Invalid local saves are retained instead of replaced with a new hero.
+- Cloud recovery archives the rejected outbox before removing it from active synchronization. It no longer replays the same rejected commands immediately after choosing the cloud copy. Timestamped backups and a downloadable previous offline copy remain available. A failed character open cannot serialize the default level-1 hero over a recovery snapshot, and resumed progression comes from the server record.
+- Event timestamps use the server clock plus monotonic elapsed time; device wall-clock changes cannot produce future-dated reward events. Server checks, ownership, revision validation and exclusive leases remain unchanged.
+- A Save & release action supports browser handoff. Hidden solo tabs release after settling; hidden tabs do not renew leases indefinitely. Failed opens/releases cannot leave an unbound cloud hero running as a local save. Rejected pickups no longer remove their ground items.
+- Account fields are 16px to avoid iOS input-focus zoom. Title/modal touch handling prevents native double-tap scaling while retaining vertical scrolling; map and joystick keep their own gesture handlers. Recovery file links preserve the game tab and explain that JSON is backup data.
+
+Validation performed:
+
+- `tests/accounts-browser.cjs`: real UI with PGlite running the actual SQL; import backup, shop prices, equipment, combat XP/loot, offline reconnect, revision conflict, level-26 recovery, clock changes, title/reload Continue, lease release, and cold-start recovery. Original local save remains unchanged.
+- `tests/accounts-live.cjs`: two temporary real Supabase accounts; actual Auth, ownership isolation, duplicate-session rejection, private co-op, guest combat XP/loot, and host departure restoring separate solo worlds. Temporary accounts removed afterwards.
+- `tests/mobile-viewport.cjs`: mobile Chromium at 390×844; native CDP double taps preserve scale 1, input size, title width, startup, and invalid-save preservation.
+- `tests/map-controls.cjs`: detailed terrain recovery, +/−, recenter, pointer drag, real two-finger pinch, waypoints, dungeon maps and desktop wheel. No browser exceptions.
+- JavaScript syntax, whitespace checks and the 17-file release validator passed.
+
+Physical Android/iPhone and Safari/Messenger WebKit remain unverified. Installing the WebKit test binary failed with HTTP 403 from the download hosts; mobile Chromium is not a substitute for Safari testing. The reported JSON screen matches an exported recovery file, not a tested Safari renderer failure.
+
+---
+
 # Map controls and terrain refresh — 10 October 2026
 
 Release `realm-map-20261010-2` fixes the full-map controls previously forwarding to the hidden minimap. The atlas now has its own 1–8× zoom, pointer drag, two-finger pinch, wheel zoom, player recenter and full-extent reset. Waypoint picking uses the displayed zoom/pan transform. Hollowroot and expansion dungeon maps use the same view controls. Labels scale for CSS display size and suppress overlaps.

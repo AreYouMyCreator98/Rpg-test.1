@@ -1,5 +1,5 @@
-import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-map-20261010-2';
-import {connectSupabase} from './supabase-rooms.js?v=realm-map-20261010-2';
+import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-recovery-20261010-3';
+import {connectSupabase} from './supabase-rooms.js?v=realm-recovery-20261010-3';
 
 export function installMultiplayer(api) {
   const {$,THREE,hero,enemies,loot,items,living}=api;

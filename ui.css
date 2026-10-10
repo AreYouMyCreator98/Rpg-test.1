@@ -110,3 +110,14 @@ input[type="range"],input[type="checkbox"]{accent-color:var(--ui-gold)}
 .collection-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:12px}.collection-grid .quest-entry{margin:0;display:flex;flex-direction:column;gap:8px}.collection-grid button{margin-top:auto}#account-content>.quest-entry{display:flex;flex-wrap:wrap;gap:8px;padding:16px;border:1px solid var(--ui-border);background:var(--ui-glass)}#account-content>.quest-entry h3,#account-content>.quest-entry p{width:100%;margin:0 0 6px}#account-content>label{display:block;margin:12px 0}#account-content button{min-height:44px}#account-status{color:var(--ui-sage);overflow-wrap:anywhere}#account-content>.quest-entry button{flex:1 1 120px;font-size:13px}#bounty-list .quest-entry small{color:var(--ui-gold)}
 
 .map-tools{align-items:center;flex-wrap:wrap}.map-tools output{min-width:3em;text-align:center;font:13px var(--ui-sans);color:var(--ui-gold)}.map-tools button{min-width:44px;min-height:44px}#frontier-atlas{touch-action:none;user-select:none;cursor:grab;aspect-ratio:1}#frontier-atlas:active{cursor:grabbing}.map-legend{font:12px var(--ui-sans);margin-bottom:10px;color:var(--ui-sage)}.map-legend summary{padding:10px 0;cursor:pointer}
+
+/* iOS must not zoom the viewport when focusing account fields. Keep map and
+   joystick gestures owned by their existing pointer handlers. */
+input:not([type="range"]):not([type="checkbox"]),textarea,select,.room-input{font-size:16px}
+#title,#title .buttons,#title .small-buttons,.modal{touch-action:pan-y}
+#title{max-width:calc(100vw - 32px);overflow-wrap:break-word}
+#title .buttons,#title .small-buttons{flex-wrap:wrap}
+#account-content{min-width:0;overflow-wrap:anywhere}
+#account-content button{max-width:100%;white-space:normal}
+
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}

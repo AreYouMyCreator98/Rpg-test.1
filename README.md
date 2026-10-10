@@ -222,3 +222,11 @@ The large village bounty board offers repeatable elite and boss contracts. Accou
 ### Map navigation
 
 The open map has independent **− / +** zoom controls. Drag to pan, pinch with two fingers or use a mouse wheel to zoom. The pin button centers the hero; the expand-arrows button fits the entire map. Tap the terrain to place a waypoint at the displayed coordinates. More readable landmark labels appear as space becomes available while zooming. These controls also work in Hollowroot and the four expansion dungeons. Terrain is refreshed when opening the atlas or returning to the browser tab.
+
+## Resuming an account or switching browsers
+
+Use **Continue → choose your adventurer** (or **Accounts & characters**, then sign in). Local solo saves and account characters are separate. Each browser, including Safari and Messenger, needs its own sign-in to the same email account.
+
+If synchronization is paused, **Use cloud copy (keep offline backup)** resumes the last accepted cloud progress and archives unsynced local actions first. **Download previous offline backup** exports that archive; its JSON text is a recovery file, not a playable page. Do not delete a character or clear browser data to resolve a conflict.
+
+Before switching devices or browsers, use **Accounts → Save & release for another browser**. If a crashed or closed browser still holds the character, wait up to 90 seconds for its lease to expire. Only one browser may play the same character at a time.
