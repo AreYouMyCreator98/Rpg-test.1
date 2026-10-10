@@ -279,8 +279,8 @@ export function installLivingWorld(api) {
     data.area=area;const inside=area==='cave';cave.visible=inside;outsideRoots.forEach(o=>o.visible=!inside);
     npcs.forEach(n=>n.root.visible=!inside);caveLights.forEach(l=>l.visible=inside);
     scene.background.setHex(inside?0x172730:0x9dbab0);scene.fog.color.copy(scene.background);scene.fog.density=inside?.027:api.settings.quality==='low'?.0095:.0075;
-    api.sun.intensity=inside?.55:3.15;api.sun.castShadow=!inside;
-    scene.children.filter(o=>o.isHemisphereLight).forEach(l=>l.intensity=inside?1.4:1.25);
+    api.sun.intensity=inside?.55:2.7;api.sun.castShadow=!inside;
+    scene.children.filter(o=>o.isHemisphereLight).forEach(l=>l.intensity=inside?1.4:1.55);
     for(const e of api.enemies){e.label.style.display='none';e.root.visible=e.hp>0&&!!e.cave===inside}
     tell.visible=false;
   }

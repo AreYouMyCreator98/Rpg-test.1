@@ -6,7 +6,7 @@ A procedural 3D browser action RPG with a continuous expanded overworld, five se
 
 ## GitHub Pages
 
-Upload **all twenty-five runtime files (including `supabase/game-catalog.json` and `assets/goblin-scout.gltf` in their folders)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
+Upload **all twenty-seven runtime files (including `supabase/game-catalog.json` and `assets/goblin-scout.gltf` in their folders)** to the repository root on `main`. In **Settings → Pages**, select **Deploy from a branch → main → / (root)** and save. The **Validate game release** workflow checks that the static files use one consistent cache version. GitHub’s branch-based Pages publisher is the sole deployment path; the validation workflow deliberately does not publish a competing artifact. No application build or package installation is needed.
 
 Expected address: https://areyoumycreator98.github.io/Rpg-test.1/
 
@@ -283,3 +283,13 @@ Deploy the updated `supabase/character-runtime.sql` before this frontend release
 The reusable authoring source is `scripts/build-goblin-scout.py` (Python standard library only). Run it to regenerate the checked-in asset; players and GitHub Pages need no build step. `scout-model.js` adapts the clips to authoritative attack/death timing. If the asset/CDN fails, the existing procedural scout remains playable. Keep the import map pinned to the same Three.js version as the engine.
 
 Run `tests/scout-browser.cjs` with `PLAYWRIGHT_PATH` pointing to Playwright. In a browser-proxy-limited environment, `SCOUT_TEST_CACHE` may point to TLS-verified copies of `three.module.js`, `GLTFLoader.js` and `BufferGeometryUtils.js` from the pinned CDN version. `python scripts/stage-pages.py` validates the static release and includes the model.
+
+### Wildlands landscape update
+
+The overworld is now 765 × 1,040 world metres (795,600 square metres), exactly three times its previous area. Expansion is north and west; original towns, enemy homes, boss arenas, quest IDs and saved discovery indices stay in place. Four scenic regions—Verdant Reach, Jadegrove Hollow, Cloudstep Highlands and Crown of Heaven—are connected by traversable trails; a fourth wooden bridge crosses the western river. These are exploration landscapes, not additional quest/boss encounters.
+
+`environment-art.js` supplies shared smooth foliage and wind animation. Rounded canopy clusters, layered evergreen shapes, softer outdoor light, ridged mountain silhouettes and terrain shading establish an anime-inspired environment while existing characters and equipment remain intact. Near terrain is distance culled; coarse terrain, instanced mountains and lower-detail distant pines preserve the horizon. The Low/Medium/High settings and adaptive rendering remain available. No new asset service or build step is required.
+
+The minimap/full map derive extents from `BOUNDS`. Multiplayer pose validation and `supabase/character-runtime.sql` use the expanded coordinate range; install the updated SQL before deploying this client to a different Supabase project. This deployment has already updated the existing project's validator.
+
+Account storage now writes the essential outbox before attempting its optional rolling backup. Only byte-identical backup duplicates may be reclaimed automatically; distinct recovery copies and other characters are preserved. Accounts offers **Retry saving & resume sync** after a storage failure. If browser storage is actually unavailable, keep the tab open and download a recovery copy before freeing space; the game does not silently discard pending progress.

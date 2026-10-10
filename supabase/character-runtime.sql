@@ -134,7 +134,7 @@ declare c public.realm_characters;ctx public.realm_character_contexts;prior publ
  select * into ctx from public.realm_character_contexts r where r.character_id=c.id and r.world_id=realm_character_event.world_id for update;
  if not found then raise exception 'Open the world first';end if;
  t:=to_timestamp((body->>'time')::numeric/1000);px:=(body->>'x')::float8;pz:=(body->>'z')::float8;
- if t is null or t>clock_timestamp()+interval '2 seconds' or t<ctx.event_at-interval '2 seconds' or px is null or pz is null or px::text in ('NaN','Infinity','-Infinity') or pz::text in ('NaN','Infinity','-Infinity') or px not between -330 and 1150 or pz not between -340 and 180 then raise exception 'Invalid event position or time';end if;
+ if t is null or t>clock_timestamp()+interval '2 seconds' or t<ctx.event_at-interval '2 seconds' or px is null or pz is null or px::text in ('NaN','Infinity','-Infinity') or pz::text in ('NaN','Infinity','-Infinity') or px not between -585 and 1150 or pz not between -860 and 180 then raise exception 'Invalid event position or time';end if;
  seconds:=greatest(0,extract(epoch from t-ctx.event_at));
  select data into cat from public.realm_game_catalog where id;
  allowed:=sqrt((px-ctx.x)^2+(pz-ctx.z)^2)<=seconds*15+3;

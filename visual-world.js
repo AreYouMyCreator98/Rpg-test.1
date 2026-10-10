@@ -1,11 +1,11 @@
 // Presentation only. No save, item, enemy, network or collision ownership.
 // Repeated decoration is instanced by material in spatial cells; no external assets.
 export function installVisualWorld(api) {
-  const {THREE,scene,renderer,hero,geo,mat,ground,surface,pathDist,riverZ,living,frontier}=api;
+  const {THREE,scene,renderer,hero,geo,mat,ground,surface,pathDist,riverZ,living,frontier,forestArt,BOUNDS}=api;
   const root=new THREE.Group();root.name='Cinematic overworld';scene.add(root);
-  const sky=new THREE.Mesh(new THREE.SphereGeometry(230,20,12),new THREE.ShaderMaterial({
+  const sky=new THREE.Mesh(new THREE.SphereGeometry(1400,24,14),new THREE.ShaderMaterial({
     side:THREE.BackSide,depthWrite:false,
-    uniforms:{horizon:{value:new THREE.Color(0x9dbab0)},zenith:{value:new THREE.Color(0x6290aa)}},
+    uniforms:{horizon:{value:new THREE.Color(0xa9c9c7)},zenith:{value:new THREE.Color(0x598dbb)}},
     vertexShader:`varying vec3 direction;void main(){direction=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
     fragmentShader:`uniform vec3 horizon;uniform vec3 zenith;varying vec3 direction;void main(){float h=pow(max(normalize(direction).y,0.0),.6);gl_FragColor=vec4(mix(horizon,zenith,h),1.0);
     #include <tonemapping_fragment>
@@ -25,7 +25,10 @@ export function installVisualWorld(api) {
   const batches=new Map(),chunks=[],dummy=new THREE.Object3D(),color=new THREE.Color();
   let seed=51984;const random=()=>((seed=(1664525*seed+1013904223)>>>0)/4294967296),range=(a,b)=>a+(b-a)*random();
   const bladeGeometry=new THREE.BufferGeometry();bladeGeometry.setAttribute('position',new THREE.Float32BufferAttribute([-.5,-.5,0,.5,-.5,0,.12,.5,.12],3));bladeGeometry.computeVertexNormals();
-  const decorativeGeo={...geo,blade:bladeGeometry};
+  const mountain=new THREE.ConeGeometry(1,1,20,7),mp=mountain.attributes.position,mc=[];
+  for(let i=0;i<mp.count;i++){const y=mp.getY(i),a=Math.atan2(mp.getZ(i),mp.getX(i)),r=1+.22*Math.sin(a*5+y*7)+.12*Math.cos(a*9-y*4);mp.setXYZ(i,mp.getX(i)*r+.2*(y+.5)**2,y+.045*Math.sin(a*3)*(1-Math.abs(y)*2),mp.getZ(i)*r);const snow=y>.29+.045*Math.sin(a*7),c=new THREE.Color(snow?0xe0edf0:y>-.1?0x829db0:0x69887f);mc.push(c.r,c.g,c.b)}
+  mountain.setAttribute('color',new THREE.Float32BufferAttribute(mc,3));mountain.computeVertexNormals();
+  const decorativeGeo={...geo,cone:forestArt.pine,canopy:forestArt.canopy,mountain,blade:bladeGeometry};
   // Split the existing terrain along its original triangles. Heights, colours and navigation
   // are identical, but WebGL can now frustum-cull terrain behind the camera.
   const terrainTiles=new Map(),source=api.terrain.geometry,index=source.index;
@@ -41,12 +44,20 @@ export function installVisualWorld(api) {
     if(!terrainTiles.has(key))terrainTiles.set(key,{p:[],n:[],c:[]});const out=terrainTiles.get(key);
     for(const k of [a,b,c])for(const [name,values]of [['position',out.p],['normal',out.n],['color',out.c]]){const attr=source.attributes[name];const ao=name==='color'?terrainAO[k]:1;values.push(attr.getX(k)*ao,attr.getY(k)*ao,attr.getZ(k)*ao)}
   }
-  for(const t of terrainTiles.values()){const g=new THREE.BufferGeometry();for(const [name,values]of [['position',t.p],['normal',t.n],['color',t.c]])g.setAttribute(name,new THREE.Float32BufferAttribute(values,3));g.computeBoundingSphere();const m=new THREE.Mesh(g,api.terrain.material);m.receiveShadow=true;root.add(m)}
+  const terrainLOD=[];
+  for(const [key,t] of terrainTiles){const g=new THREE.BufferGeometry();for(const [name,values]of [['position',t.p],['normal',t.n],['color',t.c]])g.setAttribute(name,new THREE.Float32BufferAttribute(values,3));g.computeBoundingSphere();const m=new THREE.Mesh(g,api.terrain.material);m.receiveShadow=true;root.add(m);const [cx,cz]=key.split(',').map(Number);terrainLOD.push({m,x:cx*64+32,z:cz*64+32})}
+  // Coarse 256m tiles extend the horizon without drawing every close terrain triangle.
+  const farTerrain=[];
+  for(let cx=Math.floor(BOUNDS.left/256);cx<=Math.floor(BOUNDS.right/256);cx++)for(let cz=Math.floor(BOUNDS.top/256);cz<=Math.floor(BOUNDS.bottom/256);cz++){
+    const g=new THREE.PlaneGeometry(256,256,12,12);g.rotateX(-Math.PI/2);g.translate(cx*256+128,0,cz*256+128);const p=g.attributes.position,colors=[];
+    for(let i=0;i<p.count;i++){const x=Math.max(BOUNDS.left,Math.min(BOUNDS.right,p.getX(i))),z=Math.max(BOUNDS.top,Math.min(BOUNDS.bottom,p.getZ(i)));p.setXYZ(i,x,ground(x,z)-1.8,z);const c=new THREE.Color(api.landscapeColor(x,z));colors.push(c.r,c.g,c.b)}
+    g.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));g.computeVertexNormals();const m=new THREE.Mesh(g,api.terrain.material);m.receiveShadow=false;root.add(m);farTerrain.push(m);
+  }
   scene.remove(api.terrain);source.dispose();terrainTiles.clear();
   const settlements=[{x:0,z:64,kind:'village'},...frontier.settlements];
   const clear=(x,z,r=1)=>api.nearbyObstacles(x,z).every(o=>Math.hypot(o.x-x,o.z-z)>o.r+r);
   function add(shape,tint,x,y,z,sx,sy,sz,ry=0,rz=0,detail=false,rx=0) {
-    const cx=Math.floor(x/64),cz=Math.floor(z/64),key=[cx,cz,shape,detail].join(':');
+    const cx=shape==='mountain'?0:Math.floor(x/64),cz=shape==='mountain'?0:Math.floor(z/64),key=[cx,cz,shape,detail].join(':');
     if(!batches.has(key))batches.set(key,{cx,cz,shape,tint,detail,entries:[]});
     batches.get(key).entries.push([x,y,z,sx,sy,sz,ry,rz,rx,tint]);
   }
@@ -56,7 +67,9 @@ export function installVisualWorld(api) {
   for(const o of api.obstacles)if(o.r===.55||o.r===.5)treeRoots.push(o);
   for(let i=0;i<treeRoots.length;i++){
     const o=treeRoots[i],x=o.x,z=o.z,y=ground(x,z),h=range(5.5,9.8);
-    if(z<-250)continue;
+    if((z<-250&&z>=-340&&x>=-330)||z<-720)continue;
+    // Taller, rounded crown clusters create layered anime-inspired woodland.
+    if(i%6===1){for(let j=0;j<3;j++)add('canopy',j===2?0x5e9c54:0x397f4d,x+Math.sin(j*2.4)*1.3,y+h*(.65+j*.09),z+Math.cos(j*2.4)*1.1,2.3,h*.23,2.15,i*.4);}
     // Understorey around existing roots, fern fronds and emerald lower branches.
     if(i%3===0)for(let j=0;j<3;j++)add('cone',0x20583e,x,y+h*(.32+j*.22),z,h*(.25-j*.052),h*.48,h*(.25-j*.052),i*.7);
     for(let j=0;j<3;j++){
@@ -66,9 +79,9 @@ export function installVisualWorld(api) {
     }
   }
   // Dense but low-triangle grass, woodland ferns, wildflower beds and bank stones.
-  for(let i=0;i<15500;i++){
-    const x=range(-327,177),z=range(-337,177),p=pathDist(x,z),bank=Math.abs(z-riverZ(x));
-    if(z<-260||bank<5||p<2.5||!clear(x,z,.2))continue;
+  for(let i=0;i<38000;i++){
+    const x=range(BOUNDS.left+3,BOUNDS.right-3),z=range(BOUNDS.top+3,BOUNDS.bottom-3),p=pathDist(x,z),bank=Math.abs(z-riverZ(x));
+    if((z<-260&&z>=-340&&x>=-330)||z<-710||bank<5||p<2.5||!clear(x,z,.2))continue;
     const town=settlements.find(s=>Math.hypot(x-s.x,z-s.z)<(s.kind==='city'?34:20));
     if(town&&random()<.7)continue;
     const y=ground(x,z),a=range(0,6.28),h=range(.18,.55),leaf=i%3?0x5d904c:0x3f7945;
@@ -98,8 +111,8 @@ export function installVisualWorld(api) {
     if(i%47===0)add('orb',0x3f713f,x,y+.15,z,.36,.27,.32,a,0,true);
   }
   // Individual cobbles and worn margins follow the real navigation paths.
-  for(let i=0;i<6500;i++){
-    const x=range(-320,175),z=range(-330,175),d=pathDist(x,z);
+  for(let i=0;i<15000;i++){
+    const x=range(BOUNDS.left+5,BOUNDS.right-5),z=range(BOUNDS.top+5,BOUNDS.bottom-5),d=pathDist(x,z);
     if(d<1.7||d>3.4||Math.abs(z-riverZ(x))<8||!clear(x,z,.35))continue;
     add('orb',i%2?0x9a9873:0x777f61,x,ground(x,z)-.015,z,.18,.055,.3,range(0,6.28),0,true);
   }
@@ -194,24 +207,44 @@ export function installVisualWorld(api) {
   }
   add('box',0x8d9d90,-8,ground(-8,-73)+11,-73,16,2,1.3);
   for(let i=0;i<9;i++)add('box',0xa4b6a0,-16+i*2,ground(-8,-73)+12.5,-73,1,.9,1.5);
-  // Layered silhouettes beyond the playable boundary; the playable heights stay unchanged.
+  // Giant ridged peaks stand beyond the rectangular playable boundary, never in a road.
   for(let i=0;i<52;i++){
-    const angle=i/52*Math.PI*2,x=-75+Math.cos(angle)*310,z=-80+Math.sin(angle)*320,h=range(28,75),y=ground(x,z);
-    add('cone',i%2?0x7b9791:0x677f7b,x,y+h*.38,z,range(18,32),h,range(16,30),range(0,6));
-    if(h>55)add('cone',0xb6c6b9,x,y+h*.8,z,7,h*.16,7,0);
+    const side=i%4,u=Math.floor(i/4)/12;
+    const x=side<2?BOUNDS.left+u*(BOUNDS.right-BOUNDS.left):side===2?BOUNDS.left-115:BOUNDS.right+115;
+    const z=side<2?(side===0?BOUNDS.top-115:BOUNDS.bottom+115):BOUNDS.top+u*(BOUNDS.bottom-BOUNDS.top);
+    const h=side===0?range(270,420):side===1?range(110,220):range(170,310),base=side===0?75:side===1?-35:25;
+    add('mountain',0xffffff,x+range(-22,22),base+h*.5,z+range(-22,22),range(58,90),h,range(60,95),range(0,6));
+  }
+  // Scenic trail markers are appended to the POI list after every existing content module.
+  for(const p of frontier.wildlands){const y=ground(p.x,p.z);
+    for(const side of [-1,1]){add('cyl',0x9cae9f,p.x+side*4,y+2.5,p.z, .55,5,.55);add('orb',0xc8d6b4,p.x+side*4,y+5,p.z,.85,.45,.85)}
+    add('box',0x9baa92,p.x,y+5.3,p.z,9,.5,1.1);
+    for(let j=0;j<7;j++)add('orb',0x879383,p.x-3+j,y+.03,p.z,.35,.05,.55,j);
   }
   // Northern citadel, outside the traversable edge, visible from Frostmere's mountain road.
-  for(const [x,z,h] of [[-35,-355,29],[-50,-357,21],[-20,-358,24]]){
+  for(const [x,z,h] of [[-70,-900,60],[-92,-903,44],[-48,-904,50]]){
     const y=ground(x,z);add('cyl',0x8faaa2,x,y+h/2,z,3,h,3);add('cone',0x415e69,x,y+h+3,z,4,7,4);
     for(let j=0;j<4;j++)add('box',0x607e79,x+(j-1.5)*1.8,y+h,z+2.5,1.1,2,1.1);
   }
-  add('box',0x8ca59b,-35,ground(-35,-355)+9,-357,31,13,4);
+  add('box',0x8ca59b,-70,ground(-70,-900)+16,-903,45,24,7);
   const wind={value:0},grassMaterial=mat(0xffffff,{side:THREE.DoubleSide});
   grassMaterial.onBeforeCompile=shader=>{shader.uniforms.forestWind=wind;shader.vertexShader='uniform float forestWind;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
     #ifdef USE_INSTANCING
     float phase=instanceMatrix[3].x*.4+instanceMatrix[3].z*.3;
     transformed.x+=sin(forestWind*1.4+phase)*.18*max(position.y+.5,0.);
     #endif`)};
+  // A small deterministic grass window follows the camera region. It adds rich
+  // close ground cover without allocating dense foliage over the entire large map.
+  const meadow=new THREE.InstancedMesh(bladeGeometry,grassMaterial,6000);meadow.name='Streamed meadow';meadow.receiveShadow=true;meadow.castShadow=false;meadow.frustumCulled=false;root.add(meadow);let meadowCell='';
+  function refreshMeadow(){const cx=Math.floor(hero.root.position.x/12)*6,cz=Math.floor(hero.root.position.z/12)*6,key=cx+','+cz;if(key===meadowCell)return;meadowCell=key;let count=0;
+    const hash=(x,z)=>{const n=Math.sin(x*127.1+z*311.7)*43758.5453;return n-Math.floor(n)};
+    for(let ix=cx-17;ix<=cx+17;ix++)for(let iz=cz-17;iz<=cz+17;iz++){
+      const n=hash(ix,iz),x=ix*2+(n-.5)*1.5,z=iz*2+(hash(iz,ix)-.5)*1.5;
+      if(x<BOUNDS.left||x>BOUNDS.right||z<BOUNDS.top||z>BOUNDS.bottom||z<-710||(z<-260&&z>=-340&&x>=-330)||x>-90&&x<-20&&z>98&&z<138||pathDist(x,z)<3||Math.abs(z-riverZ(x))<5||!clear(x,z,.2))continue;
+      const y=ground(x,z),h=.24+n*.4;for(let j=0;j<4;j++){dummy.position.set(x+Math.sin(j*2)*.15,y+h/2,z+Math.cos(j*2)*.15);dummy.rotation.set(0,n*6.28+j*1.7,.12*Math.sin(j));dummy.scale.set(.13+n*.1,h,.1);dummy.updateMatrix();meadow.setMatrixAt(count,dummy.matrix);color.setHex(j%2?0x65934d:0x477d48);meadow.setColorAt(count++,color)}
+    }
+    meadow.count=count;meadow.instanceMatrix.needsUpdate=true;if(meadow.instanceColor)meadow.instanceColor.needsUpdate=true;
+  }
   api.water.material.onBeforeCompile=shader=>{
     shader.uniforms.riverTime=wind;
     shader.vertexShader='varying vec2 riverPosition;\n'+shader.vertexShader;
@@ -224,11 +257,14 @@ export function installVisualWorld(api) {
       diffuseColor.rgb*=.94+.06*ripple;
       diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.56,.72,.57),smoothstep(3.3,3.9,bank)*(.35+.1*ripple));`);
   };
+  const mountainMaterial=new THREE.MeshStandardMaterial({color:0xffffff,vertexColors:true,flatShading:true,roughness:1,fog:false});
+  mountainMaterial.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>',`outgoingLight=mix(outgoingLight,vec3(.39,.58,.57),clamp(length(vViewPosition)/1500.,.12,.7));
+#include <opaque_fragment>`)};
   // Flush once. All transforms remain static and GPU buffers are reused across frames.
   for(const b of batches.values()){
-    const m=new THREE.InstancedMesh(decorativeGeo[b.shape],b.shape==='blade'?grassMaterial:mat(0xffffff),b.entries.length);
+    const m=new THREE.InstancedMesh(decorativeGeo[b.shape],b.shape==='blade'?grassMaterial:b.shape==='mountain'?mountainMaterial:b.shape==='canopy'?forestArt.leafMaterial:mat(0xffffff,{flatShading:false}),b.entries.length);
     b.entries.forEach((e,i)=>{dummy.position.set(...e.slice(0,3));dummy.scale.set(...e.slice(3,6));dummy.rotation.set(e[8],e[6],e[7]);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix);color.setHex(e[9]).multiplyScalar(.88+random()*.12);m.setColorAt(i,color)});
-    m.castShadow=!b.detail;m.receiveShadow=true;m.computeBoundingSphere();root.add(m);chunks.push({m,x:b.cx*64+32,z:b.cz*64+32,detail:b.detail,sky:b.cx*64<-330||b.cx*64>180||b.cz*64<-340||b.cz*64>180||b.entries.some(e=>e[2]===-73&&e[0]>=-16&&e[0]<=0)});
+    m.castShadow=!b.detail;m.receiveShadow=true;m.computeBoundingSphere();root.add(m);chunks.push({m,x:b.cx*64+32,z:b.cz*64+32,detail:b.detail,sky:b.shape==='mountain'||b.cx*64<BOUNDS.left||b.cx*64>BOUNDS.right||b.cz*64<BOUNDS.top||b.cz*64>BOUNDS.bottom||b.entries.some(e=>e[2]===-73&&e[0]>=-16&&e[0]<=0)});
   }
   batches.clear();
   // Soft grounding remains visible on Low, where the real-time shadow map is disabled.
@@ -251,14 +287,15 @@ export function installVisualWorld(api) {
     if(next!==scale){scale=next;slow=fast=0;renderer.setPixelRatio(baseRatio()*scale)}
   }
   function update(dt,time,frameSeconds){
-    elapsed+=dt;timer+=dt;wind.value=time;const inside=hero.root.position.x>200;root.visible=!inside;sky.position.copy(hero.root.position);ambient.intensity=inside?.08:.36;
+    elapsed+=dt;timer+=dt;wind.value=time;forestArt.wind.value=time;const inside=hero.root.position.x>200;root.visible=!inside;if(!inside){scene.fog.density=api.settings.quality==='low'?.0024:.0018;scene.fog.color.setHex(0xa9c9c7)}sky.position.copy(hero.root.position);ambient.intensity=inside?.08:.36;
     if(quality!==api.settings.quality)resetResolution();sampleFrame(frameSeconds);
-    if(timer>.25){timer=0;const reach=api.settings.quality==='low'?82:api.settings.quality==='medium'?115:155;
-      for(const c of chunks){const d=Math.hypot(c.x-hero.root.position.x,c.z-hero.root.position.z);c.m.visible=c.sky||d<(c.detail?reach*.62:reach+40);c.m.castShadow=!c.detail&&d<45}
+    if(timer>.25){timer=0;if(!inside)refreshMeadow();const reach=api.settings.quality==='low'?82:api.settings.quality==='medium'?115:155;
+      for(const t of terrainLOD)t.m.visible=Math.hypot(t.x-hero.root.position.x,t.z-hero.root.position.z)<reach+55;
+      for(const c of chunks){const d=Math.hypot(c.x-hero.root.position.x,c.z-hero.root.position.z);c.m.visible=c.sky||d<(c.detail?reach*.62:reach+40);c.m.castShadow=!c.sky&&!c.detail&&d<45}
       for(const l of lanterns){const visible=Math.hypot(l.x-hero.root.position.x,l.z-hero.root.position.z)<70;l.glow.visible=l.halo.visible=visible}
     }
     lanternMaterial.emissiveIntensity=1.5+Math.sin(time*3)*.08;
     actors.forEach((a,i)=>{const p=a.root.position,on=a.root.visible&&(p.x>200)===inside&&p.distanceToSquared(hero.root.position)<2500;dummy.position.set(p.x,surface(p.x,p.z)+.035,p.z);dummy.rotation.set(0,0,0);dummy.scale.set(on?1.5*(a.scale||1):0,1,on?1.2*(a.scale||1):0);dummy.updateMatrix();shadows.setMatrixAt(i,dummy.matrix)});shadows.instanceMatrix.needsUpdate=true;
   }
-  return {root,chunks,lanterns,shadows,detailTextures,resetResolution,sampleFrame,update,get resolutionScale(){return scale}};
+  return {root,chunks,meadow,terrainLOD,farTerrain,lanterns,shadows,detailTextures,resetResolution,sampleFrame,update,get resolutionScale(){return scale}};
 }

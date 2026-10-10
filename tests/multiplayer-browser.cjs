@@ -50,6 +50,7 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  await a.waitForFunction(()=>!__realm.loot.some(l=>l.id==='coin'));await b.waitForFunction(()=>!__realm.loot.some(l=>l.id==='coin'));
  assert.equal((await a.evaluate(()=>__realm.player.coins))+(await b.evaluate(()=>__realm.player.coins)),107);
  console.log('PASS movement/equipment replication and atomic shared-loot pickup');
+ await a.evaluate(()=>__realm.setPosition(-440,-590));await b.evaluate(()=>__realm.setPosition(-443,-590));await a.waitForFunction(()=>[...__realm.net.peers.values()].some(p=>p.pose?.x===-443&&p.pose.z===-590&&p.ch.root.visible));await b.waitForFunction(()=>[...__realm.net.peers.values()].some(p=>p.pose?.x===-440&&p.pose.z===-590&&p.ch.root.visible));console.log('PASS both heroes replicate and remain visible in expanded western/northern regions');
  // Host stays in village. Enemy must chase and damage the remote player.
  await a.evaluate(()=>{__realm.setPosition(0,64);const e=__realm.enemies[0];e.hp=e.maxHp;e.root.position.set(-21,__realm.surface(-21,39),39);e.state='patrol';e.cooldown=0});
  await b.evaluate(()=>{__realm.setPosition(-21,40.5);__realm.player.hp=100});

@@ -1,14 +1,16 @@
-import {icon} from './ui.js?v=realm-scout-20261010-2';
+import {icon} from './ui.js?v=realm-wildlands-20261010-1';
 // Recover older cached HTML before it can pair its obsolete HUD with this module.
 // This module must retain this guard while pre-design-system pages remain cached.
-if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-scout-20261010-2"]')){
- const fresh=new URL(location.href),release='realm-scout-20261010-2';
+if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-wildlands-20261010-1"]')){
+ const fresh=new URL(location.href),release='realm-wildlands-20261010-1';
  if(fresh.searchParams.get('v')!==release){fresh.searchParams.set('v',release);location.replace(fresh.href)}
  else{document.body.textContent='The game update could not load. Reopen the game to retry. Your saved journey is safe.'}
  await new Promise(()=>{}); // Navigation replaces this document; never initialize mixed UI.
 }
 // The Shattered Marches: world data is also used by terrain, navigation and maps.
-export const BOUNDS={left:-330,right:180,top:-340,bottom:180};
+export const BOUNDS={left:-585,right:180,top:-860,bottom:180};
+export const WORLD_WIDTH=BOUNDS.right-BOUNDS.left,WORLD_DEPTH=BOUNDS.bottom-BOUNDS.top;
+export const WILDLANDS=[{name:'Verdant Reach',x:-440,z:-120},{name:'Jadegrove Hollow',x:-465,z:-400},{name:'Cloudstep Highlands',x:-190,z:-590},{name:'Crown of Heaven',x:-70,z:-795}];
 export const SETTLEMENTS=[
  {id:'capital',name:'Dawnwatch City',x:-180,z:38,kind:'city',color:0x677e94},
  {id:'mill',name:'Briarfield Village',x:-155,z:135,kind:'village',color:0x9e7450},
@@ -29,11 +31,15 @@ export const ROADS=[
  [[-190,-35],[-125,-140],[-159,-158]], [[-8,-66],[-40,-125],[-125,-140]],
  [[-40,-125],[-20,-235],[-40,-291],[-69,-312]],
  [[28,-23],[95,-65],[115,-125],[113,-210],[143,-233]],
- [[-20,-235],[40,-245],[113,-210]]
+ [[-20,-235],[40,-245],[113,-210]],
+ [[-288,-106],[-355,-100],[-440,-120],[-470,-255],[-465,-400]],
+ [[-155,135],[-300,100],[-430,70],[-430,-35],[-440,-120]],
+ [[-20,-235],[-40,-350],[-120,-460],[-190,-590],[-130,-700],[-70,-795]],
+ [[-465,-400],[-350,-440],[-240,-475],[-120,-460]]
 ];
 export function roadDistance(x,z){let best=Infinity;for(const r of ROADS)for(let i=1;i<r.length;i++){const [ax,az]=r[i-1],[bx,bz]=r[i],dx=bx-ax,dz=bz-az,t=Math.max(0,Math.min(1,((x-ax)*dx+(z-az)*dz)/(dx*dx+dz*dz)));best=Math.min(best,Math.hypot(x-ax-t*dx,z-az-t*dz))}return best}
-export function terrainColor(x,z){return z<-260?0x99adb0:x>75&&z<-150?0x647565:x<-215&&z<-25?0x7d8773:x<-100&&z>85?0x849657:0x3c7750}
-export function extraHeight(x,z){const blend=Math.max(0,Math.min(1,(Math.max(Math.abs(x),Math.abs(z))-85)/45));return blend*(3*Math.sin(x*.018)*Math.cos(z*.027)+14*Math.exp(-((x+65)**2+(z+295)**2)/4200))}
+export function terrainColor(x,z){return z<-700?0x9aaebb:z<-460?0x5e9275:x<-330?0x327853:z<-260?0x99adb0:x>75&&z<-150?0x647565:x<-215&&z<-25?0x7d8773:x<-100&&z>85?0x849657:0x3c7750}
+export function extraHeight(x,z){const blend=Math.max(0,Math.min(1,(Math.max(Math.abs(x),Math.abs(z))-85)/45));const north=Math.max(0,Math.min(1,(-z-340)/160)),west=Math.max(0,Math.min(1,(-x-330)/120));return blend*(3*Math.sin(x*.018)*Math.cos(z*.027)+14*Math.exp(-((x+65)**2+(z+295)**2)/4200))+north*(24+18*Math.sin(x*.016)*Math.cos(z*.011)+50*Math.exp(-((x+70)**2+(z+795)**2)/11000))+west*(7+6*Math.sin(z*.025)*Math.cos(x*.014))}
 
 export function installFrontier(api){
  const {THREE,scene,mesh,mat,hero,living,items,enemies,$,ground}=api;
@@ -72,11 +78,11 @@ export function installFrontier(api){
   for(let k=0;k<7;k++){const a=k/7*Math.PI*2,x=f.bx+Math.cos(a)*10,z=f.bz+Math.sin(a)*10;prop(f.id==='elemental'?'cone':'orb',f.id==='elemental'?0x82bcc0:0x718279,x,ground(x,z)+1.5,z,1.2,3,1.2);api.obstacle(x,z,1)}
  });
  // Spatially grouped instancing permits view-distance culling of a much larger forest.
- const chunks=new Map();for(let i=0;i<3400;i++){const x=BOUNDS.left+random(i*3)*510,z=BOUNDS.top+random(i*3+1)*520;if(x>30&&x<70&&z>115&&z<162||x>-90&&x<-20&&z>98&&z<138||Math.abs(x)<97&&Math.abs(z)<102||api.pathDist(x,z)<5||Math.abs(z-api.riverZ(x))<9||SETTLEMENTS.some(s=>Math.hypot(x-s.x,z-s.z)<(s.kind==='city'?48:23))||FAMILIES.some(f=>Math.hypot(x-f.x,z-f.z)<18||Math.hypot(x-f.bx,z-f.bz)<15))continue;
-  const key=Math.floor(x/48)+','+Math.floor(z/48);if(!chunks.has(key))chunks.set(key,{x:Math.floor(x/48)*48+24,z:Math.floor(z/48)*48+24,trunk:[],leaf:[],rock:[]});const chunk=chunks.get(key),y=ground(x,z),h=4+random(i*3+2)*4;
-  if(z<-263||random(i+8000)>.8){chunk.rock.push([x,y+.7,z,1,.9,1.2]);vegetation.push({x,z,rock:true})}else{chunk.trunk.push([x,y+h*.35,z,.22,h*.7,.22]);for(let j=0;j<3;j++)chunk.leaf.push([x,y+h*(.45+j*.23),z,2.15-j*.43,h*.52,2.15-j*.43]);api.obstacle(x,z,.5);vegetation.push({x,z})}
+ const chunks=new Map();for(let i=0;i<14500;i++){const x=i<3400?-330+random(i*3)*510:BOUNDS.left+random(i*3)*WORLD_WIDTH,z=i<3400?-340+random(i*3+1)*520:BOUNDS.top+random(i*3+1)*WORLD_DEPTH;if(i>=3400&&x>=-330&&z>=-340)continue;if(x>30&&x<70&&z>115&&z<162||x>-90&&x<-20&&z>98&&z<138||Math.abs(x)<97&&Math.abs(z)<102||api.pathDist(x,z)<5||Math.abs(z-api.riverZ(x))<9||SETTLEMENTS.some(s=>Math.hypot(x-s.x,z-s.z)<(s.kind==='city'?48:23))||FAMILIES.some(f=>Math.hypot(x-f.x,z-f.z)<18||Math.hypot(x-f.bx,z-f.bz)<15))continue;
+  const key=Math.floor(x/48)+','+Math.floor(z/48);if(!chunks.has(key))chunks.set(key,{x:Math.floor(x/48)*48+24,z:Math.floor(z/48)*48+24,trunk:[],leaf:[],rock:[]});const chunk=chunks.get(key),y=ground(x,z),h=i<3400?4+random(i*3+2)*4:6+random(i*3+2)*5;
+  if((z<-263&&x>=-330&&z>=-340)||z<-720||random(i+8000)>.9){chunk.rock.push([x,y+.7,z,1,.9,1.2]);vegetation.push({x,z,rock:true})}else{chunk.trunk.push([x,y+h*.35,z,.22,h*.7,.22]);for(let j=0;j<3;j++)chunk.leaf.push([x,y+h*(.45+j*.23),z,(2.15-j*.43)*(i<3400?1:1.25),h*.52,(2.15-j*.43)*(i<3400?1:1.25)]);api.obstacle(x,z,.5);vegetation.push({x,z})}
  }
- const chunkMeshes=[];for(const c of chunks.values())for(const [shape,color,list] of [['cyl',0x65503b,c.trunk],['cone',c.z<-230?0x527d75:0x37724d,c.leaf],['orb',0x82978e,c.rock]]){if(!list.length)continue;const m=api.instance(shape,color,list);root.add(m);chunkMeshes.push({m,x:c.x,z:c.z})}
+ const farPine=new THREE.ConeGeometry(1,1,6,1);const chunkMeshes=[];for(const c of chunks.values())for(const [shape,color,list] of [['cyl',0x65503b,c.trunk],['cone',c.z<-230?0x527d75:0x37724d,c.leaf],['orb',0x82978e,c.rock]]){if(!list.length)continue;const m=api.instance(shape,color,list);if(shape==='cone'){m.geometry=api.forestArt.pine;m.material=api.forestArt.leafMaterial.clone();m.material.onBeforeCompile=api.forestArt.leafMaterial.onBeforeCompile;m.material.color.setHex(color)}root.add(m);chunkMeshes.push({m,x:c.x,z:c.z,full:m.geometry,far:shape==='cone'?farPine:m.geometry})}
  // Populate enemy families with articulated bodies, not recoloured goblins.
  function creature(f,boss){
   if(f.id==='bandit'||f.id==='skeleton'){const ch=api.character(false);ch.bodyMat.color.setHex(f.color);ch.cape.material=mat(f.id==='bandit'?0x6a3433:0x433d56);ch.scale=boss?1.55:1;ch.root.scale.setScalar(ch.scale);
@@ -110,13 +116,13 @@ export function installFrontier(api){
  function nearestRest(){return SETTLEMENTS.find(s=>Math.hypot(hero.root.position.x-s.x,hero.root.position.z-s.z)<4)}
  function interact(){const s=nearestRest();if(!s)return false;api.player.hp=api.player.maxHp;api.player.stamina=api.player.maxStamina;api.toast('Rested at '+s.name);api.sound('level');api.save();return true}
  const box=document.createElement('div');box.id='frontier-mini';box.innerHTML='<canvas width="240" height="240" aria-label="Detailed local minimap"></canvas><small id="map-bearing">N · The Shattered Marches</small><div class="mini-controls"><button id="mini-out" aria-label="Zoom out">−</button><button id="mini-map">Map</button><button id="mini-in" aria-label="Zoom in">+</button><button id="mini-north" aria-label="Toggle north up">N</button></div>';$('hud').append(box);const mini=box.querySelector('canvas');$('mini-out').onclick=()=>zoom=Math.min(100,zoom+12);$('mini-in').onclick=()=>zoom=Math.max(18,zoom-12);$('mini-map').onclick=worldMap;$('mini-north').onclick=()=>{northUp=!northUp;$('mini-north').classList.toggle('north-up',northUp)};mini.onclick=worldMap;
- let atlas,ac,atlasDirty=true;const sx=900/510,sz=900/520,mx=x=>(x-BOUNDS.left)*sx,mz=z=>(z-BOUNDS.top)*sz;
+ let atlas,ac,atlasDirty=true;const sx=900/WORLD_WIDTH,sz=900/WORLD_DEPTH,mx=x=>(x-BOUNDS.left)*sx,mz=z=>(z-BOUNDS.top)*sz;
  function rebuildAtlas(){atlas=document.createElement('canvas');atlas.width=atlas.height=900;ac=atlas.getContext('2d',{willReadFrequently:true});atlas.addEventListener('contextlost',()=>atlasDirty=true);atlasDirty=false;
  for(let y=0;y<900;y+=3)for(let x=0;x<900;x+=3){const wx=x/sx+BOUNDS.left,wz=y/sz+BOUNDS.top,c=new THREE.Color(api.landscapeColor(wx,wz)),slope=ground(wx+2,wz)-ground(wx-2,wz);c.multiplyScalar(Math.max(.65,Math.min(1.2,1-slope*.1)));ac.fillStyle='#'+c.getHexString();ac.fillRect(x,y,3,3)}
  for(let y=0;y<900;y+=3)for(let x=0;x<900;x+=3){const wx=x/sx+BOUNDS.left,wz=y/sz+BOUNDS.top;if(wz<-100&&Math.floor(ground(wx,wz)/3)!==Math.floor(ground(wx+3/sx,wz+3/sz)/3)){ac.fillStyle='#314d492b';ac.fillRect(x,y,3,1)}}
  function line(points,color,width){ac.beginPath();points.forEach(([x,z],i)=>i?ac.lineTo(mx(x),mz(z)):ac.moveTo(mx(x),mz(z)));ac.strokeStyle=color;ac.lineWidth=width;ac.stroke()}
  // Match the water mesh's vertical banks, rather than a constant-width stroked curve.
- ac.beginPath();for(const side of [-1,1])for(let i=0;i<=255;i++){const x=BOUNDS.left+(side===-1?i:255-i)*2,z=api.riverZ(x)+side*api.riverWidth/2;if(side===-1&&i===0)ac.moveTo(mx(x),mz(z));else ac.lineTo(mx(x),mz(z))}ac.closePath();ac.fillStyle='#65bfc1';ac.fill();
+ ac.beginPath();for(const side of [-1,1])for(let i=0;i<=255;i++){const x=BOUNDS.left+(side===-1?i:255-i)/255*WORLD_WIDTH,z=api.riverZ(x)+side*api.riverWidth/2;if(side===-1&&i===0)ac.moveTo(mx(x),mz(z));else ac.lineTo(mx(x),mz(z))}ac.closePath();ac.fillStyle='#65bfc1';ac.fill();
  // Paths are rasterized from the same distance field as the traversable terrain.
  for(const x of api.bridges)line([[x,api.riverZ(x)-8.5],[x,api.riverZ(x)+8.5]],'#73583a',4.6*sx);
  for(const v of vegetation){ac.fillStyle=v.rock?'#a3ada0':'#284f3bc0';ac.beginPath();ac.arc(mx(v.x),mz(v.z),v.rock?1.7:2.2,0,Math.PI*2);ac.fill()}
@@ -132,8 +138,8 @@ export function installFrontier(api){
  function paint(canvas,full=false){if(atlasDirty||ac.isContextLost?.())rebuildAtlas();const frame=full?mapFrame(canvas):null;if(api.getExpansion?.()?.drawMap(canvas.getContext('2d'),canvas.width,canvas.height,frame||{scale:canvas.width/(zoom*2),x:hero.root.position.x,z:hero.root.position.z}))return;const c=canvas.getContext('2d'),w=canvas.width,h=canvas.height,p=hero.root.position,cave=p.x>200,labels=[],pixelRatio=w/(canvas.clientWidth||w);let project;
   c.clearRect(0,0,w,h);c.fillStyle='#172e2c';c.fillRect(0,0,w,h);c.save();
   if(cave){const scale=full?frame.scale:w/(zoom*1.4),cx=full?frame.x:p.x,cz=full?frame.z:p.z;project=(x,z)=>[w/2+(x-cx)*scale,h/2+(z-cz)*scale];for(const [l,r,t,b] of [[296,304,-34,8],[300,316,-24,-14],[288,312,-62,-32]]){const [x,y]=project(l,t);c.fillStyle='#777f76';c.fillRect(x,y,(r-l)*scale,(b-t)*scale);c.strokeStyle='#b1b5a2';c.strokeRect(x,y,(r-l)*scale,(b-t)*scale)}const [gx,gy]=project(296,-32);c.fillStyle=living.serialize().gateOpen?'#8ab788':'#cf965d';c.fillRect(gx,gy,8*scale,2);const [px,py]=project(306,-53);c.fillStyle='#398b9f';c.fillRect(px,py,6*scale,10*scale);for(const [x,z] of [[313,-21],[290,-59],[300,6]]){const [tx,ty]=project(x,z);c.fillStyle='#e3bd78';c.fillRect(tx-2,ty-2,4,4)}for(let i=0;i<28;i++){const [x,y]=project(i%2?289:311,-35-(i%14)*1.8);c.fillStyle=i%3?'#8be0cd':'#b098e1';c.fillRect(x-1,y-1,2,2)}}
-  else if(full){project=(x,z)=>[w/2+(x-frame.x)*frame.scale,h/2+(z-frame.z)*frame.scale];const [x,y]=project(BOUNDS.left,BOUNDS.top);c.drawImage(atlas,x,y,510*frame.scale,520*frame.scale)}
-  else{const a=northUp?0:(api.getYaw()||0),scale=w/(zoom*2),co=Math.cos(a),si=Math.sin(a);project=(x,z)=>{const dx=x-p.x,dz=z-p.z;return[w/2+(dx*co-dz*si)*scale,h/2+(dx*si+dz*co)*scale]};c.translate(w/2,h/2);c.rotate(a);c.scale(scale,scale);c.drawImage(atlas,BOUNDS.left-p.x,BOUNDS.top-p.z,510,520);c.setTransform(1,0,0,1,0,0)}
+  else if(full){project=(x,z)=>[w/2+(x-frame.x)*frame.scale,h/2+(z-frame.z)*frame.scale];const [x,y]=project(BOUNDS.left,BOUNDS.top);c.drawImage(atlas,x,y,WORLD_WIDTH*frame.scale,WORLD_DEPTH*frame.scale)}
+  else{const a=northUp?0:(api.getYaw()||0),scale=w/(zoom*2),co=Math.cos(a),si=Math.sin(a);project=(x,z)=>{const dx=x-p.x,dz=z-p.z;return[w/2+(dx*co-dz*si)*scale,h/2+(dx*si+dz*co)*scale]};c.translate(w/2,h/2);c.rotate(a);c.scale(scale,scale);c.drawImage(atlas,BOUNDS.left-p.x,BOUNDS.top-p.z,WORLD_WIDTH,WORLD_DEPTH);c.setTransform(1,0,0,1,0,0)}
   function dot(x,z,color,r=3,label){if((x>200)!==cave)return;const [xx,yy]=project(x,z);if(xx<0||yy<0||xx>w||yy>h)return;c.fillStyle=color;c.beginPath();c.arc(xx,yy,full?Math.max(r,pixelRatio*2):r,0,Math.PI*2);c.fill();if(label){const font=Math.max(16,11*pixelRatio);c.font=font+'px sans-serif';c.textAlign='center';const width=c.measureText(label).width,tx=Math.max(width/2+4,Math.min(w-width/2-4,xx)),ty=yy-8*pixelRatio,rect={l:tx-width/2-4,r:tx+width/2+4,t:ty-font,b:ty+4};if(rect.t<0||labels.some(b=>rect.l<b.r&&rect.r>b.l&&rect.t<b.b&&rect.b>b.t))return;labels.push(rect);c.lineWidth=4;c.strokeStyle='#18352c';c.strokeText(label,tx,ty);c.fillStyle='#f4e4bf';c.fillText(label,tx,ty)}}
   if(!cave){api.poi.forEach((v,i)=>dot(v.x,v.z,api.visited.includes(i)?'#efd195':'#a2b8a4',full?4:3,full?v.name:null));dot(-46,36,'#bd9ddb',4,full?'Hollowroot Cave':null)}
   for(const n of living.npcs)dot(n.root.position.x,n.root.position.z,'#8bded8',3);
@@ -160,10 +166,11 @@ export function installFrontier(api){
   c.onpointerdown=e=>{e.preventDefault();c.setPointerCapture(e.pointerId);points.set(e.pointerId,screen(e.clientX,e.clientY));previous=gesture();if(points.size===1)moved=false;else moved=true};
   c.onpointermove=e=>{if(!points.has(e.pointerId))return;e.preventDefault();points.set(e.pointerId,screen(e.clientX,e.clientY));const now=gesture(),dx=now.x-previous.x,dy=now.y-previous.y;if(Math.hypot(dx,dy)>3)moved=true;if(moved){const f=mapFrame(c);mapCenter.x-=dx/f.scale;mapCenter.z-=dy/f.scale;if(now.count===2&&previous.d>0)zoomAt(mapZoom*now.d/previous.d,now);else refresh()}previous=now};
   const end=e=>{points.delete(e.pointerId);previous=points.size?gesture():null};c.onpointerup=end;c.onpointercancel=e=>{moved=true;end(e)};c.onlostpointercapture=end;
-  c.onclick=e=>{if(moved||hero.root.position.x>200)return;const p=screen(e.clientX,e.clientY),f=mapFrame(c);waypoint=[f.x+(p.x-c.width/2)/f.scale,f.z+(p.y-c.height/2)/f.scale];refresh();api.toast('Waypoint placed')};
+  c.onclick=e=>{if(moved||hero.root.position.x>200)return;const p=screen(e.clientX,e.clientY),f=mapFrame(c);const target=[f.x+(p.x-c.width/2)/f.scale,f.z+(p.y-c.height/2)/f.scale];if(target[0]<BOUNDS.left||target[0]>BOUNDS.right||target[1]<BOUNDS.top||target[1]>BOUNDS.bottom)return;waypoint=target;refresh();api.toast('Waypoint placed')};
   c.onwheel=e=>{e.preventDefault();zoomAt(mapZoom*Math.exp(-e.deltaY*.0015),screen(e.clientX,e.clientY))};
   $('clear-waypoint').onclick=()=>{waypoint=null;refresh()};$('atlas-journal').onclick=living.journal;$('atlas-town').onclick=api.returnTown;refresh();
  }
- function update(dt){elapsed+=dt;root.visible=hero.root.position.x<200;for(const c of chunkMeshes)c.m.visible=Math.hypot(c.x-hero.root.position.x,c.z-hero.root.position.z)<(api.settings.quality==='low'?85:130);for(const s of structures)if(s.hub)s.hub.rotation.z=elapsed*.4;for(const e of tells.keys())tell(e);mapTimer+=dt;if(mapTimer>.15){mapTimer=0;const northAngle=northUp||hero.root.position.x>200?0:(api.getYaw()||0);box.style.setProperty('--north-x',50+Math.sin(northAngle)*50);box.style.setProperty('--north-y',50-Math.cos(northAngle)*50);$('mini-north').setAttribute('aria-pressed',String(northUp));if(box.offsetParent!==null)paint(mini);if($('frontier-atlas'))paint($('frontier-atlas'),true);$('map-bearing').textContent=hero.root.position.x>200?'Hollowroot Cave':waypoint?'◆ '+Math.round(Math.hypot(waypoint[0]-hero.root.position.x,waypoint[1]-hero.root.position.z))+'m · waypoint':northUp?'N ↑ · North up':'N · Camera follows'}}
- return{invalidateAtlas(){atlasDirty=true},setWaypoint(x,z){waypoint=[x,z]},paint,update,animate,updateEnemy,onDeath,restoreBosses,interact,tell,worldMap,structures,settlements:SETTLEMENTS,families:FAMILIES,mini,get atlas(){return atlas},get mapView(){return{...mapCenter,zoom:mapZoom}},get waypoint(){return waypoint},hint(){return nearestRest()?'Rest at the village fountain':''}};
+ const staticProps=root.children.filter(o=>!o.isInstancedMesh);
+ function update(dt){elapsed+=dt;for(const o of staticProps)o.visible=Math.hypot(o.position.x-hero.root.position.x,o.position.z-hero.root.position.z)<(api.settings.quality==='low'?175:280);root.visible=hero.root.position.x<200;for(const c of chunkMeshes){const d=Math.hypot(c.x-hero.root.position.x,c.z-hero.root.position.z);c.m.visible=d<(api.settings.quality==='low'?145:200);c.m.geometry=d>(api.settings.quality==='low'?75:120)?c.far:c.full;}for(const s of structures)if(s.hub)s.hub.rotation.z=elapsed*.4;for(const e of tells.keys())tell(e);mapTimer+=dt;if(mapTimer>.15){mapTimer=0;const northAngle=northUp||hero.root.position.x>200?0:(api.getYaw()||0);box.style.setProperty('--north-x',50+Math.sin(northAngle)*50);box.style.setProperty('--north-y',50-Math.cos(northAngle)*50);$('mini-north').setAttribute('aria-pressed',String(northUp));if(box.offsetParent!==null)paint(mini);if($('frontier-atlas'))paint($('frontier-atlas'),true);$('map-bearing').textContent=hero.root.position.x>200?'Hollowroot Cave':waypoint?'◆ '+Math.round(Math.hypot(waypoint[0]-hero.root.position.x,waypoint[1]-hero.root.position.z))+'m · waypoint':northUp?'N ↑ · North up':'N · Camera follows'}}
+ return{bounds:BOUNDS,wildlands:WILDLANDS,vegetation,registerWildlands(){for(const p of WILDLANDS){api.poi.push({...p});for(const side of [-1,1]){api.obstacle(p.x+side*4,p.z,.65);structures.push({x:p.x+side*4,z:p.z,w:1.1,d:1.1,color:'#bac9b8',kind:'waystone'})}}atlasDirty=true},invalidateAtlas(){atlasDirty=true},setWaypoint(x,z){waypoint=[x,z]},paint,update,animate,updateEnemy,onDeath,restoreBosses,interact,tell,worldMap,structures,settlements:SETTLEMENTS,families:FAMILIES,mini,get atlas(){return atlas},get mapView(){return{...mapCenter,zoom:mapZoom}},get waypoint(){return waypoint},hint(){return nearestRest()?'Rest at the village fountain':''}};
 }

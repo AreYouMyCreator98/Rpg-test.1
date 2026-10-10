@@ -1,7 +1,7 @@
-import {installGathering} from './gathering.js?v=realm-scout-20261010-2';
-import {workshopActions,applyWorkshop,workshopPosition,cleanWorkshop} from './gathering-rules.js?v=realm-scout-20261010-2';
-import {batchScenery} from './scene-batch.js?v=realm-scout-20261010-2';
-import {PLOTS,PIECES,freshEstate,validPiece,placementError,applyBuild,wallLike} from './building-rules.js?v=realm-scout-20261010-2';
+import {installGathering} from './gathering.js?v=realm-wildlands-20261010-1';
+import {workshopActions,applyWorkshop,workshopPosition,cleanWorkshop} from './gathering-rules.js?v=realm-wildlands-20261010-1';
+import {batchScenery} from './scene-batch.js?v=realm-wildlands-20261010-1';
+import {PLOTS,PIECES,freshEstate,validPiece,placementError,applyBuild,wallLike} from './building-rules.js?v=realm-wildlands-20261010-1';
 export function installHomestead(api){
  const {THREE,hero,scene,mesh,$}=api,roots={};let states={home:freshEstate(),coop:freshEstate()},mode=null,preview=null,kind='home',type='foundation',rotation=0,level=0,timer=0,identity='',pending=false,polling=false,ready=false,notice='';let gathering=null;
  const ghostGood=new THREE.MeshBasicMaterial({color:0x77d8b2,transparent:true,opacity:.42,depthWrite:false}),ghostBad=new THREE.MeshBasicMaterial({color:0xdc735c,transparent:true,opacity:.42,depthWrite:false});

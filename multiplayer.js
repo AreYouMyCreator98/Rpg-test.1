@@ -1,5 +1,5 @@
-import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-scout-20261010-2';
-import {connectSupabase} from './supabase-rooms.js?v=realm-scout-20261010-2';
+import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-wildlands-20261010-1';
+import {connectSupabase} from './supabase-rooms.js?v=realm-wildlands-20261010-1';
 
 export function installMultiplayer(api) {
   const {$,THREE,hero,enemies,loot,items,living}=api;
@@ -64,7 +64,7 @@ export function installMultiplayer(api) {
     if(m.type==='roster'){roster=m.players;roster.host=m.host;for(const uid of peers.keys())if(!roster.some(p=>p.id===uid))removePeer(uid);renderRoster();return}
     if(m.type==='left'){removePeer(m.id);return}
     if(m.type==='pose'){
-      const d=m.data;if(m.id===id||!d||!['x','y','z','yaw','hp','level'].every(k=>Number.isFinite(d[k]))||(d.x < -350 || d.x > 1150)||Math.abs(d.z)>350||d.level<1||d.level>40||!Number.isInteger(d.level))return;
+      const d=m.data;if(m.id===id||!d||!['x','y','z','yaw','hp','level'].every(k=>Number.isFinite(d[k]))||(d.x < api.bounds.left || d.x > 1150)||d.z<api.bounds.top||d.z>api.bounds.bottom||d.level<1||d.level>40||!Number.isInteger(d.level))return;
       api.normaliseProgression(d);const p=getPeer(m.id);if(!p)return;const first=!p.pose;p.pose=d;p.last=clock;if(first)p.ch.root.position.set(d.x,d.y,d.z);return;
     }
     if(m.type==='snapshot'&&!host){applySnapshot(m.data);lastSnapshot=clock;return}
