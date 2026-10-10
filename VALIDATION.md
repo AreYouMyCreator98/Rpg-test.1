@@ -26,6 +26,14 @@ The first published hosted disconnect test exposed a SQL installation-order regr
 
 Physical Samsung/iPhone hardware, Safari/WebKit, battery/thermal behavior, audible sound quality, real email inbox delivery and long-duration balance remain unverified. Email confirmation/recovery call real Supabase APIs with the Pages callback configured. The account server validates reward events and economy operations while the host still simulates physics; this is not a claim of cheat-proof browser combat.
 
+## Published verification
+
+GitHub Pages published `9ff8ea0` successfully (deployment run `38025475539`); static release validation passed in run `38025476087`. The subsequent SQL reinstall correction is commit `efc078c` and is installed in the hosted project.
+
+`tests/published-expansion.cjs` passed against the actual HTTPS Pages URL: pinned CDN modules, WebGL textures, corrected map bearing, touch map/waypoints/attack, expanded roster, Rootbound entry, pet/mount menus, account SDK initialization and schema-3 saving, with no captured browser errors. Its actual mobile screenshot was inspected.
+
+After the SQL correction, `tests/accounts-live.cjs` passed again **using the published Pages game** and two hosted accounts: email/password sign-in, private-character RLS, duplicate lease rejection, selected-character co-op, persistent guest XP and loot, no XP for a nonparticipating host, and both solo worlds restored after host departure. Only the two temporary test accounts and their records were removed afterward; existing user accounts/saves were not touched.
+
 ---
 
 # V2 validation
