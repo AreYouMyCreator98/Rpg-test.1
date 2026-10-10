@@ -5,7 +5,7 @@ export async function loadScoutAsset(){
  try{
   return await Promise.race([(async()=>{
    const {GLTFLoader}=await import('https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/GLTFLoader.js');
-   return new GLTFLoader().loadAsync(new URL('./assets/goblin-scout.gltf?v=realm-scout-20261010-1',import.meta.url).href);
+   return new GLTFLoader().loadAsync(new URL('./assets/goblin-scout.gltf?v=realm-scout-20261010-2',import.meta.url).href);
   })(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('Scout asset timed out')),12000)})]);
  }catch(error){console.warn('Detailed scout unavailable; retaining the existing playable model.',error);return null}
  finally{clearTimeout(timer)}
@@ -35,7 +35,7 @@ export function animateScout(e,speed,dt,attack,dying){
   action.setEffectiveWeight(lerp(action.getEffectiveWeight(),desired,1-Math.exp(-dt*24)));
   const duration=action.getClip().duration;
   // Sample attack/death from authoritative timers, never from animation events.
-  if(key===name){action.time=attack&&name==='Attack'?Math.min(.999,attack.t/attack.duration)*duration:name==='Death'?Math.min(dying,duration):['Damage','Stagger'].includes(name)?Math.min(s.elapsed,duration):s.elapsed%duration}
+  if(key===name){action.time=attack&&name==='Attack'?Math.min(.999,attack.t/attack.duration)*duration:name==='Death'?Math.min(dying,duration-1e-6):['Damage','Stagger'].includes(name)?Math.min(s.elapsed,duration-1e-6):s.elapsed%duration}
  }
  s.mixer.update(0);return true;
 }

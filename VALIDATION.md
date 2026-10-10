@@ -326,7 +326,7 @@ Physical Android/iPhone/Safari behaviour remains unverified; mobile checks use C
 
 - The deployed Pages smoke test passed, including the new return route, real CDN/WebGL initialization, map/attack controls and the existing expansion menus. The mobile return suite also passed automatic button re-enabling when its combat cooldown expires.
 
-## Custom Goblin Scout — realm-scout-20261010-1
+## Custom Goblin Scout — realm-scout-20261010-2
 
 - Original glTF generated with `python scripts/build-goblin-scout.py`: 3,399 triangles, 21 joint/material batches, 589,228 bytes, seven rigid-joint animation clips. No texture/skin decoder dependencies. Geometry/materials shared between instances.
 - `tests/scout-browser.cjs` passed in touch-enabled 390 × 844 Chromium with actual WebGL and GLTFLoader: all seven scouts load; dagger attached to HandR; seven animation states produce valid/different joint poses; AI chases and damages hero; hero sword kills award XP and loot; timed respawn works; existing level/equipment/currency load; 109 enemies and 14 bosses preserved; no JavaScript exceptions. Captured and inspected WebGL close-up and gameplay screenshots.
