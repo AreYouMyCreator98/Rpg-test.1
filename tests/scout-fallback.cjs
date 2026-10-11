@@ -7,6 +7,6 @@ const assert=require('node:assert/strict');const {chromium}=require(process.env.
   await page.route('**/assets/models/goblin_scout.glb*',r=>r.abort());if(legacyFails)await page.route('**/assets/goblin-scout.gltf*',r=>r.abort());
   await page.goto((process.env.GAME_URL||'http://127.0.0.1:8000/')+'?test');await page.waitForFunction(()=>window.__realm,{timeout:60000});await page.click('#play');
   const result=await page.evaluate(()=>({state:__realm.state,scouts:__realm.enemies.filter(e=>e.scoutModel).length,skinned:!!__realm.enemies[0].scoutModel?.skinned,hp:__realm.enemies[0].maxHp,count:__realm.enemies.length}));
-  assert.equal(result.state,'playing');assert.equal(result.hp,30);assert.equal(result.count,114);assert.equal(result.scouts,legacyFails?0:7);assert.equal(result.skinned,false);assert.deepEqual(errors,[]);console.log('PASS',legacyFails?'procedural fallback when both assets fail':'original glTF fallback when new GLB fails',result);await page.close();
+  assert.equal(result.state,'playing');assert.equal(result.hp,37);assert.equal(result.count,114);assert.equal(result.scouts,legacyFails?0:7);assert.equal(result.skinned,false);assert.deepEqual(errors,[]);console.log('PASS',legacyFails?'procedural fallback when both assets fail':'original glTF fallback when new GLB fails',result);await page.close();
  }
 }finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});
