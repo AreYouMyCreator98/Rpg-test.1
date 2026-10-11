@@ -1,5 +1,5 @@
-import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-harvest-2';
-import {connectSupabase} from './supabase-rooms.js?v=realm-harvest-2';
+import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-party-graves-1';
+import {connectSupabase} from './supabase-rooms.js?v=realm-party-graves-1';
 
 export function installMultiplayer(api) {
   const {$,THREE,hero,enemies,loot,items,living}=api;
@@ -56,7 +56,7 @@ export function installMultiplayer(api) {
     }
     if(m.type==='joined'){
       active=true;host=m.host===m.id;id=m.id;code=m.code;isPublic=m.public;sequence=0;seen.clear();request=0;lastSnapshot=clock;
-      if(api.getAccounts()?.active)await api.getAccounts().join(m.worldId);else api.start(false);party.hidden=false;api.toast(host?'Your world is open. Share its invite code.':'Joined the party. Awaiting the host’s world…');
+      if(api.getAccounts()?.active)await api.getAccounts().join(m.worldId);else api.start(false,null,m.slot);party.hidden=false;api.toast(host?'Your world is open. Share its invite code.':'Joined the party. Awaiting the host’s world…');
       if(host)sendSnapshot();else send({type:'command',data:{kind:'sync',request:++request}});return;
     }
     if(m.type==='ended'){leave(m.reason,false);return}

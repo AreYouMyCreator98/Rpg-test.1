@@ -1,11 +1,11 @@
-import {bindResourceMesh,resourceDepleted} from './resource-visuals.js?v=realm-harvest-2';
-import {graphics,retireInstances} from './graphics.js?v=realm-harvest-2';
-import {inVale} from './emerald-vale.js?v=realm-harvest-2';
-import {icon} from './ui.js?v=realm-harvest-2';
+import {bindResourceMesh,resourceDepleted} from './resource-visuals.js?v=realm-party-graves-1';
+import {graphics,retireInstances} from './graphics.js?v=realm-party-graves-1';
+import {inVale} from './emerald-vale.js?v=realm-party-graves-1';
+import {icon} from './ui.js?v=realm-party-graves-1';
 // Recover older cached HTML before it can pair its obsolete HUD with this module.
 // This module must retain this guard while pre-design-system pages remain cached.
-if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-harvest-2"]')){
- const fresh=new URL(location.href),release='realm-harvest-2';
+if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-party-graves-1"]')){
+ const fresh=new URL(location.href),release='realm-party-graves-1';
  if(fresh.searchParams.get('v')!==release){fresh.searchParams.set('v',release);location.replace(fresh.href)}
  else{document.body.textContent='The game update could not load. Reopen the game to retry. Your saved journey is safe.'}
  await new Promise(()=>{}); // Navigation replaces this document; never initialize mixed UI.

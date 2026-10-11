@@ -45,7 +45,7 @@ export async function connectSupabase(url,key,receive,account=null) {
         room=await rpc(account?(m.type==='create'?'create_character_room':'join_character_room'):(m.type==='create'?'create_room':'join_room'),{...(m.type==='create'?{player_name:m.name,is_public:m.public}:{player_name:m.name,invite_code:m.code}),...(account?{character_id:account.selected.id,session_id:account.sessionId}:{})});
         try{for(const p of room.players)await subscribe(p.id)}catch(e){await leave();throw e}
         lastState=Date.now();interval=setInterval(refresh,3000);
-        receive({type:'joined',worldId:room.id,persistent:room.persistent,id,host:room.host,code:room.code,public:room.public});receive({type:'roster',players:room.players,host:room.host});return;
+        receive({type:'joined',slot:room.players.find(p=>p.id===id)?.slot??0,worldId:room.id,persistent:room.persistent,id,host:room.host,code:room.code,public:room.public});receive({type:'roster',players:room.players,host:room.host});return;
       }
       if(m.type==='leave'){await leave();return}
       const ch=channels.get(id);if(ch)await ch.send({type:'broadcast',event:'game',payload:m});

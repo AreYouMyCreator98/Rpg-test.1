@@ -1,4 +1,4 @@
-import {WORLD_RESOURCES} from './world-resources.js?v=realm-harvest-2';
+import {WORLD_RESOURCES} from './world-resources.js?v=realm-party-graves-1';
 // Render bindings never own rewards. Saved workshop state is the only source of depletion.
 const key=(x,z)=>Math.round(x*100)+','+Math.round(z*100),ids=new Map(WORLD_RESOURCES.map((v,i)=>[key(v[0],v[1]),i+8])),refs=new Map();
 let states=new Map(),previous=new Set();

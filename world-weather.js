@@ -1,4 +1,4 @@
-import {graphics} from './graphics.js?v=realm-harvest-2';
+import {graphics} from './graphics.js?v=realm-party-graves-1';
 export const DAY_SECONDS=1440;
 const hash=n=>{const v=Math.sin(n*127.1+31.7)*43758.5453;return v-Math.floor(v)};
 export function weatherAt(days){

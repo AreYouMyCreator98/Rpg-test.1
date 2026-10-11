@@ -22,8 +22,8 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  if(process.env.SCOUT_TEST_CACHE)for(const file of ['loaders/GLTFLoader.js','utils/BufferGeometryUtils.js','utils/SkeletonUtils.js'])await context.route('**/examples/jsm/'+file,r=>r.fulfill({path:process.env.SCOUT_TEST_CACHE+'/'+file.split('/').pop(),contentType:'application/javascript'}));
  await context.addInitScript(()=>{localStorage.setItem('realm-fallen-settings',JSON.stringify({quality:'low',sound:false}));localStorage.setItem('realm-supabase',JSON.stringify({url:'https://realm-test.supabase.co',key:'sb_publishable_test'}))});
  await context.exposeBinding('__roomRpc',({page},uid,name,args)=>{
-  if(name==='realm_create_room'){if(members.has(uid))throw Error('Already joined');const code=String(++serial).padStart(16,'0'),r={id:crypto.randomUUID(),code,host:uid,public:args.is_public,name:args.player_name+'’s world',players:[{id:uid,name:args.player_name}]};rooms.set(code,r);members.set(uid,code);return roomState(uid)}
-  if(name==='realm_join_room'){const r=rooms.get(args.invite_code);if(!r)throw Error('Room not found');if(r.players.length>=4)throw Error('Room full');r.players.push({id:uid,name:args.player_name});members.set(uid,r.code);return roomState(uid)}
+  if(name==='realm_create_room'){if(members.has(uid))throw Error('Already joined');const code=String(++serial).padStart(16,'0'),r={id:crypto.randomUUID(),code,host:uid,public:args.is_public,name:args.player_name+'’s world',players:[{id:uid,name:args.player_name,slot:0}]};rooms.set(code,r);members.set(uid,code);return roomState(uid)}
+  if(name==='realm_join_room'){const r=rooms.get(args.invite_code);if(!r)throw Error('Room not found');if(r.players.length>=4)throw Error('Room full');r.players.push({id:uid,name:args.player_name,slot:[0,1,2,3].find(s=>!r.players.some(p=>p.slot===s))});members.set(uid,r.code);return roomState(uid)}
   if(name==='realm_room_state'){if(page===delayPage){delayPage=null;const stale=roomState(uid);return new Promise(resolve=>{releaseState=()=>resolve(stale);stateWaiting?.()})}return roomState(uid);}
   if(name==='realm_list_rooms')return [...rooms.values()].filter(r=>r.public).map(r=>({code:r.code,name:r.name,count:r.players.length}));
   if(name==='realm_leave_room'){const r=rooms.get(members.get(uid));if(r){if(r.host===uid){rooms.delete(r.code);for(const p of r.players)members.delete(p.id)}else{r.players=r.players.filter(p=>p.id!==uid);members.delete(uid)}}return null}
@@ -39,6 +39,8 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  await b.fill('#join-code',code);await b.fill('#room-name','Ally');await b.click('#join-room');await b.waitForFunction(()=>__realm.net.active&&!__realm.net.host);
  await a.evaluate(()=>__realm.closeModal());await b.evaluate(()=>__realm.closeModal());
  await a.waitForFunction(()=>__realm.net.peers.size===1);await b.waitForFunction(()=>__realm.net.peers.size===1);
+ for(const [page,x] of [[a,46],[b,48]])assert.deepEqual(await page.evaluate(()=>({x:__realm.hero.root.position.x,z:__realm.hero.root.position.z,stage:__realm.living.serialize().prologue.stage})),{x,z:153.5,stage:0});
+ console.log('PASS party starts side by side in the graveyard with unread prologue');
  assert.equal(await a.evaluate(()=>__realm.player.coins),45);assert.equal(await a.evaluate(()=>localStorage.getItem('realm-fallen-save-v1')),saved);
  await a.evaluate(()=>{__realm.visuals.weather.state().days=21.2});await b.waitForFunction(()=>Math.abs(__realm.visuals.weather.state().days-21.2)<.01);assert.equal(await a.evaluate(()=>__realm.visuals.weather.weather),await b.evaluate(()=>__realm.visuals.weather.weather));console.log('PASS host world clock and weather synchronize to guest');
  console.log('PASS private room creation, hidden discovery, code join, remote hero and isolated solo save');
