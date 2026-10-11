@@ -3,7 +3,7 @@ import {WORLD_RESOURCES,MATERIALS,RECIPES,workshopData,packFor,nodeSpec,station,
 import {batchScenery} from './scene-batch.js?v=realm-harvest-1';
 export function installGathering(api){
  const {THREE,hero,mesh,homestead:h,$}=api,nodes=[],stations=[],tools=new Map();let receipts=[],reward=null,visualTick=0;let job=null,tab='craft',menuVersion='',menuTimer=0;
- const readout=document.createElement('section');readout.id='harvest-readout';readout.className='panel';readout.hidden=true;readout.innerHTML='<strong id="harvest-title"></strong><div class="harvest-track"><i id="harvest-fill"></i></div><small id="harvest-count"></small><span id="harvest-reward" role="status" aria-live="polite"></span>';document.body.append(readout);
+ const readout=document.createElement('section');readout.id='harvest-readout';readout.className='panel';readout.hidden=true;readout.innerHTML='<strong id="harvest-title"></strong><div class="harvest-track" role="progressbar" aria-label="Harvest progress" aria-valuemin="0" aria-valuemax="3"><i id="harvest-fill"></i></div><small id="harvest-count"></small><span id="harvest-reward" role="status" aria-live="polite"></span>';document.body.append(readout);
  const remains=[];for(const tree of [true,false]){const geometry=tree?new THREE.CylinderGeometry(.3,.4,.5,8):new THREE.IcosahedronGeometry(.4,0),material=new THREE.MeshStandardMaterial({color:tree?0x92704b:0x879286,roughness:1,flatShading:true}),m=new THREE.InstancedMesh(geometry,material,128);m.count=0;m.castShadow=m.receiveShadow=true;m.frustumCulled=false;api.scene.add(m);remains.push(m)}const remnant=new THREE.Object3D();
  const near=(p,r=3.6)=>Math.hypot(hero.root.position.x-p.x,hero.root.position.z-p.z)<r;
  for(const k of ['home','coop']){
@@ -78,9 +78,9 @@ export function installGathering(api){
   receipts=receipts.filter(r=>!r.done);
   const t=job?.node||target(),valid=t?.type==='node'||job;
   readout.hidden=api.state!=='playing'||!!api.panel||(!valid&&!(reward?.until>now));
-  if(!readout.hidden){const n=job?.node||(t?.type==='node'?t:null),p=n?packFor(h.states[n.k],h.actorKey()):null,v=n?workshopData(h.states[n.k]).nodes[n.id]:null,hits=v?.readyAt>now?3:v?.hits||0;
-   $('harvest-title').textContent=n?(n.resource==='logs'?'Chopping wood':n.resource==='ore'?'Mining iron ore':'Mining stone'):'Harvest collected';$('harvest-fill').style.width=(hits/3*100)+'%';
-   $('harvest-count').textContent=n?((v?.readyAt>now?'Depleted':hits+' / 3 harvest progress')+' · '+(p.bag[n.resource]||0)+' '+MATERIALS[n.resource]+' carried'):'';
+  if(!readout.hidden){const n=job?.node||(t?.type==='node'?t:null),p=n?packFor(h.states[n.k],h.actorKey()):null,v=n?workshopData(h.states[n.k]).nodes[n.id]:null,depleted=v?.readyAt>now||n?.wild&&resourceDepleted(n.x,n.z),hits=depleted?3:v?.hits||0;
+   $('harvest-title').textContent=n?(n.resource==='logs'?'Chopping wood':n.resource==='ore'?'Mining iron ore':'Mining stone'):'Harvest collected';$('harvest-fill').style.width=(hits/3*100)+'%';readout.querySelector('.harvest-track').setAttribute('aria-valuenow',String(hits));
+   $('harvest-count').textContent=n?((depleted?'Depleted':hits+' / 3 harvest progress')+' · '+(p.bag[n.resource]||0)+' '+MATERIALS[n.resource]+' carried'):'';
    const text=reward?.until>now?reward.text:receipts.length?'Confirming harvest…':job?'Swinging '+job.tool+'…':'Tap Gather to strike';if($('harvest-reward').textContent!==text)$('harvest-reward').textContent=text;
   }
   for(const s of stations)s.root.visible=near(s.bench,80);
