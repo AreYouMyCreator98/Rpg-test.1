@@ -66,7 +66,7 @@ export function installPrologue(api){
   if(net?.active&&!net.host&&!authoritative){net.graveyardWarning();return;}
   if(data().read||data().stage>=2||starting)return;
   const encounter=data();starting=true;let size=net?.active?net.partySize:1;
-  try{if(api.getAccounts?.()?.active)size=await api.getAccounts().graveyardParty()}catch(e){api.toast('The graves remain still: '+e.message);return}finally{starting=false}
+  try{if(net?.active&&api.getAccounts?.()?.active)size=await api.getAccounts().graveyardParty()}catch(e){api.toast('The graves remain still: '+e.message);return}finally{starting=false}
   if(data()!==encounter||data().read||data().stage>=2)return;
   data().partySize=size;data().read=true;data().stage=1;
   for(const e of foes){e.dmg=Math.round((e.prologueDamage??e.dmg)*(1+.1*(data().partySize-1)));if(e.prologue<count()&&!data().killed.includes(e.prologue)){e.hp=e.maxHp;e.dead=0;}}
