@@ -1,5 +1,5 @@
-import {bindResourceMesh,resourceDepleted} from './resource-visuals.js?v=realm-harvest-1';
-import {graphics,retireInstances} from './graphics.js?v=realm-harvest-1';
+import {bindResourceMesh,resourceDepleted} from './resource-visuals.js?v=realm-harvest-2';
+import {graphics,retireInstances} from './graphics.js?v=realm-harvest-2';
 // A bounded presentation layer. Original tree roots, terrain, roads and collision remain authoritative.
 export const VALE={left:-535,right:-335,top:-120,bottom:80};
 export const inVale=(x,z)=>x>=VALE.left&&x<=VALE.right&&z>=VALE.top&&z<=VALE.bottom;
@@ -67,7 +67,7 @@ export function installEmeraldVale(api){
  transformed.x+=sin(valeTime*1.15+origin.x*.31+origin.z*.21+position.y*.4)*strength*distanceFade;
  transformed.z+=cos(valeTime*.83+origin.z*.27)*strength*.45*distanceFade;
  #endif`)};
- const readyPromise=import('https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/GLTFLoader.js').then(({GLTFLoader})=>new GLTFLoader().loadAsync(new URL('./assets/environment/emerald-library.glb?v=realm-harvest-1',import.meta.url).href)).then(gltf=>{
+ const readyPromise=import('https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/GLTFLoader.js').then(({GLTFLoader})=>new GLTFLoader().loadAsync(new URL('./assets/environment/emerald-library.glb?v=realm-harvest-2',import.meta.url).href)).then(gltf=>{
   gltf.scene.updateMatrixWorld(true);const oldMaterials=new Set();gltf.scene.traverse(o=>{if(!o.isMesh)return;const geometry=o.geometry.clone().applyMatrix4(o.matrixWorld);geometry.computeBoundingSphere();models.set(o.name,geometry);oldMaterials.add(o.material);o.geometry.dispose()});for(const m of oldMaterials)m.dispose();
   for(const name of placements.values())if(!models.has(name.name)&&!models.has(name.name+'-near'))throw Error('Incomplete Emerald Vale library: '+name.name);
   for(const p of placements.values())cells.push({p,m:null,near:models.get(p.name+'-near')||models.get(p.name),far:models.get(p.name+'-far')||models.get(p.name+'-near')||models.get(p.name),x:p.cx*40+20,z:p.cz*40+20,detail:p.detail,lod:'far',last:0});loaded=true;
