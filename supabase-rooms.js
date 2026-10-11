@@ -1,3 +1,4 @@
+import {encodePacket,packetReader} from './network-packets.js?v=realm-net-sync-1';
 // Supabase handles authenticated membership and transport. Game authority stays
 // with the host. Private per-sender topics prevent guests spoofing host packets.
 export async function connectSupabase(url,key,receive,account=null) {
@@ -8,15 +9,18 @@ export async function connectSupabase(url,key,receive,account=null) {
   if(!session){const result=await db.auth.signInAnonymously();if(result.error)throw result.error;session=result.data.session}
   await db.realtime.setAuth(session.access_token);
   const id=session.user.id,channels=new Map();let room=null,interval=null,closed=false,polling=false,joining=false,generation=0,lastState=Date.now();
+  let packetSequence=0;const received=new Map(),latest=new Map(),sending=new Set();
   async function rpc(name,args){const {data,error}=await db.rpc('realm_'+name,args);if(error)throw error;return data}
   function errorMessage(e){receive({type:'error',message:e?.message||'Supabase connection failed.'})}
   async function subscribe(uid){
     if(channels.has(uid))return;
-    const channel=db.channel('realm:'+room.id+':'+uid,{config:{private:true,broadcast:{self:false,ack:false}}});channels.set(uid,channel);
-    channel.on('broadcast',{event:'game'},({payload})=>{
-      if(!room||!payload||typeof payload!=='object'||JSON.stringify(payload).length>196608)return;
+    const subscribedRoom=room.id;const channel=db.channel('realm:'+subscribedRoom+':'+uid,{config:{private:true,broadcast:{self:false,ack:false}}});channels.set(uid,channel);
+    const read=packetReader();channel.on('broadcast',{event:'game'},({payload})=>{
+      payload=read(payload);
+      if(!room||room.id!==subscribedRoom||!payload||typeof payload!=='object'||JSON.stringify(payload).length>1048576)return;
+      if(payload.type==='pose'||payload.type==='snapshot'){const k=uid+':'+payload.type;if(!Number.isSafeInteger(payload.seq)){receive({type:'ended',reason:'Your party uses a different network update. Everyone must reload before joining.'});return}if(payload.seq<=(received.get(k)||0))return;received.set(k,payload.seq)}
       if(payload.type==='pose')receive({type:'pose',id:uid,data:payload.data});
-      if(payload.type==='command'&&room.host===id)receive({type:'command',id:uid,data:payload.data});
+      if(payload.type==='command'&&room.host===id){const k=uid+':pose';if(payload.data?.pose&&Number.isSafeInteger(payload.seq)){if(payload.seq>(received.get(k)||0))received.set(k,payload.seq);else payload.data={...payload.data,pose:undefined}}receive({type:'command',id:uid,data:payload.data})}
       if(uid===room.host&&payload.type==='snapshot')receive(payload);
       if(uid===room.host&&payload.type==='event'&&(!payload.to||payload.to===id))receive(payload);
     });
@@ -33,7 +37,8 @@ export async function connectSupabase(url,key,receive,account=null) {
       receive({type:'roster',players:room.players,host:room.host});
     }catch(e){if(ticket!==generation)return;if(Date.now()-lastState>20000){await leave(false);receive({type:'ended',reason:'Connection lost. Your solo save is unchanged.'})}else errorMessage(e)}finally{polling=false}
   }
-  async function leave(notify=true){generation++;clearInterval(interval);interval=null;room=null;await db.removeAllChannels();channels.clear();if(notify)await rpc('leave_room')}
+  async function leave(notify=true){generation++;clearInterval(interval);interval=null;room=null;await db.removeAllChannels();channels.clear();received.clear();latest.clear();if(notify)await rpc('leave_room')}
+  async function broadcast(ch,payload){for(const packet of encodePacket(payload)){const result=await ch.send({type:'broadcast',event:'game',payload:packet});if(result==='error'||result==='timed out')throw Error('Party connection is delayed. Reconnecting…')}}
   async function send(m){
     if((m.type==='create'||m.type==='join')&&joining){errorMessage(new Error('Already joining a room. Please wait.'));return}
     try{
@@ -45,10 +50,16 @@ export async function connectSupabase(url,key,receive,account=null) {
         room=await rpc(account?(m.type==='create'?'create_character_room':'join_character_room'):(m.type==='create'?'create_room':'join_room'),{...(m.type==='create'?{player_name:m.name,is_public:m.public}:{player_name:m.name,invite_code:m.code}),...(account?{character_id:account.selected.id,session_id:account.sessionId}:{})});
         try{for(const p of room.players)await subscribe(p.id)}catch(e){await leave();throw e}
         lastState=Date.now();interval=setInterval(refresh,3000);
-        receive({type:'joined',slot:room.players.find(p=>p.id===id)?.slot??0,worldId:room.id,persistent:room.persistent,id,host:room.host,code:room.code,public:room.public});receive({type:'roster',players:room.players,host:room.host});return;
+        await receive({type:'joined',slot:room.players.find(p=>p.id===id)?.slot??0,worldId:room.id,persistent:room.persistent,id,host:room.host,code:room.code,public:room.public});receive({type:'roster',players:room.players,host:room.host});return;
       }
       if(m.type==='leave'){await leave();return}
-      const ch=channels.get(id);if(ch)await ch.send({type:'broadcast',event:'game',payload:m});
+      const ch=channels.get(id);if(!ch)return;
+      // Keep only the newest unsent pose/snapshot; never queue obsolete movement.
+      const payload=JSON.parse(JSON.stringify({...m,seq:++packetSequence},(k,v)=>typeof v==='number'&&!Number.isInteger(v)?Math.round(v*1000)/1000:v));
+      if(m.type==='pose'||m.type==='snapshot'){
+        const kind=m.type;if(kind==='snapshot'&&!payload.data.world&&latest.get(kind)?.payload.data.world)payload.data.world=latest.get(kind).payload.data.world;latest.set(kind,{ch,payload});if(sending.has(kind))return;sending.add(kind);
+        try{while(latest.has(kind)&&room&&!closed){const next=latest.get(kind);latest.delete(kind);await broadcast(next.ch,next.payload)}}finally{sending.delete(kind)}
+      }else await broadcast(ch,payload);
     }catch(e){errorMessage(e)}finally{if(m.type==='create'||m.type==='join')joining=false}
   }
   // Each tab has an in-memory identity. Persistent Supabase auth broadcasts

@@ -12,7 +12,7 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
 }}`;
 (async()=>{
  const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader','--disable-background-timer-throttling','--disable-renderer-backgrounding']});
- const rooms=new Map(),members=new Map(),subscriptions=new Map(),errors=[];let serial=0,delayPage=null,releaseState=null,stateWaiting=null;
+ const rooms=new Map(),members=new Map(),subscriptions=new Map(),errors=[];let fragments=0,serial=0,delayPage=null,releaseState=null,stateWaiting=null;
  function roomState(uid){const r=rooms.get(members.get(uid));return r?{...r,players:[...r.players]}:null}
  try{
  const context=await browser.newContext({viewport:{width:960,height:700}});
@@ -31,7 +31,7 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  });
  await context.exposeBinding('__roomSubscribe',({page},uid,topic)=>{const r=roomState(uid);assert(r&&topic.startsWith('realm:'+r.id+':'));const list=subscriptions.get(topic)||new Set();list.add(page);subscriptions.set(topic,list)});
  await context.exposeBinding('__roomRemove',({page},topic)=>subscriptions.get(topic)?.delete(page));
- await context.exposeBinding('__roomSend',async({page},uid,topic,payload)=>{assert(topic.endsWith(':'+uid));for(const dest of subscriptions.get(topic)||[])if(dest!==page&&!dest.isClosed())await dest.evaluate(([t,p])=>window.__roomEmit(t,p),[topic,payload]);return 'ok'});
+ await context.exposeBinding('__roomSend',async({page},uid,topic,payload)=>{assert(topic.endsWith(':'+uid));if(payload.type==='fragment')fragments++;for(const dest of subscriptions.get(topic)||[])if(dest!==page&&!dest.isClosed())await dest.evaluate(([t,p])=>window.__roomEmit(t,p),[topic,payload]);return 'ok'});
  const a=await context.newPage(),b=await context.newPage();for(const p of [a,b]){p.on('pageerror',e=>errors.push(e.message));await p.goto((process.env.GAME_URL||'http://127.0.0.1:8000/')+'?test');await p.waitForFunction(()=>window.__realm?.net);await p.evaluate(()=>{const setRatio=__realm.renderer.setPixelRatio.bind(__realm.renderer);__realm.renderer.setPixelRatio=value=>setRatio(Math.min(value,.25));__realm.renderer.setPixelRatio(.25);__realm.renderer.render=()=>{}})}
  await a.click('#play');await a.evaluate(()=>{__realm.player.coins=321;__realm.save()});const saved=await a.evaluate(()=>localStorage.getItem('realm-fallen-save-v1'));
  await a.evaluate(()=>__realm.net.lobby());await a.fill('#room-name','Host');await a.click('#create-private');await a.waitForFunction(()=>__realm.net.active&&__realm.net.host);const code=await a.evaluate(()=>__realm.net.code);
@@ -45,6 +45,19 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  for(const page of [a,b]){await page.waitForFunction(()=>__realm.prologue.data().read&&__realm.prologue.foes.length===16);assert.equal(await page.evaluate(()=>__realm.prologue.foes[0].dmg),9);assert.equal(await page.evaluate(()=>__realm.prologue.foes.filter(e=>e.hp>0).length),16);}
  await a.evaluate(()=>{__realm.prologue.beginAmbush();for(const e of __realm.prologue.foes)e.cooldown=1000});assert.equal(await a.evaluate(()=>__realm.prologue.foes.length),16);
  console.log('PASS guest warning triggers 16 shared skeletons, increased damage and no duplicate ambush');
+ await b.waitForFunction(()=>__realm.prologue.foes.every(e=>!e.buried));
+ assert(await b.evaluate(()=>__realm.prologue.foes.every(e=>e.root.visible&&e.rig.position.y>-.1&&e.rig.position.y<.2)),'risen skeleton bodies return above ground on guest');
+ const hostId=rooms.get(code).host,topic='realm:'+rooms.get(code).id+':'+hostId;
+ await b.waitForFunction(()=>[...__realm.net.peers.values()].some(p=>p.pose));const hostPose=await b.evaluate(()=>[...__realm.net.peers.values()][0].pose);
+ await b.evaluate(([t,d])=>window.__roomEmit(t,{type:'pose',seq:1,data:{...d,x:-500,z:-700}}),[topic,hostPose]);
+ await b.evaluate(t=>window.__roomEmit(t,{type:'snapshot',seq:1,data:{enemies:[]}}),topic);
+ assert(await b.evaluate(()=>__realm.net.active&&[...__realm.net.peers.values()][0].pose.x>-100),'stale pose and snapshot ignored');
+ console.log('PASS guest emergence stays visible and delayed packets cannot rewind movement/world');
+ const beforeFragments=fragments;await a.evaluate(()=>{__realm.homestead.states.home.__networkTest='x'.repeat(240000);__realm.visuals.weather.state().days=22.5});
+ await b.waitForFunction(()=>Math.abs(__realm.visuals.weather.state().days-22.5)<.01);assert(fragments>beforeFragments,'large world state is fragmented and delivered');await a.evaluate(()=>delete __realm.homestead.states.home.__networkTest);
+ console.log('PASS oversized world snapshot arrives completely without silently losing state');
+
+
  assert.equal(await a.evaluate(()=>__realm.player.coins),45);assert.equal(await a.evaluate(()=>localStorage.getItem('realm-fallen-save-v1')),saved);
  await a.evaluate(()=>{__realm.visuals.weather.state().days=21.2});await b.waitForFunction(()=>Math.abs(__realm.visuals.weather.state().days-21.2)<.01);assert.equal(await a.evaluate(()=>__realm.visuals.weather.weather),await b.evaluate(()=>__realm.visuals.weather.weather));console.log('PASS host world clock and weather synchronize to guest');
  console.log('PASS private room creation, hidden discovery, code join, remote hero and isolated solo save');

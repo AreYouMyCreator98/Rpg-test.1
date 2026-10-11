@@ -43,6 +43,7 @@ on:
       - ui.js
       - frontier.js
       - living-world.js
+      - network-packets.js
       - multiplayer.js
       - multiplayer-config.js
       - supabase-rooms.js

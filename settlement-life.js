@@ -1,4 +1,4 @@
-import {batchScenery} from './scene-batch.js?v=realm-party-graves-2';
+import {batchScenery} from './scene-batch.js?v=realm-net-sync-1';
 
 // Bounded A*: queries the very same collision predicate used by heroes and mounts.
 export function findStreetPath(start, goal, blocked, limit=1800) {
