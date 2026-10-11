@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><link rel="icon" href="data:,"><meta name="theme-color" content="#102f29"><title>Realm of the Fallen</title>
-<link rel="stylesheet" href="./ui.css?v=realm-gathering-2"></head><body>
+<link rel="stylesheet" href="./ui.css?v=realm-harvest-1"></head><body>
 <div id="shade"></div><section id="title"><div class="eyebrow">The Shattered Marches · World expansion</div><h1>Realm of<br>the <span>Fallen</span></h1><div class="rule"></div><p>Beyond the old forest, a kingdom awaits. Explore mountain villages, reclaim the roads, and challenge fourteen bosses, descend into ancient dungeons and ride with your companions.</p><div class="buttons"><button class="primary" id="play" disabled>Begin your journey &nbsp; →</button><button id="continue" class="hidden">Continue</button></div><div class="small-buttons"><button id="title-controls">Controls</button><button id="title-settings">Settings</button></div><div id="loading">Awakening the forest…</div></section><div id="brand">REALM OF THE FALLEN &nbsp; / &nbsp; THE SHATTERED MARCHES</div>
 <div id="hud" class="hidden">
  <section class="hero-card panel" aria-label="Character status"><span class="hero-emblem" data-icon="hero"></span><div class="hero-top"><span class="hero-name">The Wanderer</span><span class="level" id="level">Lv 1</span></div><div class="status-row health"><div class="bar"><i id="hpbar"></i></div><span id="hptext"></span></div><div class="status-row experience"><div class="bar xp"><i id="xpbar"></i></div><span id="xptext"></span></div><div class="status-row stamina-row"><div class="bar stamina"><i id="staminabar"></i></div><span id="stamtext">Stamina 100 / 100</span></div></section>
@@ -40,33 +40,35 @@
 </script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js"}}</script>
 <script type="module">
-import {graphics,normaliseGraphics} from './graphics.js?v=realm-gathering-2';
-import {batchScenery} from './scene-batch.js?v=realm-gathering-2';
-import {valeGroundColor,valeRiverProfile} from './emerald-vale.js?v=realm-gathering-2';
-import {createForestArt} from './environment-art.js?v=realm-gathering-2';
-import {installBossArenas} from './boss-arenas.js?v=realm-gathering-2';
-import {createCinematic} from './cinematic.js?v=realm-gathering-2';
-import {refineAdventurer} from './hero-detail.js?v=realm-gathering-2';
-import {regionalStats,staggerEnemy} from './combat-balance.js?v=realm-gathering-2';
-import {loadScoutAsset,replaceScouts,animateScout} from './scout-model.js?v=realm-gathering-2';
+import {bindResourceMesh,resourceDepleted} from './resource-visuals.js?v=realm-harvest-1';
+
+import {graphics,normaliseGraphics} from './graphics.js?v=realm-harvest-1';
+import {batchScenery} from './scene-batch.js?v=realm-harvest-1';
+import {valeGroundColor,valeRiverProfile} from './emerald-vale.js?v=realm-harvest-1';
+import {createForestArt} from './environment-art.js?v=realm-harvest-1';
+import {installBossArenas} from './boss-arenas.js?v=realm-harvest-1';
+import {createCinematic} from './cinematic.js?v=realm-harvest-1';
+import {refineAdventurer} from './hero-detail.js?v=realm-harvest-1';
+import {regionalStats,staggerEnemy} from './combat-balance.js?v=realm-harvest-1';
+import {loadScoutAsset,replaceScouts,animateScout} from './scout-model.js?v=realm-harvest-1';
 const scoutAssetPromise=loadScoutAsset();
-let installLivingWorld,migrateSave;try{({installLivingWorld,migrateSave}=await import('./living-world.js?v=realm-gathering-2'))}catch(e){fatal('The Living World module could not load. Keep index.html and living-world.js together, then reload.');throw e}
-const {installSettlementLife}=await import('./settlement-life.js?v=realm-gathering-2');
-const {installStrongholdArt}=await import('./stronghold-art.js?v=realm-gathering-2');
-const {installFrontier,BOUNDS,WORLD_WIDTH,WORLD_DEPTH,roadDistance,terrainColor,extraHeight}=await import('./frontier.js?v=realm-gathering-2');
-import {installHomestead} from './homestead.js?v=realm-gathering-2';
-import {installAccounts} from './accounts.js?v=realm-gathering-2';
+let installLivingWorld,migrateSave;try{({installLivingWorld,migrateSave}=await import('./living-world.js?v=realm-harvest-1'))}catch(e){fatal('The Living World module could not load. Keep index.html and living-world.js together, then reload.');throw e}
+const {installSettlementLife}=await import('./settlement-life.js?v=realm-harvest-1');
+const {installStrongholdArt}=await import('./stronghold-art.js?v=realm-harvest-1');
+const {installFrontier,BOUNDS,WORLD_WIDTH,WORLD_DEPTH,roadDistance,terrainColor,extraHeight}=await import('./frontier.js?v=realm-harvest-1');
+import {installHomestead} from './homestead.js?v=realm-harvest-1';
+import {installAccounts} from './accounts.js?v=realm-harvest-1';
 let settlementLife=null,strongholds=null,arenas=null,prologue=null,homestead=null,living=null,net=null,frontier=null,ui=null,visuals=null,progression=null,expansion=null,companions=null,accounts=null,accountActor=null,accountDrops=false,accountReward=null;let lastTownCombat=-Infinity,townReturnBusy=false;
-const {installPrologue}=await import('./prologue.js?v=realm-gathering-2');
-const {installUI,icon}=await import('./ui.js?v=realm-gathering-2');
-let installVisualWorld;try{({installVisualWorld}=await import('./visual-world.js?v=realm-gathering-2'))}catch(e){fatal('The scenery module could not load. Reload to retry; keep visual-world.js with the other game files. Your saved journey is safe.');throw e}
-const {installExpansionWorld}=await import('./expansion-world.js?v=realm-gathering-2');
-const {installCompanions,normaliseCompanions}=await import('./companions.js?v=realm-gathering-2');
+const {installPrologue}=await import('./prologue.js?v=realm-harvest-1');
+const {installUI,icon}=await import('./ui.js?v=realm-harvest-1');
+let installVisualWorld;try{({installVisualWorld}=await import('./visual-world.js?v=realm-harvest-1'))}catch(e){fatal('The scenery module could not load. Reload to retry; keep visual-world.js with the other game files. Your saved journey is safe.');throw e}
+const {installExpansionWorld}=await import('./expansion-world.js?v=realm-harvest-1');
+const {installCompanions,normaliseCompanions}=await import('./companions.js?v=realm-harvest-1');
 const $=id=>document.getElementById(id);let THREE;
 try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js')}catch(e){fatal('The forest could not load. Check your internet connection and reload. The game needs access to cdn.jsdelivr.net.');throw e}
 function fatal(message){const el=document.createElement('div');el.id='fatal';el.style.cssText='position:fixed;inset:0;z-index:100;background:#102f29;color:#f3e8d1;display:grid;place-content:center;padding:24px';el.innerHTML='<h2>Journey interrupted</h2><p></p><button onclick="location.reload()">Try again</button>';el.querySelector('p').textContent=message;document.body.append(el)}
-import {prepareRollRig,groundedRoll,resetRoll,normaliseCamera} from './adventure-motion.js?v=realm-gathering-2';
-import {normaliseProgression,characterStats,refreshVitals,xpForLevel,installProgression} from './progression.js?v=realm-gathering-2';
+import {prepareRollRig,groundedRoll,resetRoll,normaliseCamera} from './adventure-motion.js?v=realm-harvest-1';
+import {normaliseProgression,characterStats,refreshVitals,xpForLevel,installProgression} from './progression.js?v=realm-harvest-1';
 const forestArt=createForestArt(THREE);
 const TAU=Math.PI*2,clamp=THREE.MathUtils.clamp,lerp=THREE.MathUtils.lerp,rand=(a,b)=>a+Math.random()*(b-a),V=THREE.Vector3;
 const mobile=matchMedia('(pointer:coarse)').matches;if(mobile)document.body.classList.add('touch');
@@ -87,12 +89,12 @@ const pathDist=(x,z)=>Math.min(roadDistance(x,z),segmentDist(x,z,{x:-23,z:36},{x
 function landscapeColor(x,z){const bank=Math.abs(z-riverZ(x)),path=pathDist(x,z),smooth=(a,b,v)=>{const t=clamp((v-a)/(b-a),0,1);return t*t*(3-2*t)},mix=(a,b,t)=>{let c=0;for(const bit of [16,8,0])c|=Math.round(((a>>bit)&255)*(1-t)+((b>>bit)&255)*t)<<bit;return c};let base=mix(0x38784a,0x4b7749,smooth(-35,-65,z));base=mix(base,terrainColor(x,z),smooth(75,110,Math.max(Math.abs(x),Math.abs(z))));base=mix(base,0x969c6c,1-smooth(5,9,bank));base=mix(base,0xb5a16b,1-smooth(1.8,3.2,path));return valeGroundColor(x,z,base,path,bank)}
 let tg=new THREE.PlaneGeometry(WORLD_WIDTH,WORLD_DEPTH,Math.ceil(WORLD_WIDTH/3),Math.ceil(WORLD_DEPTH/3));tg.rotateX(-Math.PI/2);tg.translate((BOUNDS.left+BOUNDS.right)/2,0,(BOUNDS.top+BOUNDS.bottom)/2);let pos=tg.attributes.position,colors=[];for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,ground(x,z));let c=new THREE.Color(landscapeColor(x,z));c.multiplyScalar(.84+seeded()*.13+.12*Math.sin(x*.17)*Math.cos(z*.13));colors.push(c.r,c.g,c.b)}seed=98421;for(let i=0;i<113*121;i++)seeded();tg.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));tg.computeVertexNormals();let terrain=new THREE.Mesh(tg,new THREE.MeshStandardMaterial({vertexColors:true,flatShading:false,roughness:1}));terrain.receiveShadow=true;scene.add(terrain);
 const waterGeo=new THREE.PlaneGeometry(WORLD_WIDTH,riverWidth,Math.ceil(WORLD_WIDTH/2.5),5);waterGeo.rotateX(-Math.PI/2);waterGeo.translate((BOUNDS.left+BOUNDS.right)/2,0,0);const wp=waterGeo.attributes.position;for(let i=0;i<wp.count;i++){wp.setZ(i,wp.getZ(i)+riverZ(wp.getX(i)));wp.setY(i,-.36)}waterGeo.computeVertexNormals();const water=new THREE.Mesh(waterGeo,mat(0x43bdba,{roughness:.27,metalness:.25,transparent:true,opacity:.86}));scene.add(water);
-const obstacles=[],obstacleGrid=new Map();function obstacle(x,z,r){const o={x,z,r};obstacles.push(o);for(let a=Math.floor((x-r-1)/12);a<=Math.floor((x+r+1)/12);a++)for(let b=Math.floor((z-r-1)/12);b<=Math.floor((z+r+1)/12);b++){const k=a+','+b;if(!obstacleGrid.has(k))obstacleGrid.set(k,[]);obstacleGrid.get(k).push(o)}}function nearbyObstacles(x,z){return obstacleGrid.get(Math.floor(x/12)+','+Math.floor(z/12))||[]}function bridgeAt(x,z){return bridges.some(b=>Math.abs(x-b)<2.4&&Math.abs(z-riverZ(b))<8.5)}function surface(x,z,feet){const base=bridgeAt(x,z)?Math.max(.5,ground(x,z)):ground(x,z);return homestead?homestead.surface(x,z,base,feet??hero.root.position.y):base}function deep(x,z){return Math.abs(z-riverZ(x))<3.8&&!bridgeAt(x,z)&&Math.abs(x-62)>6}
+const obstacles=[],obstacleGrid=new Map();function obstacle(x,z,r){const o={x,z,r};obstacles.push(o);for(let a=Math.floor((x-r-1)/12);a<=Math.floor((x+r+1)/12);a++)for(let b=Math.floor((z-r-1)/12);b<=Math.floor((z+r+1)/12);b++){const k=a+','+b;if(!obstacleGrid.has(k))obstacleGrid.set(k,[]);obstacleGrid.get(k).push(o)}}function nearbyObstacles(x,z){return (obstacleGrid.get(Math.floor(x/12)+','+Math.floor(z/12))||[]).filter(o=>!((o.r===.5||o.r===.55)&&resourceDepleted(o.x,o.z)))}function bridgeAt(x,z){return bridges.some(b=>Math.abs(x-b)<2.4&&Math.abs(z-riverZ(b))<8.5)}function surface(x,z,feet){const base=bridgeAt(x,z)?Math.max(.5,ground(x,z)):ground(x,z);return homestead?homestead.surface(x,z,base,feet??hero.root.position.y):base}function deep(x,z){return Math.abs(z-riverZ(x))<3.8&&!bridgeAt(x,z)&&Math.abs(x-62)>6}
 for(const x of bridges){let z=riverZ(x);for(let i=-8;i<=8;i++){mesh('box',0x8e6740,x,.45,z+i,4.6,.28,.91)}for(let side of [-1,1]){mesh('box',0x674d35,x+side*2.1,1.5,z,.16,.16,17);for(let i=-8;i<=8;i+=4)mesh('box',0x725237,x+side*2.1,.9,z+i,.2,1.6,.22)}}
 function instance(shape,color,entries){if(!entries.length)return;const m=new THREE.InstancedMesh(geo[shape],mat(color),entries.length),dummy=new THREE.Object3D();entries.forEach((e,i)=>{dummy.position.set(e[0],e[1],e[2]);dummy.scale.set(e[3],e[4],e[5]);dummy.rotation.set(0,e[6]||0,e[7]||0);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix)});m.castShadow=true;m.receiveShadow=true;const tint=new THREE.Color();for(let i=0;i<entries.length;i++){const e=entries[i];tint.setHSL(.28+Math.sin(e[0]*3+e[2])*.02,.08,.77+.12*Math.sin(e[0]+e[2]*2));m.setColorAt(i,tint)}scene.add(m);return m}
 const trunks=[],pines=[],oaks=[],bushes=[],grass=[],flowers=[],rocks=[];
 for(let i=0;i<570;i++){let x=sr(-87,87),z=sr(-90,94);if(Math.hypot(x+46,z-36)<6||Math.hypot(x,z-71)<23||Math.abs(z-riverZ(x))<9||pathDist(x,z)<4||poi.some(p=>Math.hypot(x-p.x,z-p.z)<10))continue;const y=ground(x,z),h=sr(4.3,8.5),pine=seeded()<.62;trunks.push([x,y+h*.38,z,.24,h*.76,.24]);if(pine){for(let j=0;j<3;j++)pines.push([x,y+h*(.5+j*.2),z,h*(.32-j*.055),h*.55,h*(.32-j*.055)])}else{oaks.push([x,y+h*.8,z,2.4,h*.4,2.2,seeded()*6]);oaks.push([x+1.3,y+h*.68,z+.3,1.8,h*.3,1.9])}obstacle(x,z,.55)}
-const startingScenery=[];function nearInstances(shape,color,entries,geometry){const cells=new Map();for(const e of entries){const key=Math.floor(e[0]/48)+','+Math.floor(e[2]/48);if(!cells.has(key))cells.set(key,[]);cells.get(key).push(e)}for(const list of cells.values()){const m=instance(shape,color,list);if(geometry){m.geometry=geometry;const tint=m.material.color.clone();m.material=forestArt.leafMaterial.clone();m.material.onBeforeCompile=forestArt.leafMaterial.onBeforeCompile;m.material.color.copy(tint)}m.computeBoundingSphere();startingScenery.push({m,tree:!!geometry||shape==='cyl',x:list[0][0],z:list[0][2]})}}
+const startingScenery=[];function nearInstances(shape,color,entries,geometry){const cells=new Map();for(const e of entries){const key=Math.floor(e[0]/48)+','+Math.floor(e[2]/48);if(!cells.has(key))cells.set(key,[]);cells.get(key).push(e)}for(const list of cells.values()){const m=instance(shape,color,list);if(geometry){m.geometry=geometry;const tint=m.material.color.clone();m.material=forestArt.leafMaterial.clone();m.material.onBeforeCompile=forestArt.leafMaterial.onBeforeCompile;m.material.color.copy(tint)}if(geometry||shape==='cyl')bindResourceMesh(THREE,m,list,ground,true);m.computeBoundingSphere();startingScenery.push({m,tree:!!geometry||shape==='cyl',x:list[0][0],z:list[0][2]})}}
 nearInstances('cyl',0x614b33,trunks);nearInstances('cone',0x245e43,pines,forestArt.pine);nearInstances('orb',0x42894b,oaks,forestArt.canopy);
 for(let i=0;i<1800;i++){let x=sr(-88,88),z=sr(-90,95),y=ground(x,z);if(Math.hypot(x,z-71)<21||Math.abs(z-riverZ(x))<5||pathDist(x,z)<2.6)continue;let r=seeded();if(r<.12){bushes.push([x,y+.4,z,.8,.7,.7]);}else if(r<.24){rocks.push([x,y+.3,z,.6,.6,.7,seeded()*6]);}else{grass.push([x,y+.24,z,.18,sr(.35,.8),.13,seeded()*6]);if(r>.92)flowers.push([x,y+.47,z,.14,.12,.14])}}
 nearInstances('orb',0x44764c,bushes);nearInstances('cone',0x7baf62,grass);nearInstances('orb',0xf1cd81,flowers);nearInstances('orb',0x809184,rocks);
@@ -321,7 +323,7 @@ settlementLife=installSettlementLife({THREE,scene,mesh,mat,ground,surface,hero,l
 strongholds=installStrongholdArt({THREE,scene,mesh,mat,ground,hero,arenas,expansion,frontier});
 frontier.invalidateAtlas();
 living.restore(null);
-try{const {installMultiplayer}=await import('./multiplayer.js?v=realm-gathering-2');net=installMultiplayer({bounds:BOUNDS,$,THREE,scene,hero,enemies,loot,items,chests,living,frontier,expansion,companions,accountStructure,getAccounts(){return accounts},getHomestead(){return homestead},getSettlementLife(){return settlementLife},character,animate,groundedRoll,resetRoll,characterStats,normaliseProgression,face,project,drop,removeLoot,addItem,awardXP,burst,sound,toast,modal,closeModal,start,readSave,hurtPlayer,
+try{const {installMultiplayer}=await import('./multiplayer.js?v=realm-harvest-1');net=installMultiplayer({bounds:BOUNDS,$,THREE,scene,hero,enemies,loot,items,chests,living,frontier,expansion,companions,accountStructure,getAccounts(){return accounts},getHomestead(){return homestead},getSettlementLife(){return settlementLife},character,animate,groundedRoll,resetRoll,characterStats,normaliseProgression,face,project,drop,removeLoot,addItem,awardXP,burst,sound,toast,modal,closeModal,start,readSave,hurtPlayer,
 get player(){return player},get panel(){return panel},get state(){return state},get attack(){return attack},get dodge(){return dodge},get blocking(){return blocking},get bossDead(){return bossDead},setBossDead(value){bossDead=value},
 structureFrom(uid,fn){accountActor=uid===net?.id?null:uid;try{return fn()}finally{accountActor=null}},
 hitFrom(e,amount,heavy,ch,combatStats){const original=hero.root.position.clone();try{accountActor=ch.netId;hero.root.position.copy(ch.root.position);hurtEnemy(e,amount,heavy,combatStats)}finally{accountActor=null;hero.root.position.copy(original)}}
@@ -329,7 +331,7 @@ hitFrom(e,amount,heavy,ch,combatStats){const original=hero.root.position.clone()
 if(!getComputedStyle(document.documentElement).getPropertyValue('--ui-forest').trim()){fatal('The interface files could not load. Reload this page to retry; your saved journey is safe.');throw new Error('UI stylesheet missing')}
 progression=installProgression({$,modal,save,items,getName(){return accounts?.selected?.name||'The Wanderer'},accountStructure,accountEvent(action,body){return accounts?.event(action,body)},get player(){return player}});
 accounts=installAccounts({$,hero,items,enemies,settings,snapshot,start,showTitle,readSave,equipVisual,toast,modal,closeModal,net(){return net},arriveTown,normalise(p){normaliseProgression(p);normaliseCompanions(p)},get player(){return player},get state(){return state},get panel(){return panel}});
-homestead=installHomestead({THREE,hero,scene,mesh,$,ground,burst,get attack(){return attack},get dodge(){return dodge},get mounted(){return companions?.mounted},poi,frontier,living,accounts(){return accounts},net(){return net},readSave,save,sound,toast,modal,closeModal,get panel(){return panel},get state(){return state}});
+homestead=installHomestead({THREE,hero,shield,scene,mesh,$,ground,burst,get attack(){return attack},get dodge(){return dodge},get mounted(){return companions?.mounted},poi,frontier,living,accounts(){return accounts},net(){return net},readSave,save,sound,toast,modal,closeModal,get panel(){return panel},get state(){return state}});
 ui=installUI({returnTown:townReturnMenu,homestead,accounts,prologue,$,living,hero,items,inventory,stats,xpNeeded,progression,expansion,companions,modal,closeModal,settingsMenu,controls,systemPause,getNet(){return net},get player(){return player},get panel(){return panel},get blocking(){return blocking},get guardBreak(){return guardBreak},get dodgeCooldown(){return dodgeCooldown}});
 $('play').disabled=false;$('loading').textContent='A complete journey. No account required.';if(readSave()||accounts.hasRemembered)$('continue').classList.remove('hidden');
 frontier.registerWildlands();poi.push({name:"The Emerald Vale",x:-430,z:30},{name:"Vale Overlook",x:-492,z:-30});

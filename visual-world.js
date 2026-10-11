@@ -1,11 +1,12 @@
-import {installWorldWeather} from './world-weather.js?v=realm-gathering-2';
-import {dressVillage} from './village-art.js?v=realm-gathering-2';
-import {installRiverDetails} from './river-details.js?v=realm-gathering-2';
-import {installEnvironmentLife} from './environment-life.js?v=realm-gathering-2';
-import {graphics,retireInstances} from './graphics.js?v=realm-gathering-2';
-import {createTerrainStream} from './terrain-stream.js?v=realm-gathering-2';
-import {createWesternRange} from './emerald-landscape.js?v=realm-gathering-2';
-import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-gathering-2';
+import {bindResourceMesh} from './resource-visuals.js?v=realm-harvest-1';
+import {installWorldWeather} from './world-weather.js?v=realm-harvest-1';
+import {dressVillage} from './village-art.js?v=realm-harvest-1';
+import {installRiverDetails} from './river-details.js?v=realm-harvest-1';
+import {installEnvironmentLife} from './environment-life.js?v=realm-harvest-1';
+import {graphics,retireInstances} from './graphics.js?v=realm-harvest-1';
+import {createTerrainStream} from './terrain-stream.js?v=realm-harvest-1';
+import {createWesternRange} from './emerald-landscape.js?v=realm-harvest-1';
+import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-harvest-1';
 // Presentation only. No save, item, enemy, network or collision ownership.
 // Repeated decoration is instanced by material in spatial cells; Vale assets are repository-hosted.
 export function installVisualWorld(api) {
@@ -47,10 +48,10 @@ export function installVisualWorld(api) {
   scene.remove(api.terrain);api.terrain.geometry.dispose();
   const settlements=[{x:0,z:64,kind:'village'},...frontier.settlements];
   const clear=(x,z,r=1)=>api.nearbyObstacles(x,z).every(o=>Math.hypot(o.x-x,o.z-z)>o.r+r);
-  function add(shape,tint,x,y,z,sx,sy,sz,ry=0,rz=0,detail=false,rx=0) {
+  function add(shape,tint,x,y,z,sx,sy,sz,ry=0,rz=0,detail=false,rx=0,resource=null) {
     const cx=shape==='mountain'?0:Math.floor(x/64),cz=shape==='mountain'?0:Math.floor(z/64),key=[cx,cz,shape,detail,inVale(x,z)].join(':');
     if(!batches.has(key))batches.set(key,{cx,cz,shape,tint,detail,vale:inVale(x,z),entries:[]});
-    batches.get(key).entries.push([x,y,z,sx,sy,sz,ry,rz,rx,tint]);
+    batches.get(key).entries.push([x,y,z,sx,sy,sz,ry,rz,rx,tint,resource?.x,resource?.z]);
   }
   // Clumps frame the existing route, never close a traversable passage.
   // Trees grow only around existing trunks: collision footprints and the map remain valid.
@@ -60,9 +61,9 @@ export function installVisualWorld(api) {
     const o=treeRoots[i],x=o.x,z=o.z,y=ground(x,z),h=range(5.5,9.8);
     if((z<-250&&z>=-340&&x>=-330)||z<-720)continue;
     // Taller, rounded crown clusters create layered anime-inspired woodland.
-    if(i%6===1){for(let j=0;j<3;j++)add('canopy',j===2?0x5e9c54:0x397f4d,x+Math.sin(j*2.4)*1.3,y+h*(.65+j*.09),z+Math.cos(j*2.4)*1.1,2.3,h*.23,2.15,i*.4);}
+    if(i%6===1){for(let j=0;j<3;j++)add('canopy',j===2?0x5e9c54:0x397f4d,x+Math.sin(j*2.4)*1.3,y+h*(.65+j*.09),z+Math.cos(j*2.4)*1.1,2.3,h*.23,2.15,i*.4,0,false,0,{x,z});}
     // Understorey around existing roots, fern fronds and emerald lower branches.
-    if(i%3===0)for(let j=0;j<3;j++)add('cone',0x20583e,x,y+h*(.32+j*.22),z,h*(.25-j*.052),h*.48,h*(.25-j*.052),i*.7);
+    if(i%3===0)for(let j=0;j<3;j++)add('cone',0x20583e,x,y+h*(.32+j*.22),z,h*(.25-j*.052),h*.48,h*(.25-j*.052),i*.7,0,false,0,{x,z});
     for(let j=0;j<3;j++){
       const a=range(0,6.28),r=range(.65,2),xx=x+Math.sin(a)*r,zz=z+Math.cos(a)*r;
       if(pathDist(xx,zz)<2.8)continue;
@@ -244,7 +245,7 @@ export function installVisualWorld(api) {
   for(const b of batches.values()){
     const m=new THREE.InstancedMesh(decorativeGeo[b.shape],b.shape==='blade'?grassMaterial:b.shape==='mountain'?mountainMaterial:b.shape==='canopy'?forestArt.leafMaterial:mat(0xffffff,{flatShading:false}),b.entries.length);
     b.entries.forEach((e,i)=>{dummy.position.set(...e.slice(0,3));dummy.scale.set(...e.slice(3,6));dummy.rotation.set(e[8],e[6],e[7]);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix);color.setHex(e[9]).multiplyScalar(.88+random()*.12);m.setColorAt(i,color)});
-    m.castShadow=!b.detail;m.receiveShadow=true;m.computeBoundingSphere();root.add(m);chunks.push({m,vale:['canopy','cone'].includes(b.shape)||b.vale&&['orb','blade'].includes(b.shape),x:b.cx*64+32,z:b.cz*64+32,detail:b.detail,sky:b.shape==='mountain'||b.cx*64<BOUNDS.left||b.cx*64>BOUNDS.right||b.cz*64<BOUNDS.top||b.cz*64>BOUNDS.bottom||b.entries.some(e=>e[2]===-73&&e[0]>=-16&&e[0]<=0)});
+    if(['canopy','cone'].includes(b.shape)&&!b.detail)bindResourceMesh(THREE,m,b.entries,ground);m.castShadow=!b.detail;m.receiveShadow=true;m.computeBoundingSphere();root.add(m);chunks.push({m,vale:['canopy','cone'].includes(b.shape)||b.vale&&['orb','blade'].includes(b.shape),x:b.cx*64+32,z:b.cz*64+32,detail:b.detail,sky:b.shape==='mountain'||b.cx*64<BOUNDS.left||b.cx*64>BOUNDS.right||b.cz*64<BOUNDS.top||b.cz*64>BOUNDS.bottom||b.entries.some(e=>e[2]===-73&&e[0]>=-16&&e[0]<=0)});
   }
   batches.clear();
   // Soft grounding remains visible on Low, where the real-time shadow map is disabled.

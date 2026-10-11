@@ -1,10 +1,11 @@
-import {graphics,retireInstances} from './graphics.js?v=realm-gathering-2';
-import {inVale} from './emerald-vale.js?v=realm-gathering-2';
-import {icon} from './ui.js?v=realm-gathering-2';
+import {bindResourceMesh,resourceDepleted} from './resource-visuals.js?v=realm-harvest-1';
+import {graphics,retireInstances} from './graphics.js?v=realm-harvest-1';
+import {inVale} from './emerald-vale.js?v=realm-harvest-1';
+import {icon} from './ui.js?v=realm-harvest-1';
 // Recover older cached HTML before it can pair its obsolete HUD with this module.
 // This module must retain this guard while pre-design-system pages remain cached.
-if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-gathering-2"]')){
- const fresh=new URL(location.href),release='realm-gathering-2';
+if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-harvest-1"]')){
+ const fresh=new URL(location.href),release='realm-harvest-1';
  if(fresh.searchParams.get('v')!==release){fresh.searchParams.set('v',release);location.replace(fresh.href)}
  else{document.body.textContent='The game update could not load. Reopen the game to retry. Your saved journey is safe.'}
  await new Promise(()=>{}); // Navigation replaces this document; never initialize mixed UI.
@@ -109,7 +110,7 @@ export function installFrontier(api){
   const key=Math.floor(x/48)+','+Math.floor(z/48)+','+inVale(x,z);if(!chunks.has(key))chunks.set(key,{vale:inVale(x,z),x:Math.floor(x/48)*48+24,z:Math.floor(z/48)*48+24,trunk:[],leaf:[],rock:[]});const chunk=chunks.get(key),y=ground(x,z),h=i<3400?4+random(i*3+2)*4:6+random(i*3+2)*5;
   if((z<-263&&x>=-330&&z>=-340)||z<-720||random(i+8000)>.9){chunk.rock.push([x,y+.7,z,1,.9,1.2]);vegetation.push({x,z,rock:true})}else{chunk.trunk.push([x,y+h*.35,z,.22,h*.7,.22]);for(let j=0;j<3;j++)chunk.leaf.push([x,y+h*(.45+j*.23),z,(2.15-j*.43)*(i<3400?1:1.25),h*.52,(2.15-j*.43)*(i<3400?1:1.25)]);api.obstacle(x,z,.5);vegetation.push({x,z})}
  }
- const farPine=new THREE.ConeGeometry(1,1,6,1);const chunkMeshes=[];for(const c of chunks.values())for(const [shape,color,list] of [['cyl',0x65503b,c.trunk],['cone',c.z<-230?0x527d75:0x37724d,c.leaf],['orb',0x82978e,c.rock]]){if(!list.length)continue;const m=api.instance(shape,color,list);if(shape==='cone'){m.geometry=api.forestArt.pine;m.material=api.forestArt.leafMaterial.clone();m.material.onBeforeCompile=api.forestArt.leafMaterial.onBeforeCompile;m.material.color.setHex(color)}root.add(m);chunkMeshes.push({m,rock:shape==='orb',vale:c.vale,x:c.x,z:c.z,full:m.geometry,far:shape==='cone'?farPine:m.geometry})}
+ const farPine=new THREE.ConeGeometry(1,1,6,1);const chunkMeshes=[];for(const c of chunks.values())for(const [shape,color,list] of [['cyl',0x65503b,c.trunk],['cone',c.z<-230?0x527d75:0x37724d,c.leaf],['orb',0x82978e,c.rock]]){if(!list.length)continue;const m=api.instance(shape,color,list);if(shape==='cone'){m.geometry=api.forestArt.pine;m.material=api.forestArt.leafMaterial.clone();m.material.onBeforeCompile=api.forestArt.leafMaterial.onBeforeCompile;m.material.color.setHex(color)}bindResourceMesh(THREE,m,list,ground);root.add(m);chunkMeshes.push({m,rock:shape==='orb',vale:c.vale,x:c.x,z:c.z,full:m.geometry,far:shape==='cone'?farPine:m.geometry})}
  // Populate enemy families with articulated bodies, not recoloured goblins.
  function creature(f,boss){
   if(f.id==='bandit'||f.id==='skeleton'){const ch=api.character(false);ch.bodyMat.color.setHex(f.color);ch.cape.material=mat(f.id==='bandit'?0x6a3433:0x433d56);ch.scale=boss?1.55:1;ch.root.scale.setScalar(ch.scale);

@@ -168,3 +168,6 @@ html.zoom-recovery,html.zoom-recovery body{touch-action:pinch-zoom}
 #target-lock:after{content:"";position:absolute;inset:6px;border:1px solid var(--ui-ivory);border-radius:50%}
 #target-lock[hidden]{display:none!important}
 @media(orientation:landscape) and (max-height:500px){.quiet-hud .context-action{bottom:28px;max-width:35vw}}
+#harvest-readout{position:fixed;z-index:24;left:50%;transform:translateX(-50%);bottom:max(314px,calc(var(--safe-bottom) + 302px));width:min(280px,76vw);padding:8px 12px;pointer-events:none;text-align:center;font:12px var(--ui-sans);background:#102b25e8}
+#harvest-readout[hidden]{display:none}#harvest-readout strong{display:block;font:15px var(--ui-serif);color:var(--ui-gold)}#harvest-readout small{display:block;color:var(--ui-sage)}#harvest-reward{display:block;min-height:17px;color:var(--ui-mint)}.harvest-track{height:4px;background:#081713;border-radius:4px;margin:6px 0;overflow:hidden}.harvest-track i{display:block;height:100%;background:var(--ui-gold);transition:width .15s}
+@media(orientation:landscape) and (max-height:500px){#harvest-readout{bottom:92px;width:220px}}
