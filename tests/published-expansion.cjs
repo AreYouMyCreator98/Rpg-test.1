@@ -7,7 +7,7 @@ await context.route(/^https:\/\//,async route=>{try{const response=await http.fe
 await context.addInitScript(()=>localStorage.setItem('realm-fallen-settings',JSON.stringify({quality:'low',sound:false})));
 const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
 await page.goto('https://areyoumycreator98.github.io/Rpg-test.1/?test&release='+release);await page.waitForFunction(()=>window.__realm);assert((await page.locator('link[rel=stylesheet]').getAttribute('href')).includes(release));await page.tap('#play');await page.waitForFunction(()=>__realm.renderer.info.render.calls>0);
-assert.equal(await page.evaluate(()=>__realm.visuals.detailTextures.length),3);assert.equal(await page.evaluate(()=>__realm.enemies.length),109);
+assert.equal(await page.evaluate(()=>__realm.visuals.detailTextures.length),3);assert.equal(await page.evaluate(()=>__realm.enemies.length),114);
 assert.equal(await page.evaluate(()=>__realm.prologue.data().stage),0);assert.equal(await page.evaluate(()=>__realm.player.weapon),'w0');
 await page.tap('#pause-touch');await page.tap('#journey-building');assert.equal(await page.locator('[data-part]').count(),7);assert(await page.locator('#estate-home').isVisible());assert(await page.locator('#estate-coop').isVisible());await page.tap('#close-modal');
 await page.evaluate(()=>{__realm.setPosition(-23,133);__realm.homestead.workshop()});await page.waitForSelector('[data-recipe=axe]');await page.tap('[data-recipe=axe]');assert.equal(await page.evaluate(()=>__realm.homestead.states.home.workshop.packs.owner.tools.axe),1);await page.tap('#close-modal');

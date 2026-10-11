@@ -1,10 +1,10 @@
-import {graphics,retireInstances} from './graphics.js?v=realm-settlements-1';
-import {inVale} from './emerald-vale.js?v=realm-settlements-1';
-import {icon} from './ui.js?v=realm-settlements-1';
+import {graphics,retireInstances} from './graphics.js?v=realm-graves-1';
+import {inVale} from './emerald-vale.js?v=realm-graves-1';
+import {icon} from './ui.js?v=realm-graves-1';
 // Recover older cached HTML before it can pair its obsolete HUD with this module.
 // This module must retain this guard while pre-design-system pages remain cached.
-if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-settlements-1"]')){
- const fresh=new URL(location.href),release='realm-settlements-1';
+if(!document.getElementById('gold-counter')||!document.querySelector('link[href$="ui.css?v=realm-graves-1"]')){
+ const fresh=new URL(location.href),release='realm-graves-1';
  if(fresh.searchParams.get('v')!==release){fresh.searchParams.set('v',release);location.replace(fresh.href)}
  else{document.body.textContent='The game update could not load. Reopen the game to retry. Your saved journey is safe.'}
  await new Promise(()=>{}); // Navigation replaces this document; never initialize mixed UI.
@@ -176,7 +176,7 @@ export function installFrontier(api){
   function dot(x,z,color,r=3,label){if((x>200)!==cave)return;const [xx,yy]=project(x,z);if(xx<0||yy<0||xx>w||yy>h)return;c.fillStyle=color;c.beginPath();c.arc(xx,yy,full?Math.max(r,pixelRatio*2):r,0,Math.PI*2);c.fill();if(label){const font=Math.max(16,11*pixelRatio);c.font=font+'px sans-serif';c.textAlign='center';const width=c.measureText(label).width,tx=Math.max(width/2+4,Math.min(w-width/2-4,xx)),ty=yy-8*pixelRatio,rect={l:tx-width/2-4,r:tx+width/2+4,t:ty-font,b:ty+4};if(rect.t<0||labels.some(b=>rect.l<b.r&&rect.r>b.l&&rect.t<b.b&&rect.b>b.t))return;labels.push(rect);c.lineWidth=4;c.strokeStyle='#18352c';c.strokeText(label,tx,ty);c.fillStyle='#f4e4bf';c.fillText(label,tx,ty)}}
   if(!cave){api.poi.forEach((v,i)=>dot(v.x,v.z,api.visited.includes(i)?'#efd195':'#a2b8a4',full?4:3,full?v.name:null));dot(-46,36,'#bd9ddb',4,full?'Hollowroot Cave':null)}
   for(const n of living.npcs)dot(n.root.position.x,n.root.position.z,'#8bded8',3);
-  for(const e of enemies)if(e.hp>0&&(full||e.root.position.distanceTo(p)<zoom*1.5))dot(e.root.position.x,e.root.position.z,e.isBoss||e.type===3?'#ffad76':'#e06d64',e.isBoss?5:2.5);
+  for(const e of enemies)if(e.hp>0&&!e.buried&&(full||e.root.position.distanceTo(p)<zoom*1.5))dot(e.root.position.x,e.root.position.z,e.isBoss||e.type===3?'#ffad76':'#e06d64',e.isBoss?5:2.5);
   for(const l of api.loot)dot(l.g.position.x,l.g.position.z,'#ffdc67',2);
   for(const peer of api.getNet()?.peers?.values()||[]){const q=peer.ch.root.position;dot(q.x,q.z,'#88c9ff',4)}
   const q=questTarget();if(q)dot(q[0],q[1],'#ffed96',5);if(waypoint)dot(waypoint[0],waypoint[1],'#f699e7',5,full?'Waypoint':null);

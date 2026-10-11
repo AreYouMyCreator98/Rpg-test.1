@@ -1,4 +1,4 @@
-import {PLOTS,wallLike} from './building-rules.js?v=realm-settlements-1';
+import {PLOTS,wallLike} from './building-rules.js?v=realm-graves-1';
 export const MATERIALS={logs:'Logs',rubble:'Rough stone',ore:'Iron ore',wood:'Timber planks',stone:'Stone blocks',nails:'Iron nails'};
 export const RECIPES={
  axe:{name:'Stone axe',cost:{wood:4,stone:2},tool:'axe',rank:1},

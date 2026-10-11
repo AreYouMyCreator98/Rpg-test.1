@@ -1569,7 +1569,7 @@
     },
     {
       "id": "24",
-      "name": "Fenrir · The Moonfang",
+      "name": "Fenrir \u00b7 The Moonfang",
       "x": -286,
       "z": 135,
       "hp": 220,
@@ -1773,7 +1773,7 @@
     },
     {
       "id": "30",
-      "name": "Morvain · The Bone Regent",
+      "name": "Morvain \u00b7 The Bone Regent",
       "x": -288,
       "z": -106,
       "hp": 320,
@@ -1977,7 +1977,7 @@
     },
     {
       "id": "36",
-      "name": "Captain Rook · The Oathbreaker",
+      "name": "Captain Rook \u00b7 The Oathbreaker",
       "x": -159,
       "z": -158,
       "hp": 380,
@@ -2181,7 +2181,7 @@
     },
     {
       "id": "42",
-      "name": "Silkmaw · Brood Mother",
+      "name": "Silkmaw \u00b7 Brood Mother",
       "x": 143,
       "z": -233,
       "hp": 450,
@@ -2385,7 +2385,7 @@
     },
     {
       "id": "48",
-      "name": "Astrax · The Stormheart",
+      "name": "Astrax \u00b7 The Stormheart",
       "x": -69,
       "z": -312,
       "hp": 600,
@@ -4107,8 +4107,218 @@
     },
     {
       "id": "106",
-      "name": "Grave-picker",
+      "name": "Risen Vanguard",
       "x": 44,
+      "z": 148,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 0
+    },
+    {
+      "id": "107",
+      "name": "Risen Vanguard",
+      "x": 56,
+      "z": 141,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 1
+    },
+    {
+      "id": "108",
+      "name": "Veyr \u00b7 Restless Vanguard",
+      "x": 38,
+      "z": 125,
+      "hp": 60,
+      "xp": 30,
+      "damage": 13,
+      "speed": 2.5,
+      "type": 1,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 18,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 2
+    },
+    {
+      "id": "109",
+      "name": "Risen Vanguard",
+      "x": 56,
+      "z": 148,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 3
+    },
+    {
+      "id": "110",
+      "name": "Risen Vanguard",
+      "x": 44,
+      "z": 141,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 4
+    },
+    {
+      "id": "111",
+      "name": "Risen Vanguard",
+      "x": 62,
+      "z": 130,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 5
+    },
+    {
+      "id": "112",
+      "name": "Risen Vanguard",
+      "x": 38,
+      "z": 135,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 6
+    },
+    {
+      "id": "113",
+      "name": "Risen Vanguard",
+      "x": 62,
       "z": 140,
       "hp": 30,
       "xp": 18,
@@ -4128,84 +4338,12 @@
           "unique": false
         },
         {
-          "id": "tooth",
-          "qty": 1,
-          "unique": false
-        },
-        {
           "id": "potion",
           "qty": 1,
           "unique": false
         }
-      ]
-    },
-    {
-      "id": "107",
-      "name": "Lantern thief",
-      "x": 58,
-      "z": 132,
-      "hp": 30,
-      "xp": 18,
-      "damage": 8,
-      "speed": 3.1,
-      "type": 0,
-      "family": null,
-      "expansion": null,
-      "boss": false,
-      "guardian": false,
-      "dungeon": null,
-      "level": 1,
-      "drops": [
-        {
-          "id": "coin",
-          "qty": 4,
-          "unique": false
-        },
-        {
-          "id": "tooth",
-          "qty": 1,
-          "unique": false
-        },
-        {
-          "id": "potion",
-          "qty": 1,
-          "unique": false
-        }
-      ]
-    },
-    {
-      "id": "108",
-      "name": "Veyr · Keeper of the Pit",
-      "x": 50,
-      "z": 124,
-      "hp": 60,
-      "xp": 30,
-      "damage": 13,
-      "speed": 2.5,
-      "type": 1,
-      "family": null,
-      "expansion": null,
-      "boss": false,
-      "guardian": false,
-      "dungeon": null,
-      "level": 1,
-      "drops": [
-        {
-          "id": "coin",
-          "qty": 8,
-          "unique": false
-        },
-        {
-          "id": "tooth",
-          "qty": 1,
-          "unique": false
-        },
-        {
-          "id": "potion",
-          "qty": 1,
-          "unique": false
-        }
-      ]
+      ],
+      "prologue": 7
     }
   ],
   "quests": [
@@ -4314,7 +4452,7 @@
       "kind": "Main",
       "giver": "ranger",
       "bossFamily": "wolf",
-      "description": "Defeat Fenrir · The Moonfang and report to Warden Rowan. A unique weapon awaits in the boss's loot.",
+      "description": "Defeat Fenrir \u00b7 The Moonfang and report to Warden Rowan. A unique weapon awaits in the boss's loot.",
       "goal": 1,
       "gold": 160,
       "xp": 140,
@@ -4344,7 +4482,7 @@
       "kind": "Main",
       "giver": "priest",
       "bossFamily": "skeleton",
-      "description": "Defeat Morvain · The Bone Regent and report to Sister Aveline. A unique weapon awaits in the boss's loot.",
+      "description": "Defeat Morvain \u00b7 The Bone Regent and report to Sister Aveline. A unique weapon awaits in the boss's loot.",
       "goal": 1,
       "gold": 220,
       "xp": 200,
@@ -4374,7 +4512,7 @@
       "kind": "Main",
       "giver": "marshal",
       "bossFamily": "bandit",
-      "description": "Defeat Captain Rook · The Oathbreaker and report to Marshal Cera. A unique weapon awaits in the boss's loot.",
+      "description": "Defeat Captain Rook \u00b7 The Oathbreaker and report to Marshal Cera. A unique weapon awaits in the boss's loot.",
       "goal": 1,
       "gold": 280,
       "xp": 260,
@@ -4404,7 +4542,7 @@
       "kind": "Main",
       "giver": "herbalist",
       "bossFamily": "spider",
-      "description": "Defeat Silkmaw · Brood Mother and report to Herbalist Nessa. A unique weapon awaits in the boss's loot.",
+      "description": "Defeat Silkmaw \u00b7 Brood Mother and report to Herbalist Nessa. A unique weapon awaits in the boss's loot.",
       "goal": 1,
       "gold": 340,
       "xp": 320,
@@ -4434,7 +4572,7 @@
       "kind": "Main",
       "giver": "sage",
       "bossFamily": "elemental",
-      "description": "Defeat Astrax · The Stormheart and report to Sage Orin. A unique weapon awaits in the boss's loot.",
+      "description": "Defeat Astrax \u00b7 The Stormheart and report to Sage Orin. A unique weapon awaits in the boss's loot.",
       "goal": 1,
       "gold": 400,
       "xp": 380,

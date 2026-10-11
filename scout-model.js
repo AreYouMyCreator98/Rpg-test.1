@@ -8,25 +8,25 @@ export async function loadScoutAsset(){
   const loader=new GLTFLoader();
   try{
    const [asset,{clone}]=await deadline(Promise.all([
-    loader.loadAsync(new URL('./assets/models/goblin_scout.glb?v=realm-settlements-1',import.meta.url).href),
+    loader.loadAsync(new URL('./assets/models/goblin_scout.glb?v=realm-graves-1',import.meta.url).href),
     import(CDN+'examples/jsm/utils/SkeletonUtils.js')
    ]),10000);
    if(!REQUIRED.every(name=>asset.animations.some(c=>c.name===name)))throw new Error('Scout clips are incomplete');
    const names=['Root','Head','UpperArmL','UpperArmR','ThighL','ThighR','HandR'];
    if(!names.every(name=>asset.scene.getObjectByName(name)))throw new Error('Scout skeleton is incomplete');
    // Optional geometry streams independently; a slow/failed LOD cannot delay Play.
-   const lodPromise=deadline(loader.loadAsync(new URL('./assets/models/goblin_scout_lod.glb?v=realm-settlements-1',import.meta.url).href),10000)
+   const lodPromise=deadline(loader.loadAsync(new URL('./assets/models/goblin_scout_lod.glb?v=realm-graves-1',import.meta.url).href),10000)
     .then(low=>validatedLod(asset,low)).catch(error=>{console.warn('Scout LOD unavailable; keeping full detail.',error);return null});
    return {...asset,cloneSkinned:clone,skinned:true,lodPromise};
   }catch(error){console.warn('Red Cowl unavailable; loading the original Scout.',error)}
   // Existing glTF remains a genuine playable fallback, including its original clips.
-  return await deadline(loader.loadAsync(new URL('./assets/goblin-scout.gltf?v=realm-settlements-1',import.meta.url).href),5000);
+  return await deadline(loader.loadAsync(new URL('./assets/goblin-scout.gltf?v=realm-graves-1',import.meta.url).href),5000);
  }catch(error){console.warn('Scout assets unavailable; retaining the procedural model.',error);return null}
 }
 export function replaceScouts(THREE,asset,enemies,scene,view=null){
  if(!asset)return;
  for(const e of enemies){
-  if(e.type!==0||e.family||e.expansion)continue;
+  if(e.type!==0||e.family||e.expansion||e.prologue!==undefined)continue;
   const old=e.root,root=new THREE.Group(),model=asset.skinned?asset.cloneSkinned(asset.scene):asset.scene.clone(true);
   root.name='Scout';root.add(model);
   if(asset.skinned){const palettes=new Map();model.traverse(o=>{if(!o.isSkinnedMesh)return;const key=o.skeleton.bones.map(b=>b.uuid).join(',');if(palettes.has(key))o.skeleton=palettes.get(key);else palettes.set(key,o.skeleton)})}
