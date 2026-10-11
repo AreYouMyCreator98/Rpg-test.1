@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - combat-balance.js
       - world-weather.js
       - river-details.js
       - graphics.js

@@ -1,4 +1,4 @@
-import {batchScenery} from './scene-batch.js?v=realm-weather-1';
+import {batchScenery} from './scene-batch.js?v=realm-balance-1';
 // Wall relief, masonry joints and lighting fixtures stay at existing boundaries.
 export function installStrongholdArt({THREE,scene,mesh,mat,ground,hero,arenas,expansion,frontier}){
  const cells=[];

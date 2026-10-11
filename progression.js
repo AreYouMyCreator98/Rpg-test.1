@@ -7,12 +7,12 @@ export const SKILLS=[
 ].map(([id,branch,name,description],index)=>({id,branch,name,description,cost:1,requires:null,index}));
 SKILLS.forEach((s,i)=>s.requires=i%6?SKILLS[i-1].id:null);
 const integer=(n,max)=>Number.isFinite(n)?Math.max(0,Math.min(max,Math.floor(n))):0;
-export const xpForLevel=level=>45+(level-1)*25+Math.max(0,level-20)**2*5;
+export const xpForLevel=level=>2*(45+(level-1)*25+Math.max(0,level-20)**2*5);
 export function normaliseProgression(p){
  const budget=(p.level-1)*3,attrs={};let spent=0;
  for(const id of Object.keys(ATTRIBUTES)){const n=Math.min(integer(p.attributes?.[id],30),budget-spent);attrs[id]=n;spent+=n}p.attributes=attrs;p.attributePoints=budget-spent;
- const given=new Set(Array.isArray(p.skills)?p.skills:[]),skills=[];for(const s of SKILLS)if(given.has(s.id)&&(!s.requires||skills.includes(s.requires))&&skills.length<p.level-1)skills.push(s.id);
- p.skills=skills;p.skillPoints=p.level-1-skills.length;p.progressionVersion=1;return p;
+ const given=new Set(Array.isArray(p.skills)?p.skills:[]),skills=[];for(const s of SKILLS)if(given.has(s.id)&&(!s.requires||skills.includes(s.requires))&&skills.length<(p.level-1)*3)skills.push(s.id);
+ p.skills=skills;p.skillPoints=(p.level-1)*3-skills.length;p.progressionVersion=1;return p;
 }
 export function characterStats(p,items){
  const a=p.attributes||{},has=id=>p.skills?.includes(id)?1:0;
@@ -35,7 +35,7 @@ export function installProgression(api){
  modal('Improve '+ATTRIBUTES[id][0],`<p>${value} → ${value+1} · costs 1 attribute point</p><div class="stat-grid">${Object.entries(labels).filter(([k])=>before[k]!==after[k]).map(([k,label])=>`<span>${label}</span><strong>${Number(before[k].toFixed(3))} → ${Number(after[k].toFixed(3))}</strong>`).join('')}</div><button id="attribute-confirm" class="primary">Confirm upgrade</button><button id="attribute-cancel">Cancel</button>`,'attribute-preview');
  $('attribute-confirm').onclick=()=>{if(api.player!==p||p.attributes[id]!==value||p.attributePoints!==points)return;api.accountEvent?.('attribute',{id});p.attributes[id]++;commit();stats()};$('attribute-cancel').onclick=stats;
  }
- function tree(){const p=api.player;modal('Paths of the Wanderer',`<p>${p.skillPoints} skill points · earn one per level. Each node costs 1 point. Follow each branch from top to bottom.</p><div class="skill-trees" id="skill-trees"></div><button id="respec">Reset skills · ${50+p.level*10} gold</button><button id="skill-stats">Character attributes</button>`,'skills');
+ function tree(){const p=api.player;modal('Paths of the Wanderer',`<p>${p.skillPoints} skill points · earn three per level. Each node costs 1 point. Follow each branch from top to bottom.</p><div class="skill-trees" id="skill-trees"></div><button id="respec">Reset skills · ${50+p.level*10} gold</button><button id="skill-stats">Character attributes</button>`,'skills');
  for(const branch of ['Warrior','Guardian','Ranger']){const column=document.createElement('section');column.className='skill-branch';column.innerHTML=`<h3>${branch}</h3>`;for(const skill of SKILLS.filter(s=>s.branch===branch)){const owned=p.skills.includes(skill.id),available=!owned&&p.skillPoints>0&&(!skill.requires||p.skills.includes(skill.requires));const b=document.createElement('button');b.className='skill-node '+(owned?'unlocked':available?'available':'locked');b.dataset.skill=skill.id;b.setAttribute('aria-label',skill.name);b.innerHTML=`<strong>${skill.name}</strong><small>${owned?'Unlocked':available?'1 skill point':'Locked'}</small>`;b.onclick=()=>detail(skill);column.append(b)}$('skill-trees').append(column)}$('skill-stats').onclick=stats;$('respec').onclick=respec;
  }
  function detail(s){const p=api.player,owned=p.skills.includes(s.id),available=!owned&&p.skillPoints>0&&(!s.requires||p.skills.includes(s.requires));modal(s.name,`<p>${s.description}</p><p>${s.requires?'Requires '+SKILLS.find(n=>n.id===s.requires).name:'First node of '+s.branch} · 1 point</p><button id="unlock-skill" class="primary" ${available?'':'disabled'}>${owned?'Already unlocked':'Unlock skill'}</button><button id="skill-back">Back to skill trees</button>`,'skill-detail');$('unlock-skill').onclick=()=>{if(api.player!==p||p.skillPoints<=0||p.skills.includes(s.id)||(s.requires&&!p.skills.includes(s.requires)))return;api.accountEvent?.('skill',{id:s.id});p.skills.push(s.id);commit();tree()};$('skill-back').onclick=tree}

@@ -58,11 +58,11 @@ create or replace function public.realm_award_experience(p jsonb,amount integer)
 language plpgsql immutable set search_path=pg_catalog,public as $$
 declare level_no integer:=(p->>'level')::integer; xp integer:=(p->>'xp')::integer+amount; required integer; spent integer; max_hp integer;max_stamina integer;
 begin
- loop required:=45+(level_no-1)*25+greatest(0,level_no-20)^2*5;exit when level_no>=40 or xp<required;xp:=xp-required;level_no:=level_no+1;end loop;
+ loop required:=2*(45+(level_no-1)*25+greatest(0,level_no-20)^2*5);exit when level_no>=40 or xp<required;xp:=xp-required;level_no:=level_no+1;end loop;
  select coalesce(sum(value::integer),0) into spent from jsonb_each_text(p->'attributes');
  max_hp:=100+(level_no-1)*12+coalesce((p#>>'{attributes,vitality}')::integer,0)*8+case when p->'skills'?'vitality' then 30 else 0 end;
  max_stamina:=150+coalesce((p#>>'{attributes,endurance}')::integer,0)*4+case when p->'skills'?'stamina' then 25 else 0 end;
- return p||jsonb_build_object('level',level_no,'xp',least(xp,required),'attributePoints',(level_no-1)*3-spent,'skillPoints',level_no-1-jsonb_array_length(p->'skills'),'maxHp',max_hp,'maxStamina',max_stamina);
+ return p||jsonb_build_object('level',level_no,'xp',least(xp,required),'attributePoints',(level_no-1)*3-spent,'skillPoints',(level_no-1)*3-jsonb_array_length(p->'skills'),'maxHp',max_hp,'maxStamina',max_stamina);
 end$$;
 create or replace function public.realm_character_open(character_id uuid,expected_revision bigint,session_id uuid,world_id uuid) returns jsonb
 language plpgsql security definer set search_path=pg_catalog,public as $$
@@ -88,7 +88,7 @@ declare c public.realm_characters;p jsonb;cat jsonb;entry jsonb;allocated intege
  if not (p->'attributes')?&array['strength','vitality','endurance','dexterity','fortitude'] or jsonb_typeof(p->'attributes')<>'object' or jsonb_typeof(p->'skills')<>'array' then raise exception 'Invalid legacy build';end if;
  select sum(value::integer) into allocated from jsonb_each_text(p->'attributes');
  if allocated>((p->>'level')::integer-1)*3 or exists(select 1 from jsonb_each_text(p->'attributes') where key not in ('strength','vitality','endurance','dexterity','fortitude') or value::integer not between 0 and 30) then raise exception 'Invalid legacy attributes';end if;
- if jsonb_array_length(p->'skills')>(p->>'level')::integer-1 or (select count(*)<>count(distinct value) from jsonb_array_elements_text(p->'skills')) then raise exception 'Invalid legacy skills';end if;
+ if jsonb_array_length(p->'skills')>((p->>'level')::integer-1)*3 or (select count(*)<>count(distinct value) from jsonb_array_elements_text(p->'skills')) then raise exception 'Invalid legacy skills';end if;
  for skill in select value from jsonb_array_elements_text(p->'skills') loop select prerequisite into prereq from public.realm_skill_catalog where id=skill;if not found or prereq is not null and not p->'skills'?prereq then raise exception 'Invalid legacy prerequisite';end if;end loop;
  for item_id in select unnest(array['weapon','armour']) loop if p->>item_id is not null and (public.realm_inventory_quantity(p->'inventory',p->>item_id)<1 or cat#>>array['items',p->>item_id,'type']<>item_id) then raise exception 'Invalid legacy equipment';end if;end loop;
  for entry in select value from jsonb_array_elements(cat->'quests') loop if legacy#>>array['living','quests',entry->>'id','status'] in ('active','claimed') then insert into public.realm_character_quests(character_id,world_id,quest_id,claimed,legacy_count) values(c.id,c.id,entry->>'id',legacy#>>array['living','quests',entry->>'id','status']='claimed',least((entry->>'goal')::integer,greatest(0,coalesce((legacy#>>array['living','quests',entry->>'id','count'])::integer,0))));end if;end loop;

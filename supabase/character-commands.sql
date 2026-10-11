@@ -104,7 +104,7 @@ begin
  elsif action='skill' then
   select * into skill from public.realm_skill_catalog s where s.id=item_id;
   if not found then raise exception 'Unknown skill'; end if;
-  if skills?item_id or jsonb_array_length(skills)>=level_no-1 or (skill.prerequisite is not null and not skills?skill.prerequisite) then raise exception 'Skill requirements not met'; end if;
+  if skills?item_id or jsonb_array_length(skills)>=(level_no-1)*3 or (skill.prerequisite is not null and not skills?skill.prerequisite) then raise exception 'Skill requirements not met'; end if;
   skills:=skills||jsonb_build_array(item_id);
  elsif action='respec' then
   if jsonb_array_length(skills)=0 then raise exception 'No skills to reset'; end if;
@@ -114,7 +114,7 @@ begin
  select sum(value::integer) into allocated from jsonb_each_text(attrs);
  max_hp:=100+(level_no-1)*12+(attrs->>'vitality')::integer*8+case when skills?'vitality' then 30 else 0 end;
  max_stamina:=150+(attrs->>'endurance')::integer*4+case when skills?'stamina' then 25 else 0 end;
- p:=p||jsonb_build_object('inventory',inv,'coins',coins,'attributes',attrs,'attributePoints',(level_no-1)*3-allocated,'skills',skills,'skillPoints',level_no-1-jsonb_array_length(skills),'maxHp',max_hp,'maxStamina',max_stamina,'hp',least((p->>'hp')::numeric,max_hp),'stamina',least((p->>'stamina')::numeric,max_stamina));
+ p:=p||jsonb_build_object('inventory',inv,'coins',coins,'attributes',attrs,'attributePoints',(level_no-1)*3-allocated,'skills',skills,'skillPoints',(level_no-1)*3-jsonb_array_length(skills),'maxHp',max_hp,'maxStamina',max_stamina,'hp',least((p->>'hp')::numeric,max_hp),'stamina',least((p->>'stamina')::numeric,max_stamina));
  insert into public.realm_character_revisions(character_id,revision,progression,solo_world) values(c.id,c.revision,c.progression,c.solo_world) on conflict do nothing;
  update public.realm_characters r set progression=p,revision=r.revision+1,updated_at=clock_timestamp() where r.id=c.id returning * into c;
  insert into public.realm_character_commands(character_id,request_id,action,payload,revision) values(c.id,request_id,action,payload,c.revision);
