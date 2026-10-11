@@ -40,6 +40,7 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  await a.evaluate(()=>__realm.closeModal());await b.evaluate(()=>__realm.closeModal());
  await a.waitForFunction(()=>__realm.net.peers.size===1);await b.waitForFunction(()=>__realm.net.peers.size===1);
  assert.equal(await a.evaluate(()=>__realm.player.coins),45);assert.equal(await a.evaluate(()=>localStorage.getItem('realm-fallen-save-v1')),saved);
+ await a.evaluate(()=>{__realm.visuals.weather.state().days=21.2});await b.waitForFunction(()=>Math.abs(__realm.visuals.weather.state().days-21.2)<.01);assert.equal(await a.evaluate(()=>__realm.visuals.weather.weather),await b.evaluate(()=>__realm.visuals.weather.weather));console.log('PASS host world clock and weather synchronize to guest');
  console.log('PASS private room creation, hidden discovery, code join, remote hero and isolated solo save');
  // Host-controlled citizens replicate instead of independently walking through each other’s shops.
  await b.waitForFunction(()=>__realm.settlementLife.people.every(n=>n.remote));

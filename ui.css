@@ -151,3 +151,10 @@ html.zoom-recovery,html.zoom-recovery body{touch-action:pinch-zoom}
 .quiet-hud .touch-actions button:active{transform:scale(.94);border-color:var(--ui-gold)}
 .quiet-hud .npc-label{background:linear-gradient(100deg,#14251dee,#203127b8);border:1px solid #c1ad7044;border-radius:6px;padding:6px 10px;box-shadow:0 3px 12px #0004}
 .quiet-hud .bar{border-radius:3px;box-shadow:0 1px 4px #0007,inset 0 1px #fff2}
+/* Slim navigational strip: shared dark-fantasy palette, separate from touch combat. */
+#world-compass{position:absolute;left:50%;transform:translateX(-50%);top:max(14px,var(--safe-top));width:280px;text-align:center;color:var(--ui-ivory);text-shadow:0 1px 3px #000;pointer-events:auto}
+#world-compass button{padding:0;border:0;border-radius:3px;box-shadow:none;backdrop-filter:none;background:linear-gradient(90deg,transparent,#10161399,transparent);color:var(--ui-gold);width:100%;min-height:44px}
+#world-compass canvas{width:100%;height:32px;display:block}.world-clock{font:11px var(--ui-sans);letter-spacing:.04em;color:var(--ui-sage);pointer-events:none}
+#world-compass .compass-quest{font:12px var(--ui-serif);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-height:44px;margin-top:-3px}
+@media(orientation:portrait){#world-compass{top:max(91px,calc(var(--safe-top) + 76px));width:min(70vw,280px)}.quiet-hud #toasts{top:192px}.quiet-hud.mini-visible #frontier-mini{top:197px}}
+@media(orientation:landscape) and (max-width:800px){#world-compass{width:30vw;left:62%;top:max(8px,var(--safe-top))}.world-clock{font-size:10px}#world-compass .compass-quest{font-size:11px}.quiet-hud #toasts{top:110px}}

@@ -1,10 +1,11 @@
-import {dressVillage} from './village-art.js?v=realm-graves-1';
-import {installRiverDetails} from './river-details.js?v=realm-graves-1';
-import {installEnvironmentLife} from './environment-life.js?v=realm-graves-1';
-import {graphics,retireInstances} from './graphics.js?v=realm-graves-1';
-import {createTerrainStream} from './terrain-stream.js?v=realm-graves-1';
-import {createWesternRange} from './emerald-landscape.js?v=realm-graves-1';
-import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-graves-1';
+import {installWorldWeather} from './world-weather.js?v=realm-weather-1';
+import {dressVillage} from './village-art.js?v=realm-weather-1';
+import {installRiverDetails} from './river-details.js?v=realm-weather-1';
+import {installEnvironmentLife} from './environment-life.js?v=realm-weather-1';
+import {graphics,retireInstances} from './graphics.js?v=realm-weather-1';
+import {createTerrainStream} from './terrain-stream.js?v=realm-weather-1';
+import {createWesternRange} from './emerald-landscape.js?v=realm-weather-1';
+import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-weather-1';
 // Presentation only. No save, item, enemy, network or collision ownership.
 // Repeated decoration is instanced by material in spatial cells; Vale assets are repository-hosted.
 export function installVisualWorld(api) {
@@ -13,14 +14,14 @@ export function installVisualWorld(api) {
   const root=new THREE.Group();root.name='Cinematic overworld';scene.add(root);for(const side of ['west','north','east','south'])root.add(createWesternRange(THREE,ground,BOUNDS,side));
   const sky=new THREE.Mesh(new THREE.SphereGeometry(1400,24,14),new THREE.ShaderMaterial({
     side:THREE.BackSide,depthWrite:false,
-    uniforms:{cloudTime:{value:0},horizon:{value:new THREE.Color(0xa9c9c7)},zenith:{value:new THREE.Color(0x598dbb)}},
+    uniforms:{cloudCover:{value:0},cloudLight:{value:1},cloudTime:{value:0},horizon:{value:new THREE.Color(0xa9c9c7)},zenith:{value:new THREE.Color(0x598dbb)}},
     vertexShader:`varying vec3 direction;void main(){direction=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
-    fragmentShader:`uniform float cloudTime;uniform vec3 horizon;uniform vec3 zenith;varying vec3 direction;
+    fragmentShader:`uniform float cloudTime;uniform float cloudCover;uniform float cloudLight;uniform vec3 horizon;uniform vec3 zenith;varying vec3 direction;
     float hashCloud(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
     float noiseCloud(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hashCloud(i),hashCloud(i+vec2(1,0)),f.x),mix(hashCloud(i+vec2(0,1)),hashCloud(i+vec2(1,1)),f.x),f.y);}
     void main(){vec3 d=normalize(direction);float h=pow(max(d.y,0.0),.6);vec3 skyColor=mix(horizon,zenith,h);
     vec2 uv=d.xz/max(d.y,.08)*2.8+vec2(cloudTime*.002,0.);float cloud=noiseCloud(uv)*.65+noiseCloud(uv*2.1)*.25+noiseCloud(uv*4.3)*.1;
-    float cover=smoothstep(.57,.74,cloud)*smoothstep(.015,.15,d.y);skyColor=mix(skyColor,vec3(.88,.94,.94),cover*.85);gl_FragColor=vec4(skyColor,1.0);
+    float cover=smoothstep(.57-cloudCover*.34,.74-cloudCover*.3,cloud)*smoothstep(.015,.15,d.y);skyColor=mix(skyColor,vec3(.88,.94,.94)*cloudLight,cover*.85);gl_FragColor=vec4(skyColor,1.0);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
     }`
@@ -268,6 +269,7 @@ export function installVisualWorld(api) {
     if(api.settings.quality==='auto'&&((slow>=2&&scale<=.65)||(fast>=4&&scale>=1))){const old=api.settings.autoTier??1,tier=Math.max(0,Math.min(2,old+(slow>=2?-1:1)));slow=fast=0;if(tier!==old){api.settings.autoTier=tier;meadowCell='';const profile=graphics(api.settings);renderer.setPixelRatio(baseRatio()*scale);renderer.shadowMap.enabled=profile.shadow>0;if(api.sun.shadow.mapSize.x!==(profile.shadow||1024)){api.sun.shadow.mapSize.setScalar(profile.shadow||1024);api.sun.shadow.map?.dispose();api.sun.shadow.map=null}}}
 
   }
+  const weather=installWorldWeather(Object.assign(Object.create(api),{sky,ambient}));
   function update(dt,time,frameSeconds){
     const profile=graphics(api.settings);waterDetail.value=profile.water;riverDetails.update(time,profile);life.update(dt,time);vale.update(dt,time);if(frameSeconds>0&&frameSeconds<2){timings.push(frameSeconds*1000);if(timings.length>120)timings.shift()}diagnosticTimer+=dt;if(diagnostic&&diagnosticTimer>1){diagnosticTimer=0;const sorted=[...timings].sort((a,b)=>a-b),avg=timings.reduce((a,b)=>a+b,0)/Math.max(1,timings.length);diagnostic.textContent=`${api.settings.quality}${api.settings.quality==='auto'?' / '+['low','medium','high'][api.settings.autoTier??1]:''} · scale ${scale.toFixed(2)} · ${(1000/avg).toFixed(0)} fps
 mean ${avg.toFixed(1)} ms · p95 ${(sorted[Math.floor(sorted.length*.95)]||0).toFixed(1)} ms
@@ -283,7 +285,7 @@ ${api.enemies.filter(e=>e.hp>0).length} enemies · slow >33ms ${timings.filter(t
       for(const l of lanterns){const visible=Math.hypot(l.x-hero.root.position.x,l.z-hero.root.position.z)<70;l.glow.visible=l.halo.visible=visible}
     }
     terrainStream.updateView();lanternMaterial.emissiveIntensity=1.5+Math.sin(time*3)*.08;
-    actors.forEach((a,i)=>{const p=a.root.position,on=a.root.visible&&(p.x>200)===inside&&p.distanceToSquared(hero.root.position)<2500;dummy.position.set(p.x,surface(p.x,p.z)+.035,p.z);dummy.rotation.set(0,0,0);dummy.scale.set(on?1.5*(a.scale||1):0,1,on?1.2*(a.scale||1):0);dummy.updateMatrix();shadows.setMatrixAt(i,dummy.matrix)});shadows.instanceMatrix.needsUpdate=true;
+    actors.forEach((a,i)=>{const p=a.root.position,on=a.root.visible&&(p.x>200)===inside&&p.distanceToSquared(hero.root.position)<2500;dummy.position.set(p.x,surface(p.x,p.z)+.035,p.z);dummy.rotation.set(0,0,0);dummy.scale.set(on?1.5*(a.scale||1):0,1,on?1.2*(a.scale||1):0);dummy.updateMatrix();shadows.setMatrixAt(i,dummy.matrix)});shadows.instanceMatrix.needsUpdate=true;weather.update(dt);
   }
-  return {riverDetails,life,terrainStream,vale,root,chunks,meadow,terrainLOD,farTerrain,lanterns,shadows,detailTextures,resetResolution,sampleFrame,update,get resolutionScale(){return scale}};
+  return {weather,riverDetails,life,terrainStream,vale,root,chunks,meadow,terrainLOD,farTerrain,lanterns,shadows,detailTextures,resetResolution,sampleFrame,update,get resolutionScale(){return scale}};
 }
