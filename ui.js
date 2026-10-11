@@ -1,5 +1,9 @@
 // Realm UI design system. All interface icons share this local SVG family.
 const paths={
+ axe:'<path d="m8 28 13-24M17 9l7 4 5-7-7-4M15 13l7 4 2-4"/>',
+ pickaxe:'<path d="m8 29 12-23M5 10q13-12 24 7L18 10Z"/>',
+ clock:'<circle cx="16" cy="16" r="12"/><path d="M16 8v9l6 3"/>',
+
  reticle:'<circle cx="16" cy="16" r="8"/><path d="M16 2v7m0 14v7M2 16h7m14 0h7"/><circle cx="16" cy="16" r="1" fill="currentColor"/>',
  menu:'<path d="M5 9h22M5 17h22M5 25h22"/>',
  hero:'<rect x="4" y="4" width="24" height="24" rx="3" transform="rotate(45 16 16)" class="icon-gold" stroke-width=".8" fill="var(--ui-pine)"/><path fill="currentColor" stroke="none" d="M16 5 19.4 12.6 27 16 19.4 19.4 16 27 12.6 19.4 5 16 12.6 12.6Z"/>',
@@ -68,6 +72,7 @@ export function installUI(api){
   $('quest-title').textContent=q?.name||'A Kingdom Reclaimed';const quest=$('objective').textContent;if(lastQuest&&lastQuest!==quest)flash(document.querySelector('.quest'));lastQuest=quest;
   const prompt=$('hint').classList.contains('hidden')?'':$('hint').textContent.replace(/^(Interact · |E · )/,'');
   $('pickup-touch').classList.toggle('hidden',!prompt||!!api.panel);$('context-label').textContent=prompt;
+  const actionIcon=/^Gather wood|^Chop /.test(prompt)?'axe':/^Gather stone|^Mine /.test(prompt)?'pickaxe':/^Regrowing/.test(prompt)?'clock':prompt==='Gathering…'?($('pickup-touch').dataset.actionIcon||'axe'):'talk';if($('pickup-touch').dataset.actionIcon!==actionIcon){$('pickup-touch').dataset.actionIcon=actionIcon;$('pickup-touch').querySelector('svg').outerHTML=icon(actionIcon)}
   const potions=p.inventory.find(i=>i.id==='potion')?.qty||0;$('potion-touch').disabled=!potions;$('potion-touch').setAttribute('aria-label',`Heal · ${potions} potions`);$('potion-touch').querySelector('span').textContent='Heal · '+potions;$('potion-touch').title=potions?`${potions} potions`:'No potions';
   const restricted=!api.companions.mounted&&(p.stamina<api.stats().dodgeCost||api.guardBreak>0||api.dodgeCooldown>0);$('dodge-touch').setAttribute('aria-disabled',String(restricted));$('dodge-touch').classList.toggle('unavailable',restricted);$('dodge-touch').style.setProperty('--cooldown',Math.min(1,Math.max(api.dodgeCooldown/api.stats().dodgeCooldown,api.guardBreak>0?1:0))*360+'deg');$('dodge-touch').title=p.stamina<api.stats().dodgeCost?'Requires '+api.stats().dodgeCost.toFixed(1)+' stamina':api.dodgeCooldown>0?'Dodge recovering':'Dodge';
   $('block-touch').classList.toggle('held',api.blocking);if(api.companions.mounted){$('staminabar').style.width=(api.companions.stamina/api.companions.maxStamina*100)+'%';$('stamtext').textContent='Mount stamina '+Math.floor(api.companions.stamina)+' / '+api.companions.maxStamina}$('dodge-touch').querySelector('span').textContent=api.companions.mounted?'Dismount':'Dodge';$('dodge-touch').setAttribute('aria-label',api.companions.mounted?'Dismount':'Dodge');

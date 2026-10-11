@@ -45,7 +45,7 @@ begin
    v:=v||jsonb_build_object('looseAt',now_ms);amount:=1;
   else
    v:=v||jsonb_build_object('hits',(v->>'hits')::integer+rank,'lastHit',now_ms);
-   if (v->>'hits')::integer>=3 then v:=v||jsonb_build_object('hits',0,'readyAt',now_ms+120000);amount:=case when node>=6 then 4 else 6 end;end if;
+   if (v->>'hits')::integer>=3 then v:=v||jsonb_build_object('hits',0,'readyAt',now_ms+4320000);amount:=case when node>=6 then 4 else 6 end;end if;
   end if;
   balance:=(p#>>array['bag',material])::integer+amount;if balance>500 then raise exception 'Builder pack is full';end if;
   p:=jsonb_set(p,array['bag',material],to_jsonb(balance))||jsonb_build_object('lastHit',now_ms);

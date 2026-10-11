@@ -1,5 +1,5 @@
-import {MATERIALS,RECIPES,workshopData,packFor,nodeSpec,station,stockOf,shelterReady} from './gathering-rules.js?v=realm-mobility-1';
-import {batchScenery} from './scene-batch.js?v=realm-mobility-1';
+import {WORLD_RESOURCES,MATERIALS,RECIPES,workshopData,packFor,nodeSpec,station,stockOf,shelterReady} from './gathering-rules.js?v=realm-gathering-2';
+import {batchScenery} from './scene-batch.js?v=realm-gathering-2';
 export function installGathering(api){
  const {THREE,hero,mesh,homestead:h,$}=api,nodes=[],stations=[],tools=new Map();let job=null,tab='craft',menuVersion='',menuTimer=0;
  const near=(p,r=3.6)=>Math.hypot(hero.root.position.x-p.x,hero.root.position.z-p.z)<r;
@@ -34,20 +34,30 @@ export function installGathering(api){
  function clearTools(ch){for(const g of Object.values(tools.get(ch)||{}))g.visible=false}
  function cancel(){if(job){hero.weapon.visible=job.weaponVisible;job=null}clearTools(hero)}
  function pose(ch,kind,t){clearTools(ch);if(kind!=='hands'){toolFor(ch,kind).visible=true;ch.weapon.visible=false}const swing=Math.sin(Math.min(1,t)*Math.PI);ch.arms[1].rotation.x=-.3-swing*1.75;ch.arms[1].rotation.z=-.2;ch.arms[0].rotation.x=-.25-swing*.55;ch.rig.rotation.x=swing*.22;ch.rig.rotation.y=-.13+Math.sin(t*Math.PI*2)*.13;}
+ const resourceCells=new Map();
+ WORLD_RESOURCES.forEach((v,i)=>{const n=nodeSpec('home',i+8),key=Math.floor(n.x/8)+','+Math.floor(n.z/8);if(!resourceCells.has(key))resourceCells.set(key,[]);resourceCells.get(key).push(n)});
  function target(){
   const choices=[];
+  if(hero.root.position.x<200&&!api.mounted&&!h.mode){const cx=Math.floor(hero.root.position.x/8),cz=Math.floor(hero.root.position.z/8);
+   for(let x=cx-1;x<=cx+1;x++)for(let z=cz-1;z<=cz+1;z++)for(const n of resourceCells.get(x+','+z)||[]){
+    if(!near(n,3.3)||Math.abs(hero.root.position.y-api.ground(n.x,n.z))>3)continue;
+    const k=[h.kind,h.kind==='home'?'coop':'home'].find(k=>h.states[k].canEdit!==false&&packFor(h.states[k],h.actorKey()).tools[n.tool]>0);
+    if(k)choices.push({...n,k,type:'node'});
+   }
+  }
   for(const s of stations){if(near(s.bench,3))choices.push({k:s.k,type:'bench',...s.bench});if(near(s.chest,3))choices.push({k:s.k,type:'chest',...s.chest})}
   for(const n of nodes)if(near(n,3.3))choices.push({...n,type:'node'});
   return choices.sort((a,b)=>Math.hypot(hero.root.position.x-a.x,hero.root.position.z-a.z)-Math.hypot(hero.root.position.x-b.x,hero.root.position.z-b.z))[0];
  }
- function hint(){const t=target();if(!t)return null;if(t.type==='bench')return 'Use workbench · '+h.plots[t.k].name;if(t.type==='chest')return 'Open storage · '+h.plots[t.k].name;
-  const s=h.states[t.k],v=workshopData(s).nodes[t.id],p=packFor(s,h.actorKey());if(v?.readyAt>Date.now())return 'Regrowing · '+Math.ceil((v.readyAt-Date.now())/1000)+'s';
+ function hint(){if(job)return 'Gathering…';const t=target();if(!t)return null;if(t.type==='bench')return 'Use workbench · '+h.plots[t.k].name;if(t.type==='chest')return 'Open storage · '+h.plots[t.k].name;
+  const s=h.states[t.k],v=workshopData(s).nodes[t.id],p=packFor(s,h.actorKey());if(v?.readyAt>Date.now()){const seconds=Math.ceil((v.readyAt-Date.now())/1000);return 'Regrowing · '+Math.floor(seconds/60)+'m '+seconds%60+'s'}
+  if(t.wild)return 'Gather '+(t.resource==='logs'?'wood · Axe':'stone · Pickaxe');
   return (p.tools[t.tool]?(t.tool==='axe'?'Chop marked tree':'Mine '+(t.resource==='ore'?'iron ore':'stone')):t.resource==='ore'?'A pickaxe is required':'Gather loose '+(t.resource==='logs'?'branches':'stone'))+' · '+h.plots[t.k].name;
  }
  function interact(){const t=target();if(!t)return false;h.setKind(t.k);if(t.type!=='node'){void menu(t.type==='chest'?'storage':'craft');return true}
   if(job||api.attack||api.dodge||api.mounted)return true;
   const p=packFor(h.states[t.k],h.actorKey()),v=workshopData(h.states[t.k]).nodes[t.id];
-  if(v?.readyAt>Date.now()){api.toast(hint());return true}if(t.resource==='ore'&&!p.tools.pickaxe){api.toast('Craft a pickaxe at the workbench first.');return true}
+  if(v?.readyAt>Date.now()){api.toast(hint());return true}if(t.wild&&!p.tools[t.tool]){api.toast('The matching gathering tool is required.');return true}if(t.resource==='ore'&&!p.tools.pickaxe){api.toast('Craft a pickaxe at the workbench first.');return true}
   job={node:t,k:t.k,t:0,hit:false,tool:p.tools[t.tool]?t.tool:'hands',weaponVisible:hero.weapon.visible};api.sound('swing');return true;
  }
  function update(dt){
@@ -89,5 +99,5 @@ export function installGathering(api){
    if(q.status==='active'){for(const[node,label]of [[0,'Mark timber grove'],[4,'Mark stone deposit']]){const b=document.createElement('button');b.textContent=label;b.onclick=()=>{const n=nodeSpec(h.kind,node);api.frontier.setWaypoint(n.x,n.z);api.closeModal()};area.append(b)}}
   }
  }
- return{menu,interact,hint,update,blocked,cancel,nodes,stations,pose,get animation(){return job?{tool:job.tool,t:job.t}:null},remote(ch,a){clearTools(ch);if(a&&['axe','pickaxe','hands'].includes(a.tool)&&Number.isFinite(a.t))pose(ch,a.tool,Math.max(0,Math.min(1,a.t)))},removeRemote(ch){clearTools(ch);for(const g of Object.values(tools.get(ch)||{}))g.removeFromParent();tools.delete(ch)}};
+ return{target,menu,interact,hint,update,blocked,cancel,nodes,stations,pose,get animation(){return job?{tool:job.tool,t:job.t}:null},remote(ch,a){clearTools(ch);if(a&&['axe','pickaxe','hands'].includes(a.tool)&&Number.isFinite(a.t))pose(ch,a.tool,Math.max(0,Math.min(1,a.t)))},removeRemote(ch){clearTools(ch);for(const g of Object.values(tools.get(ch)||{}))g.removeFromParent();tools.delete(ch)}};
 }
