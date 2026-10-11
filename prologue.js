@@ -1,8 +1,8 @@
-import {batchScenery} from './scene-batch.js?v=realm-party-graves-1';
+import {batchScenery} from './scene-batch.js?v=realm-party-graves-2';
 // Chapter zero is world progress; absent data means an existing journey, never a reset.
 export function installPrologue(api){
  const {THREE,mesh,ground,hero,living,$}=api,root=new THREE.Group();api.scene.add(root);
- const START={x:50,z:151},grave={x:47.8,z:150},gate={x:50,z:118},charter={x:0,z:83};let waking=0;
+ const START={x:50,z:151},grave={x:47.8,z:150},gate={x:50,z:118},charter={x:0,z:83};let waking=0,starting=false;
  const data=()=>living.serialize().prologue??={version:1,stage:3,read:false,killed:[]};
  const prop=(s,c,x,y,z,a,b,d,parent=root)=>mesh(s,c,x,y,z,a,b,d,parent);
  for(const side of [-1,1])prop('box',0x555d59,50+side*17,2.1,138,1,4.2,41);
@@ -20,6 +20,10 @@ export function installPrologue(api){
  root.remove(hinge);batchScenery(THREE,root);root.add(hinge);
  // Keep the first three roster slots stable for existing account reward records.
  const graves=[[44,148],[56,141],[38,125],[56,148],[44,141],[62,130],[38,135],[62,140]];
+ // Reserve stable enemy IDs; unused reinforcements stay buried and inactive.
+ for(let row=0;row<6;row++)for(const x of [36,41,59,64])graves.push([x,123+row*5]);
+ const count=()=>8*Math.max(1,Math.min(4,Number(data().partySize)||1));
+ const activeFoes=()=>foes.slice(0,count());
  const ribGeometry=new THREE.TorusGeometry(1,.105,4,10);
  function skeleton(e){
   // Reuse the combat rig, not the goblin mesh. Bones, ribs and skull are real geometry.
@@ -57,11 +61,17 @@ export function installPrologue(api){
   e.cape=new THREE.Object3D();e.rig.add(e.cape);e.shoulder=[];
  }
  const foes=graves.map(([x,z],i)=>{const e=api.spawnEnemy(x,z,i===2?1:0);e.prologue=i;e.name=i===2?'Veyr · Restless Vanguard':'Risen Vanguard';e.label.firstChild.textContent=e.name;e.respawn=Infinity;skeleton(e);e.buried=true;e.root.visible=false;return e});
- function beginAmbush(){
-  if(data().read||data().stage>=2)return;
-  data().read=true;data().stage=1;
-  for(const e of foes)if(e.hp>0){e.rise=-e.prologue*.28;e.buried=true;e.state='emerging'}
-  api.toast('The warning stirs the dead. Eight graves begin to move.');
+ async function beginAmbush(authoritative=false){
+  const net=api.getNet?.();
+  if(net?.active&&!net.host&&!authoritative){net.graveyardWarning();return;}
+  if(data().read||data().stage>=2||starting)return;
+  const encounter=data();starting=true;let size=net?.active?net.partySize:1;
+  try{if(api.getAccounts?.()?.active)size=await api.getAccounts().graveyardParty()}catch(e){api.toast('The graves remain still: '+e.message);return}finally{starting=false}
+  if(data()!==encounter||data().read||data().stage>=2)return;
+  data().partySize=size;data().read=true;data().stage=1;
+  for(const e of foes){e.dmg=Math.round((e.prologueDamage??e.dmg)*(1+.1*(data().partySize-1)));if(e.prologue<count()&&!data().killed.includes(e.prologue)){e.hp=e.maxHp;e.dead=0;}}
+  for(const e of activeFoes())if(e.hp>0){e.rise=-(e.prologue%8)*.28-Math.floor(e.prologue/8)*.65;e.buried=true;e.state='emerging'}
+  api.toast('The warning stirs the dead. '+count()+' skeletons rise.');api.save();
  }
  function risePose(e,t){const u=Math.max(0,Math.min(1,t/1.8)),ease=u*u*(3-2*u);e.root.visible=t>=0;e.rig.position.y=-2.35*(1-ease);e.rig.rotation.x=.8*(1-ease);e.arms.forEach((a,i)=>{a.rotation.x=-1.3*(1-ease);a.rotation.z=(i?-.2:.2)*(1-ease)});e.head.rotation.x=-.35*(1-ease)}
  function updateEnemy(e,dt){
@@ -78,10 +88,11 @@ export function installPrologue(api){
  api.poi.push({name:'The Unmarked Graves',x:50,z:138});api.frontier.structures.push({x:50,z:138,w:35,d:42,color:'#77796c',kind:'graveyard'});
  function restore(saved){
   const old=saved?.living?.prologue;
-  living.serialize().prologue=old?{version:2,stage:Math.max(0,Math.min(3,Number(old.stage)||0)),read:!!old.read||Number(old.stage)>=1,killed:Array.isArray(old.killed)?[...new Set(old.killed.filter(i=>Number.isInteger(i)&&i>=0&&i<8))]:[]}:saved?{version:2,stage:3,read:true,killed:[]}:{version:2,stage:0,read:false,killed:[]};
+  living.serialize().prologue=old?{version:2,stage:Math.max(0,Math.min(3,Number(old.stage)||0)),read:!!old.read||Number(old.stage)>=1,killed:Array.isArray(old.killed)?[...new Set(old.killed.filter(i=>Number.isInteger(i)&&i>=0&&i<32))]:[],partySize:Math.max(1,Math.min(4,Math.floor(Number(old.partySize)||1)))}:saved?{version:2,stage:3,read:true,killed:[]}:{version:2,stage:0,read:false,killed:[]};
   for(const e of foes){
-   e.rig.position.set(0,0,0);e.rig.rotation.set(0,0,0);e.rise=2;e.buried=false;
-   if(data().stage>=2||data().killed.includes(e.prologue)){e.hp=0;e.dead=4;e.root.visible=false;e.respawn=Infinity}
+   e.prologueDamage=e.dmg;e.rig.position.set(0,0,0);e.dmg=Math.round(e.dmg*(1+.1*((data().partySize||1)-1)));e.rig.rotation.set(0,0,0);e.rise=2;e.buried=false;
+   if(e.prologue>=count()){e.hp=0;e.dead=4;e.buried=true;e.state='buried';e.root.visible=false}
+   else if(data().stage>=2||data().killed.includes(e.prologue)){e.hp=0;e.dead=4;e.root.visible=false;e.respawn=Infinity}
    else if(!data().read){e.buried=true;e.state='buried';e.root.visible=false}
    else {e.state='chase';e.root.visible=true}
   }
@@ -90,17 +101,18 @@ export function installPrologue(api){
 
  function afterStart(){if(data().stage===0)api.toast('CHAPTER ZERO · THE UNBURIED — Read the warning beside your grave. Your rusty blade is all that remains.');}
  function dialogue(title,text,button,fn){api.modal(title,'<div class="eyebrow">The lone warrior · Chapter zero</div><p>'+text+'</p><button id="story-next" class="primary">'+button+'</button>','story');$('story-next').onclick=()=>{api.closeModal();fn?.();api.save()};}
+ function unlockGate(){if(data().read&&activeFoes().every(e=>e.hp<=0))data().stage=Math.max(2,data().stage)}
  function interact(){const p=hero.root.position,near=q=>Math.hypot(p.x-q.x,p.z-q.z)<3;
   if(near(grave)){dialogue('A name scratched away','Cold earth fills your gloves. Your armour bears the mark of the royal vanguard, but every name on the burial ledger has been struck through. Beneath a fallen soldier’s hand you find a warning: “The king ordered us buried before the battle was over. If one of us wakes, follow the lanterns. Bram in Wanderer’s Village will remember.”<br><br>You are alone. Someone made certain of that.','Keep the warning',beginAmbush);return true}
-  if(near(gate)&&data().stage<2){if(!data().read){api.toast('Read the fallen soldier’s warning beside your grave.');return true}if(foes.some(e=>e.hp>0)){api.toast('Defeat all eight risen skeletons to break the gate’s chain.');return true}data().stage=2;dialogue('The gate gives way','The graveyard’s chain snaps beneath your rusty blade. Beyond the graves, a narrow path runs toward warm lanterns. You remember a crown, a command, and the sound of your own company falling silent. You do not yet remember who betrayed you.<br><br>Find shelter first. Answers can wait until dawn.','Follow the lantern road');return true}
+  if(near(gate)&&data().stage<2){if(!data().read){api.toast('Read the fallen soldier’s warning beside your grave.');return true}if(activeFoes().some(e=>e.hp>0)){api.toast('Defeat all '+count()+' risen skeletons to break the gate’s chain.');return true}if(api.getNet?.()?.active&&!api.getNet().host)api.getNet().graveyardGate();else unlockGate();dialogue('The gate gives way','The graveyard’s chain snaps beneath your rusty blade. Beyond the graves, a narrow path runs toward warm lanterns. You remember a crown, a command, and the sound of your own company falling silent. You do not yet remember who betrayed you.<br><br>Find shelter first. Answers can wait until dawn.','Follow the lantern road');return true}
   if(near(charter)){if(data().stage<2){api.toast('Escape the Unmarked Graves first.');return true}data().stage=3;dialogue('A place among the living','Bram recognises the broken crest on your shoulder. “We were told the vanguard deserted. I should have known better.”<br><br>He gives you the old settlement charter. Two abandoned plots south-west of the village are yours to rebuild: a quiet home for one warrior, and a common hearth for companions.<br><br>“Raise a roof. Learn who still stands with you. Then follow the king’s soldiers into the forest.” Your search begins where the village’s troubles end.','Begin Chapter I');return true}return false;
  }
  function hint(){const p=hero.root.position;if(Math.hypot(p.x-grave.x,p.z-grave.z)<3)return 'Read the fallen soldier’s warning';if(data().stage<2&&Math.hypot(p.x-gate.x,p.z-gate.z)<3)return 'Break the graveyard chain';if(data().stage<3&&Math.hypot(p.x-charter.x,p.z-charter.z)<3)return 'Read Bram’s settlement charter';return null}
  function blocked(x,z,r){if(x<31||x>69||z<116||z>161)return false;return Math.abs(x-33)<.5+r&&z>117&&z<160||Math.abs(x-67)<.5+r&&z>117&&z<160||Math.abs(z-159)<.5+r&&x>32&&x<68||Math.abs(z-118)<.5+r&&x>32&&x<68&&(Math.abs(x-50)>3-r||data().stage<2)}
  function update(dt){hinge.rotation.y+=((data().stage>=2?-Math.PI/2:0)-hinge.rotation.y)*Math.min(1,dt*5);root.visible=hero.root.position.distanceTo(root.position.clone().set(50,0,138))<110;if(waking>0&&!api.panel){waking=Math.max(0,waking-dt);hero.rig.rotation.x=-Math.sin(Math.min(1,waking/2.4)*Math.PI/2)*1.05;}}
- function hud(){if(data().stage>=3)return;const count=foes.filter(e=>e.hp<=0).length;$('quest-title').textContent='The Unburied';$('objective').textContent=data().stage===0?'Read the warning beside your grave.':data().stage===1?'Defeat the risen skeletons ('+count+'/8), then break the northern gate.':'Follow the lantern road to Bram’s charter outside the village.';if(hero.root.position.z>117&&hero.root.position.x>32&&hero.root.position.x<68)$('location').textContent='The Unmarked Graves';}
+ function hud(){if(data().stage>=3)return;const defeated=activeFoes().filter(e=>e.hp<=0).length;$('quest-title').textContent='The Unburied';$('objective').textContent=data().stage===0?'Read the warning beside your grave.':data().stage===1?'Defeat the risen skeletons ('+defeated+'/'+count()+'), then break the northern gate.':'Follow the lantern road to Bram’s charter outside the village.';if(hero.root.position.z>117&&hero.root.position.x>32&&hero.root.position.x<68)$('location').textContent='The Unmarked Graves';}
  function onDeath(e){if(e.prologue===undefined)return false;if(!data().killed.includes(e.prologue))data().killed.push(e.prologue);e.respawn=Infinity;api.drop('coin',e.root.position.x,e.root.position.z,e.prologue===2?18:4);api.drop('potion',e.root.position.x+.6,e.root.position.z);return true}
- function journal(){dialogue('The Unburied',data().stage>=3?'You escaped the graves and found Bram. The vanguard did not desert: somebody ordered its burial. Rebuild a foothold near the village, help its people and follow the king’s trail into the forest.':'You woke beneath the vanguard’s broken crest. Read the warning, defeat the eight risen skeletons, open the northern gate and follow the road to Bram’s charter.', 'Return to the world')}
+ function journal(){dialogue('The Unburied',data().stage>=3?'You escaped the graves and found Bram. The vanguard did not desert: somebody ordered its burial. Rebuild a foothold near the village, help its people and follow the king’s trail into the forest.':'You woke beneath the vanguard’s broken crest. Read the warning, defeat the '+count()+' risen skeletons, open the northern gate and follow the road to Bram’s charter.', 'Return to the world')}
  function respawn(){if(data().stage>=2)return false;hero.root.position.set(START.x,ground(START.x,START.z),START.z);api.player.hp=api.player.maxHp;return true}
- return {updateEnemy,risePose,restore,afterStart,interact,hint,blocked,update,hud,onDeath,journal,respawn,foes,data,start:START};
+ return {updateEnemy,risePose,restore,afterStart,interact,hint,blocked,update,hud,onDeath,journal,respawn,beginAmbush,unlockGate,get foes(){return activeFoes()},data,start:START};
 }

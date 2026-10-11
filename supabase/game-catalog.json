@@ -1641,7 +1641,7 @@
     },
     {
       "id": "24",
-      "name": "Fenrir · The Moonfang",
+      "name": "Fenrir \u00b7 The Moonfang",
       "x": -286,
       "z": 135,
       "hp": 414,
@@ -1863,7 +1863,7 @@
     },
     {
       "id": "30",
-      "name": "Morvain · The Bone Regent",
+      "name": "Morvain \u00b7 The Bone Regent",
       "x": -288,
       "z": -106,
       "hp": 602,
@@ -2085,7 +2085,7 @@
     },
     {
       "id": "36",
-      "name": "Captain Rook · The Oathbreaker",
+      "name": "Captain Rook \u00b7 The Oathbreaker",
       "x": -159,
       "z": -158,
       "hp": 714,
@@ -2307,7 +2307,7 @@
     },
     {
       "id": "42",
-      "name": "Silkmaw · Brood Mother",
+      "name": "Silkmaw \u00b7 Brood Mother",
       "x": 143,
       "z": -233,
       "hp": 846,
@@ -2529,7 +2529,7 @@
     },
     {
       "id": "48",
-      "name": "Astrax · The Stormheart",
+      "name": "Astrax \u00b7 The Stormheart",
       "x": -69,
       "z": -312,
       "hp": 1260,
@@ -4491,7 +4491,7 @@
     },
     {
       "id": "108",
-      "name": "Veyr · Restless Vanguard",
+      "name": "Veyr \u00b7 Restless Vanguard",
       "x": 38,
       "z": 125,
       "hp": 60,
@@ -4686,6 +4686,798 @@
       "baseHp": 30,
       "baseDamage": 8,
       "regionTier": 0
+    },
+    {
+      "id": "114",
+      "name": "Risen Vanguard",
+      "x": 36,
+      "z": 123,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 8,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "115",
+      "name": "Risen Vanguard",
+      "x": 41,
+      "z": 123,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 9,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "116",
+      "name": "Risen Vanguard",
+      "x": 59,
+      "z": 123,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 10,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "117",
+      "name": "Risen Vanguard",
+      "x": 64,
+      "z": 123,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 11,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "118",
+      "name": "Risen Vanguard",
+      "x": 36,
+      "z": 128,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 12,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "119",
+      "name": "Risen Vanguard",
+      "x": 41,
+      "z": 128,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 13,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "120",
+      "name": "Risen Vanguard",
+      "x": 59,
+      "z": 128,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 14,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "121",
+      "name": "Risen Vanguard",
+      "x": 64,
+      "z": 128,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 15,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "122",
+      "name": "Risen Vanguard",
+      "x": 36,
+      "z": 133,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 16,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "123",
+      "name": "Risen Vanguard",
+      "x": 41,
+      "z": 133,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 17,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "124",
+      "name": "Risen Vanguard",
+      "x": 59,
+      "z": 133,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 18,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "125",
+      "name": "Risen Vanguard",
+      "x": 64,
+      "z": 133,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 19,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "126",
+      "name": "Risen Vanguard",
+      "x": 36,
+      "z": 138,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 20,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "127",
+      "name": "Risen Vanguard",
+      "x": 41,
+      "z": 138,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 21,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "128",
+      "name": "Risen Vanguard",
+      "x": 59,
+      "z": 138,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 22,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "129",
+      "name": "Risen Vanguard",
+      "x": 64,
+      "z": 138,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 23,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "130",
+      "name": "Risen Vanguard",
+      "x": 36,
+      "z": 143,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 24,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "131",
+      "name": "Risen Vanguard",
+      "x": 41,
+      "z": 143,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 25,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "132",
+      "name": "Risen Vanguard",
+      "x": 59,
+      "z": 143,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 26,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "133",
+      "name": "Risen Vanguard",
+      "x": 64,
+      "z": 143,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 27,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "134",
+      "name": "Risen Vanguard",
+      "x": 36,
+      "z": 148,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 28,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "135",
+      "name": "Risen Vanguard",
+      "x": 41,
+      "z": 148,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 29,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "136",
+      "name": "Risen Vanguard",
+      "x": 59,
+      "z": 148,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 30,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
+    },
+    {
+      "id": "137",
+      "name": "Risen Vanguard",
+      "x": 64,
+      "z": 148,
+      "hp": 30,
+      "xp": 18,
+      "damage": 8,
+      "speed": 3.1,
+      "type": 0,
+      "family": null,
+      "expansion": null,
+      "boss": false,
+      "guardian": false,
+      "dungeon": null,
+      "level": 1,
+      "drops": [
+        {
+          "id": "coin",
+          "qty": 4,
+          "unique": false
+        },
+        {
+          "id": "potion",
+          "qty": 1,
+          "unique": false
+        }
+      ],
+      "prologue": 31,
+      "baseHp": 30,
+      "baseDamage": 8,
+      "regionTier": 0
     }
   ],
   "quests": [
@@ -4794,7 +5586,7 @@
       "kind": "Main",
       "giver": "ranger",
       "bossFamily": "wolf",
-      "description": "Defeat Fenrir · The Moonfang and report to Warden Rowan. A unique weapon awaits in the boss's loot.",
+      "description": "Defeat Fenrir \u00b7 The Moonfang and report to Warden Rowan. A unique weapon awaits in the boss's loot.",
       "goal": 1,
       "gold": 160,
       "xp": 140,
@@ -4824,7 +5616,7 @@
       "kind": "Main",
       "giver": "priest",
       "bossFamily": "skeleton",
-      "description": "Defeat Morvain · The Bone Regent and report to Sister Aveline. A unique weapon awaits in the boss's loot.",
+      "description": "Defeat Morvain \u00b7 The Bone Regent and report to Sister Aveline. A unique weapon awaits in the boss's loot.",
       "goal": 1,
       "gold": 220,
       "xp": 200,
@@ -4854,7 +5646,7 @@
       "kind": "Main",
       "giver": "marshal",
       "bossFamily": "bandit",
-      "description": "Defeat Captain Rook · The Oathbreaker and report to Marshal Cera. A unique weapon awaits in the boss's loot.",
+      "description": "Defeat Captain Rook \u00b7 The Oathbreaker and report to Marshal Cera. A unique weapon awaits in the boss's loot.",
       "goal": 1,
       "gold": 280,
       "xp": 260,
@@ -4884,7 +5676,7 @@
       "kind": "Main",
       "giver": "herbalist",
       "bossFamily": "spider",
-      "description": "Defeat Silkmaw · Brood Mother and report to Herbalist Nessa. A unique weapon awaits in the boss's loot.",
+      "description": "Defeat Silkmaw \u00b7 Brood Mother and report to Herbalist Nessa. A unique weapon awaits in the boss's loot.",
       "goal": 1,
       "gold": 340,
       "xp": 320,
@@ -4914,7 +5706,7 @@
       "kind": "Main",
       "giver": "sage",
       "bossFamily": "elemental",
-      "description": "Defeat Astrax · The Stormheart and report to Sage Orin. A unique weapon awaits in the boss's loot.",
+      "description": "Defeat Astrax \u00b7 The Stormheart and report to Sage Orin. A unique weapon awaits in the boss's loot.",
       "goal": 1,
       "gold": 400,
       "xp": 380,

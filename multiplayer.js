@@ -1,5 +1,5 @@
-import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-party-graves-1';
-import {connectSupabase} from './supabase-rooms.js?v=realm-party-graves-1';
+import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-party-graves-2';
+import {connectSupabase} from './supabase-rooms.js?v=realm-party-graves-2';
 
 export function installMultiplayer(api) {
   const {$,THREE,hero,enemies,loot,items,living}=api;
@@ -108,6 +108,8 @@ export function installMultiplayer(api) {
   function handleCommand(uid,d){
     if(!active||!host||!d)return;
     if(d.kind==='sync'){sendSnapshot();return}
+    if(d.kind==='graveyard-gate'){const p=point(uid)?.pose;if(p&&Math.hypot(p.x-50,p.z-118)<4){api.prologue.unlockGate();sendSnapshot()}return}
+    if(d.kind==='graveyard-warning'){const p=point(uid)?.pose;if(p&&Math.hypot(p.x-47.8,p.z-150)<4){api.prologue.beginAmbush(true);sendSnapshot()}return}
     if(!Number.isSafeInteger(d.request)||d.request<1||d.request<=(seen.get(uid)||0))return;seen.set(uid,d.request);
     const p=point(uid);if(!p||p.pose.hp<=0||p.pose.away&&d.kind!=='exp-bounty'&&d.kind!=='build')return;
     if(d.kind==='attack'){
@@ -161,7 +163,7 @@ export function installMultiplayer(api) {
     if(!host)for(const e of enemies){const d=e.netPose;if(!d)continue;e.root.position.lerp(new THREE.Vector3(d.x,d.y,d.z),1-Math.exp(-dt*18));api.face(e,d.yaw,dt);e.root.visible=(d.x>200)===(hero.root.position.x>200)&&e.root.position.distanceTo(hero.root.position)<55&&(e.hp>0||e.dead<3);if(e.prologue!==undefined&&e.buried){e.root.visible=false;if(e.state==='emerging'&&e.rise>=0){e.root.visible=true;const u=Math.min(1,e.rise/1.8),v=u*u*(3-2*u);e.rig.position.y=-2.35*(1-v);e.rig.rotation.x=.8*(1-v)}continue}api.animate(e,e.state==='chase'?e.speed:e.state==='patrol'?e.speed*.35:0,dt,e.attack,e.hp<=0?e.dead:0);e.recoil=Math.max(0,(e.recoil||0)-dt);if(e.guardian)living.guardianTell(e)}
   }
   function onKill(e){if(active&&host)send({type:'event',data:{kind:'kill',enemy:enemies.indexOf(e),x:e.root.position.x,z:e.root.position.z}})}
-  return {get active(){return active},get host(){return host},get applying(){return applying},get peers(){return peers},get code(){return code},get id(){return id},lobby,leave,update,interact,target,onKill,
+  return {get active(){return active},get host(){return host},get applying(){return applying},get partySize(){return Math.max(1,Math.min(4,roster.length))},graveyardGate(){command({kind:'graveyard-gate'})},graveyardWarning(){command({kind:'graveyard-warning'})},get peers(){return peers},get code(){return code},get id(){return id},lobby,leave,update,interact,target,onKill,
     build(baseKind,op){command({kind:'build',baseKind,op})},expansionStructure(action){command({kind:'exp-structure',action})},expansionBounty(target){command({kind:'exp-bounty',target})},expansionProjectile(enemy,attack){if(active&&host)send({type:'event',data:{kind:'exp-projectile',enemy,attack}})},
     accountStructure(uid,id){if(active&&host)event({kind:'account-structure',id},uid)},accountHit(uid,hit){if(active&&host)event({kind:'account-hit',hit},uid)},
     onAttack(combo){if(active&&!host)command({kind:'attack',combo})},

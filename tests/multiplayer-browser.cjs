@@ -41,6 +41,10 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  await a.waitForFunction(()=>__realm.net.peers.size===1);await b.waitForFunction(()=>__realm.net.peers.size===1);
  for(const [page,x] of [[a,46],[b,48]])assert.deepEqual(await page.evaluate(()=>({x:__realm.hero.root.position.x,z:__realm.hero.root.position.z,stage:__realm.living.serialize().prologue.stage})),{x,z:153.5,stage:0});
  console.log('PASS party starts side by side in the graveyard with unread prologue');
+ await b.evaluate(()=>__realm.setPosition(47.8,150));await b.waitForTimeout(400);await b.evaluate(()=>__realm.prologue.interact());await b.click('#story-next');
+ for(const page of [a,b]){await page.waitForFunction(()=>__realm.prologue.data().read&&__realm.prologue.foes.length===16);assert.equal(await page.evaluate(()=>__realm.prologue.foes[0].dmg),9);assert.equal(await page.evaluate(()=>__realm.prologue.foes.filter(e=>e.hp>0).length),16);}
+ await a.evaluate(()=>{__realm.prologue.beginAmbush();for(const e of __realm.prologue.foes)e.cooldown=1000});assert.equal(await a.evaluate(()=>__realm.prologue.foes.length),16);
+ console.log('PASS guest warning triggers 16 shared skeletons, increased damage and no duplicate ambush');
  assert.equal(await a.evaluate(()=>__realm.player.coins),45);assert.equal(await a.evaluate(()=>localStorage.getItem('realm-fallen-save-v1')),saved);
  await a.evaluate(()=>{__realm.visuals.weather.state().days=21.2});await b.waitForFunction(()=>Math.abs(__realm.visuals.weather.state().days-21.2)<.01);assert.equal(await a.evaluate(()=>__realm.visuals.weather.weather),await b.evaluate(()=>__realm.visuals.weather.weather));console.log('PASS host world clock and weather synchronize to guest');
  console.log('PASS private room creation, hidden discovery, code join, remote hero and isolated solo save');

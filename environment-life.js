@@ -1,5 +1,5 @@
 // Small decorative populations, separate from hostile AI and persistent gameplay.
-import {graphics} from './graphics.js?v=realm-party-graves-1';
+import {graphics} from './graphics.js?v=realm-party-graves-2';
 export function installEnvironmentLife(api){
  const {THREE,scene,hero,ground,riverZ}=api,root=new THREE.Group();root.name='Ambient wildlife';scene.add(root);
  const bodyGeo=new THREE.IcosahedronGeometry(1,0),wingGeo=new THREE.BufferGeometry();wingGeo.setAttribute('position',new THREE.Float32BufferAttribute([0,0,0,.5,.08,.1,.75,0,-.25,.25,0,-.18],3));wingGeo.setIndex([0,1,2,0,2,3]);wingGeo.computeVertexNormals();

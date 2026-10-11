@@ -1,4 +1,4 @@
-import {batchScenery} from './scene-batch.js?v=realm-party-graves-1';
+import {batchScenery} from './scene-batch.js?v=realm-party-graves-2';
 // Wall relief, masonry joints and lighting fixtures stay at existing boundaries.
 export function installStrongholdArt({THREE,scene,mesh,mat,ground,hero,arenas,expansion,frontier}){
  const cells=[];

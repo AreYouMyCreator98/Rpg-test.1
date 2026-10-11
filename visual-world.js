@@ -1,12 +1,12 @@
-import {bindResourceMesh} from './resource-visuals.js?v=realm-party-graves-1';
-import {installWorldWeather} from './world-weather.js?v=realm-party-graves-1';
-import {dressVillage} from './village-art.js?v=realm-party-graves-1';
-import {installRiverDetails} from './river-details.js?v=realm-party-graves-1';
-import {installEnvironmentLife} from './environment-life.js?v=realm-party-graves-1';
-import {graphics,retireInstances} from './graphics.js?v=realm-party-graves-1';
-import {createTerrainStream} from './terrain-stream.js?v=realm-party-graves-1';
-import {createWesternRange} from './emerald-landscape.js?v=realm-party-graves-1';
-import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-party-graves-1';
+import {bindResourceMesh} from './resource-visuals.js?v=realm-party-graves-2';
+import {installWorldWeather} from './world-weather.js?v=realm-party-graves-2';
+import {dressVillage} from './village-art.js?v=realm-party-graves-2';
+import {installRiverDetails} from './river-details.js?v=realm-party-graves-2';
+import {installEnvironmentLife} from './environment-life.js?v=realm-party-graves-2';
+import {graphics,retireInstances} from './graphics.js?v=realm-party-graves-2';
+import {createTerrainStream} from './terrain-stream.js?v=realm-party-graves-2';
+import {createWesternRange} from './emerald-landscape.js?v=realm-party-graves-2';
+import {installEmeraldVale,inVale} from './emerald-vale.js?v=realm-party-graves-2';
 // Presentation only. No save, item, enemy, network or collision ownership.
 // Repeated decoration is instanced by material in spatial cells; Vale assets are repository-hosted.
 export function installVisualWorld(api) {
