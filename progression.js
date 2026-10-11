@@ -20,7 +20,7 @@ export function characterStats(p,items){
  return {baseAttack,equipmentAttack,attack:Math.round((baseAttack+equipmentAttack)*(1+has('strikes')*.1+has('blade')*.15)),defence:(items[p.armour]?.defence||0)+(a.fortitude||0)*.5+has('skin')*3+(p.pet==='golem'?2:0),
  maxHp:100+(p.level-1)*12+(a.vitality||0)*8+has('vitality')*30,maxStamina:150+(a.endurance||0)*4+has('stamina')*25,regen:18+(a.endurance||0)*.35+has('stamina')*3+has('recovery')*3+(p.pet==='dragon'?1.5:0),
  attackSpeed:1+(a.dexterity||0)*.01+has('reflex')*.1,dodgeCost:25-(a.dexterity||0)*.2-has('dodge')*5,dodgeCooldown:1.05-has('reflex')*.15,invulnerability:.48+has('shadow')*.08,
- walkSpeed:4.1*(1+has('swift')*.08+(p.pet==='fox'?.03:0)),runSpeed:6.5*(1+has('sprint')*.08),sprintDrain:18*(1-has('sprint')*.3),recoil:.22*(1-(a.fortitude||0)*.015),guardRecovery:1.1*(1-(a.fortitude||0)*.015),critChance:.14+(p.pet==='owl'?.02:0)+(has('precision')+has('instinct'))*.05,critMultiplier:1.65+has('blade')*.25,
+ walkSpeed:4.1*(1+has('swift')*.08+(p.pet==='fox'?.03:0)),runSpeed:9.75*(1+has('sprint')*.08),sprintDrain:18*(1-has('sprint')*.3),recoil:.22*(1-(a.fortitude||0)*.015),guardRecovery:1.1*(1-(a.fortitude||0)*.015),critChance:.14+(p.pet==='owl'?.02:0)+(has('precision')+has('instinct'))*.05,critMultiplier:1.65+has('blade')*.25,
  finisher:1.75+has('combos')*.25,heavyStagger:.3+has('breaker')*.15,whirlwind:!!has('whirlwind'),blockCost:1-has('shield')*.2,blockDamage:has('shield')?.15:.22,potionHeal:65+has('recovery')*20,damageReduction:has('unbreakable')&&p.hp<p.maxHp*.3?.8:1};
 }
 export function refreshVitals(p,items){const s=characterStats(p,items);p.maxHp=s.maxHp;p.maxStamina=s.maxStamina;p.hp=Math.min(p.hp,p.maxHp);p.stamina=Math.min(p.stamina,p.maxStamina);return s}

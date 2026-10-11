@@ -158,3 +158,13 @@ html.zoom-recovery,html.zoom-recovery body{touch-action:pinch-zoom}
 #world-compass .compass-quest{font:12px var(--ui-serif);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-height:44px;margin-top:-3px}
 @media(orientation:portrait){#world-compass{top:max(91px,calc(var(--safe-top) + 76px));width:min(70vw,280px)}.quiet-hud #toasts{top:192px}.quiet-hud.mini-visible #frontier-mini{top:197px}}
 @media(orientation:landscape) and (max-width:800px){#world-compass{width:30vw;left:62%;top:max(8px,var(--safe-top))}.world-clock{font-size:10px}#world-compass .compass-quest{font-size:11px}.quiet-hud #toasts{top:110px}}
+/* Independent toggle buttons preserve simultaneous joystick/camera/combat pointers. */
+.quiet-hud .touch-actions #sprint-touch{left:max(18px,var(--safe-left));right:auto;bottom:max(178px,calc(var(--safe-bottom) + 166px));width:48px;height:48px;min-width:48px;min-height:48px;padding:5px}
+.quiet-hud .touch-actions #lock-touch{right:max(28px,calc(var(--safe-right) + 12px));bottom:max(8px,calc(var(--safe-bottom) + 4px));width:44px;height:44px;min-width:44px;min-height:44px;padding:9px}
+#lock-touch span{display:none}.quiet-hud .touch-actions #attack-touch{bottom:max(60px,calc(var(--safe-bottom) + 52px))}
+.quiet-hud .touch-actions button[aria-pressed="true"]{border-color:var(--ui-gold);background:#786139bd}
+.quiet-hud .context-action{bottom:max(238px,calc(var(--safe-bottom) + 226px))}
+#target-lock{position:absolute;width:22px;height:22px;border:2px solid var(--ui-gold);border-radius:50%;box-shadow:0 0 0 2px #17271bbb;pointer-events:none;transform:translate(-50%,-50%)}
+#target-lock:after{content:"";position:absolute;inset:6px;border:1px solid var(--ui-ivory);border-radius:50%}
+#target-lock[hidden]{display:none!important}
+@media(orientation:landscape) and (max-height:500px){.quiet-hud .context-action{bottom:28px;max-width:35vw}}

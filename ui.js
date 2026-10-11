@@ -1,5 +1,6 @@
 // Realm UI design system. All interface icons share this local SVG family.
 const paths={
+ reticle:'<circle cx="16" cy="16" r="8"/><path d="M16 2v7m0 14v7M2 16h7m14 0h7"/><circle cx="16" cy="16" r="1" fill="currentColor"/>',
  menu:'<path d="M5 9h22M5 17h22M5 25h22"/>',
  hero:'<rect x="4" y="4" width="24" height="24" rx="3" transform="rotate(45 16 16)" class="icon-gold" stroke-width=".8" fill="var(--ui-pine)"/><path fill="currentColor" stroke="none" d="M16 5 19.4 12.6 27 16 19.4 19.4 16 27 12.6 19.4 5 16 12.6 12.6Z"/>',
  coin:'<circle cx="16" cy="16" r="12"/><circle cx="16" cy="16" r="8.5"/><path fill="currentColor" stroke="none" d="m16 10 4 6-4 6-4-6Z"/>',
@@ -34,7 +35,7 @@ export function installUI(api){
  document.querySelectorAll('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon));
  for(const [id,it]of Object.entries(api.items))it.icon=itemIcon(id,it);
  const button=(id,name,label)=>{const el=$(id);el.innerHTML=icon(name)+`<span>${label}</span>`;el.setAttribute('aria-label',label)};
- for(const [id,name,label]of [['bag-touch','bag','Satchel'],['pause-touch','menu','Menu'],['attack-touch','attack','Attack'],['block-touch','shield','Block'],['potion-touch','heal','Heal'],['dodge-touch','run','Dodge']])button(id,name,label);
+ for(const [id,name,label]of [['bag-touch','bag','Satchel'],['pause-touch','menu','Menu'],['attack-touch','attack','Attack'],['block-touch','shield','Block'],['potion-touch','heal','Heal'],['dodge-touch','run','Dodge'],['sprint-touch','run','Sprint'],['lock-touch','reticle','Lock on']])button(id,name,label);
  $('hud').append(document.querySelector('.touch-top'));$('hud').append($('pickup-touch'));
  $('pickup-touch').className='context-action';$('pickup-touch').innerHTML=icon('talk')+'<span id="context-label"></span><i class="context-diamond"></i>';
  $('equipment-switch').onclick=api.inventory;$('hint').classList.add('sr-only');
