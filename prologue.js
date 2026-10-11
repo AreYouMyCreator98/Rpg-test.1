@@ -1,8 +1,8 @@
-import {batchScenery} from './scene-batch.js?v=realm-net-sync-1';
+import {batchScenery} from './scene-batch.js?v=realm-party-lobby-1';
 // Chapter zero is world progress; absent data means an existing journey, never a reset.
 export function installPrologue(api){
  const {THREE,mesh,ground,hero,living,$}=api,root=new THREE.Group();api.scene.add(root);
- const START={x:50,z:151},grave={x:47.8,z:150},gate={x:50,z:118},charter={x:0,z:83};let waking=0,starting=false;
+ const START={x:50,z:151},grave={x:47.8,z:150},gate={x:50,z:118},charter={x:0,z:83};let waking=0,starting=false,torchTime=0;
  const data=()=>living.serialize().prologue??={version:1,stage:3,read:false,killed:[]};
  const prop=(s,c,x,y,z,a,b,d,parent=root)=>mesh(s,c,x,y,z,a,b,d,parent);
  for(const side of [-1,1])prop('box',0x555d59,50+side*17,2.1,138,1,4.2,41);
@@ -18,6 +18,14 @@ export function installPrologue(api){
  for(const x of [45,55]){prop('cyl',0x655441,x,1.3,119,.12,2.6,.12);prop('cone',api.mat(0xf9b75b,{emissive:0xeb7a2b,emissiveIntensity:.7}),x,2.7,119,.2,.55,.2)}
  prop('box',0x614c37,charter.x,ground(charter.x,charter.z)+1,charter.z,.12,2,.12);prop('box',0xc4ad77,charter.x,ground(charter.x,charter.z)+1.6,charter.z,1.8,.8,.12);
  root.remove(hinge);batchScenery(THREE,root);root.add(hinge);
+ const torchStone=new THREE.Group(),flames=[];root.add(torchStone);
+ const fire=api.mat(0xffc367,{emissive:0xff9c27,emissiveIntensity:2.5});
+ for(const [x,z,side] of [[34,126,1],[34,138,1],[34,150,1],[66,126,-1],[66,138,-1],[66,150,-1],[42,158,0],[58,158,0]]){
+  prop('box',0x343330,x,2.6,z,.24,.7,.24,torchStone);prop('cyl',0x674329,x+side*.3,2.5,z-(side?0:.3),.11,.8,.11,torchStone);
+  const f=prop('cone',fire,x+side*.3,3.02,z-(side?0:.3),.2,.65,.2);f.castShadow=false;f.receiveShadow=false;f.userData.height=f.scale.y;flames.push(f);
+ }
+ batchScenery(THREE,torchStone);
+ const torchLights=[0,1].map(()=>{const l=new THREE.PointLight(0xffab55,28,22,2);l.castShadow=false;l.visible=false;api.scene.add(l);return l});
  // Keep the first three roster slots stable for existing account reward records.
  const graves=[[44,148],[56,141],[38,125],[56,148],[44,141],[62,130],[38,135],[62,140]];
  // Reserve stable enemy IDs; unused reinforcements stay buried and inactive.
@@ -96,9 +104,11 @@ export function installPrologue(api){
    else if(!data().read){e.buried=true;e.state='buried';e.root.visible=false}
    else {e.state='chase';e.root.visible=true}
   }
-  waking=!saved?2.4:0;hinge.rotation.y=data().stage>=2?-Math.PI/2:0;
+  waking=!saved?2.4:0;if(!saved)living.serialize().climate={version:1,days:22/24};hinge.rotation.y=data().stage>=2?-Math.PI/2:0;
  }
 
+ function wake(seconds=2.4){waking=Math.max(0,Math.min(2.4,seconds));wakePose(hero,waking)}
+ function wakePose(ch,t){const u=Math.max(0,Math.min(1,t/2.4));ch.rig.rotation.x=-1.5*Math.sin(u*Math.PI/2);ch.rig.position.y=-.45*u;ch.arms.forEach(a=>a.rotation.x=-.3*u);}
  function afterStart(){if(data().stage===0)api.toast('CHAPTER ZERO · THE UNBURIED — Read the warning beside your grave. Your rusty blade is all that remains.');}
  function dialogue(title,text,button,fn){api.modal(title,'<div class="eyebrow">The lone warrior · Chapter zero</div><p>'+text+'</p><button id="story-next" class="primary">'+button+'</button>','story');$('story-next').onclick=()=>{api.closeModal();fn?.();api.save()};}
  function unlockGate(){if(data().read&&activeFoes().every(e=>e.hp<=0))data().stage=Math.max(2,data().stage)}
@@ -109,10 +119,10 @@ export function installPrologue(api){
  }
  function hint(){const p=hero.root.position;if(Math.hypot(p.x-grave.x,p.z-grave.z)<3)return 'Read the fallen soldier’s warning';if(data().stage<2&&Math.hypot(p.x-gate.x,p.z-gate.z)<3)return 'Break the graveyard chain';if(data().stage<3&&Math.hypot(p.x-charter.x,p.z-charter.z)<3)return 'Read Bram’s settlement charter';return null}
  function blocked(x,z,r){if(x<31||x>69||z<116||z>161)return false;return Math.abs(x-33)<.5+r&&z>117&&z<160||Math.abs(x-67)<.5+r&&z>117&&z<160||Math.abs(z-159)<.5+r&&x>32&&x<68||Math.abs(z-118)<.5+r&&x>32&&x<68&&(Math.abs(x-50)>3-r||data().stage<2)}
- function update(dt){hinge.rotation.y+=((data().stage>=2?-Math.PI/2:0)-hinge.rotation.y)*Math.min(1,dt*5);root.visible=hero.root.position.distanceTo(root.position.clone().set(50,0,138))<110;if(waking>0&&!api.panel){waking=Math.max(0,waking-dt);hero.rig.rotation.x=-Math.sin(Math.min(1,waking/2.4)*Math.PI/2)*1.05;}}
+ function update(dt){hinge.rotation.y+=((data().stage>=2?-Math.PI/2:0)-hinge.rotation.y)*Math.min(1,dt*5);root.visible=hero.root.position.distanceTo(root.position.clone().set(50,0,138))<110;if(waking>0&&!api.panel){waking=Math.max(0,waking-dt);wakePose(hero,waking);}torchTime+=dt;for(let i=0;i<flames.length;i++){const f=flames[i];f.scale.y=f.userData.height*(1+.1*Math.sin(torchTime*9+i*2.3));}const nearest=flames.map(f=>({f,d:f.getWorldPosition(new THREE.Vector3()).distanceToSquared(hero.root.position)})).sort((a,b)=>a.d-b.d);torchLights.forEach((l,i)=>{const n=nearest[i];l.visible=root.visible&&!!n&&n.d<900&&(i===0||api.getSettings?.().quality!=='low');if(l.visible){l.position.copy(n.f.getWorldPosition(new THREE.Vector3()));l.intensity=28+Math.sin(torchTime*7+i)*2}});}
  function hud(){if(data().stage>=3)return;const defeated=activeFoes().filter(e=>e.hp<=0).length;$('quest-title').textContent='The Unburied';$('objective').textContent=data().stage===0?'Read the warning beside your grave.':data().stage===1?'Defeat the risen skeletons ('+defeated+'/'+count()+'), then break the northern gate.':'Follow the lantern road to Bram’s charter outside the village.';if(hero.root.position.z>117&&hero.root.position.x>32&&hero.root.position.x<68)$('location').textContent='The Unmarked Graves';}
  function onDeath(e){if(e.prologue===undefined)return false;if(!data().killed.includes(e.prologue))data().killed.push(e.prologue);e.respawn=Infinity;api.drop('coin',e.root.position.x,e.root.position.z,e.prologue===2?18:4);api.drop('potion',e.root.position.x+.6,e.root.position.z);return true}
  function journal(){dialogue('The Unburied',data().stage>=3?'You escaped the graves and found Bram. The vanguard did not desert: somebody ordered its burial. Rebuild a foothold near the village, help its people and follow the king’s trail into the forest.':'You woke beneath the vanguard’s broken crest. Read the warning, defeat the '+count()+' risen skeletons, open the northern gate and follow the road to Bram’s charter.', 'Return to the world')}
  function respawn(){if(data().stage>=2)return false;hero.root.position.set(START.x,ground(START.x,START.z),START.z);api.player.hp=api.player.maxHp;return true}
- return {updateEnemy,risePose,restore,afterStart,interact,hint,blocked,update,hud,onDeath,journal,respawn,beginAmbush,unlockGate,get foes(){return activeFoes()},data,start:START};
+ return {wake,wakePose,get waking(){return waking},torches:flames,updateEnemy,risePose,restore,afterStart,interact,hint,blocked,update,hud,onDeath,journal,respawn,beginAmbush,unlockGate,get foes(){return activeFoes()},data,start:START};
 }

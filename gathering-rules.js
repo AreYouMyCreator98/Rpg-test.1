@@ -1,6 +1,6 @@
-import {WORLD_RESOURCES} from './world-resources.js?v=realm-net-sync-1';
+import {WORLD_RESOURCES} from './world-resources.js?v=realm-party-lobby-1';
 export {WORLD_RESOURCES};
-import {PLOTS,wallLike} from './building-rules.js?v=realm-net-sync-1';
+import {PLOTS,wallLike} from './building-rules.js?v=realm-party-lobby-1';
 export const RESOURCE_REGROW_MS=3*24*60*1000;
 export const MATERIALS={logs:'Logs',rubble:'Rough stone',ore:'Iron ore',wood:'Timber planks',stone:'Stone blocks',nails:'Iron nails'};
 export const RECIPES={

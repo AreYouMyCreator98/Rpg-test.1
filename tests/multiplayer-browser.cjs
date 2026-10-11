@@ -41,6 +41,13 @@ const sdk=`export function createClient(){const uid=crypto.randomUUID(),listener
  await a.waitForFunction(()=>__realm.net.peers.size===1);await b.waitForFunction(()=>__realm.net.peers.size===1);
  for(const [page,x] of [[a,46],[b,48]])assert.deepEqual(await page.evaluate(()=>({x:__realm.hero.root.position.x,z:__realm.hero.root.position.z,stage:__realm.living.serialize().prologue.stage})),{x,z:153.5,stage:0});
  console.log('PASS party starts side by side in the graveyard with unread prologue');
+ for(const page of [a,b])assert.equal(await page.evaluate(()=>__realm.net.phase),'waiting');
+ await a.evaluate(()=>__realm.net.lobby());await b.evaluate(()=>__realm.net.lobby());await a.click('#party-ready');assert(await a.locator('#party-start').isDisabled());await b.click('#party-ready');await a.waitForFunction(()=>!document.getElementById('party-start').disabled);await a.click('#party-start');
+ await b.waitForFunction(()=>__realm.net.phase==='countdown');
+ for(const page of [a,b])await page.waitForFunction(()=>__realm.net.phase==='playing'&&__realm.prologue.waking>0);
+ for(const page of [a,b]){assert(await page.evaluate(()=>__realm.hero.rig.rotation.x<-.3));assert.equal(await page.evaluate(()=>__realm.prologue.torches.length),8);assert(await page.evaluate(()=>__realm.visuals.weather.state().days%1>.9));}
+ for(const page of [a,b])await page.waitForFunction(()=>__realm.prologue.waking===0);
+ console.log('PASS ready lobby, host confirmation, shared countdown, wake animation, nighttime and eight torches');
  await b.evaluate(()=>__realm.setPosition(47.8,150));await b.waitForTimeout(400);await b.evaluate(()=>__realm.prologue.interact());await b.click('#story-next');
  for(const page of [a,b]){await page.waitForFunction(()=>__realm.prologue.data().read&&__realm.prologue.foes.length===16);assert.equal(await page.evaluate(()=>__realm.prologue.foes[0].dmg),9);assert.equal(await page.evaluate(()=>__realm.prologue.foes.filter(e=>e.hp>0).length),16);}
  await a.evaluate(()=>{__realm.prologue.beginAmbush();for(const e of __realm.prologue.foes)e.cooldown=1000});assert.equal(await a.evaluate(()=>__realm.prologue.foes.length),16);

@@ -1,4 +1,4 @@
-import {encodePacket,packetReader} from './network-packets.js?v=realm-net-sync-1';
+import {encodePacket,packetReader} from './network-packets.js?v=realm-party-lobby-1';
 // Supabase handles authenticated membership and transport. Game authority stays
 // with the host. Private per-sender topics prevent guests spoofing host packets.
 export async function connectSupabase(url,key,receive,account=null) {

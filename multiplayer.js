@@ -1,10 +1,10 @@
-import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-net-sync-1';
-import {connectSupabase} from './supabase-rooms.js?v=realm-net-sync-1';
+import {SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY} from './multiplayer-config.js?v=realm-party-lobby-1';
+import {connectSupabase} from './supabase-rooms.js?v=realm-party-lobby-1';
 
 export function installMultiplayer(api) {
   const {$,THREE,hero,enemies,loot,items,living}=api;
   let transport=null,active=false,host=false,id='',code='',isPublic=false,roster=[],busy=false,applying=false,sequence=0,clock=0,poseTime=0,snapshotTime=0,lastSnapshot=0;
-  let connectedAccount=null;const peers=new Map(),seen=new Map();let request=0,loadingWorld=false,pendingSnapshot=null,worldTime=0;
+  let connectedAccount=null;const peers=new Map(),seen=new Map();let request=0,loadingWorld=false,pendingSnapshot=null,worldTime=0;let partyPhase='waiting',ready=new Set(),readyIntent=null,deadline=0,readyTimer=0;
   const shieldGeometry=new THREE.CylinderGeometry(.36,.36,.09,8),shieldMaterial=new THREE.MeshStandardMaterial({color:0x786245,flatShading:true});
   const button=document.createElement('button');button.id='multiplayer';button.textContent='Play together';$('title').querySelector('.buttons').append(button);button.onclick=lobby;
   const party=document.createElement('button');party.id='party-button';party.textContent='Party';party.hidden=true;document.body.append(party);party.onclick=lobby;
@@ -20,7 +20,8 @@ export function installMultiplayer(api) {
   function status(text){const el=$('room-status');if(el)el.textContent=text;else api.toast(text)}
   function lobby(){
     if(active){
-      api.modal('Your adventuring party','<div class="eyebrow" id="room-kind"></div><p class="room-note">Invite code</p><div class="invite-code" id="invite-code"></div><button id="copy-invite">Copy code</button><div id="party-list"></div><p class="room-note">Account adventurers retain their own progression. Guest adventurers last for this session. Solo worlds stay separate. The host must keep this tab open. Menus do not pause the world.</p><button id="leave-room">Leave room & return to solo</button>','party');
+      api.modal('Your adventuring party','<div class="eyebrow" id="room-kind"></div><p class="room-note">Invite code</p><div class="invite-code" id="invite-code"></div><button id="copy-invite">Copy code</button><div id="party-list"></div><p id="party-start-status" role="status"></p><button id="party-ready">Ready</button><button id="party-start" class="primary">Begin together</button><p class="room-note">Account adventurers retain their own progression. Guest adventurers last for this session. Solo worlds stay separate. The host must keep this tab open. Menus do not pause the world.</p><button id="leave-room">Leave room & return to solo</button>','party');
+      $('party-ready').onclick=()=>{readyIntent=!ready.has(id);command({kind:'ready',ready:readyIntent})};$('party-start').onclick=()=>{if(host&&partyPhase==='waiting'&&roster.length&&roster.every(p=>ready.has(p.id))){partyPhase='countdown';deadline=clock+3;sendSnapshot(true);renderRoster()}};
       $('room-kind').textContent=(isPublic?'Public world':'Private room')+(host?' · You are hosting':'');$('invite-code').textContent=code;renderRoster();
       $('copy-invite').onclick=async()=>{try{await navigator.clipboard.writeText(code);api.toast('Invite code copied')}catch{api.toast('Select the invite code above to copy it.')}};
       $('leave-room').onclick=()=>leave('Left the party. Your solo journey is restored.');return;
@@ -40,7 +41,11 @@ export function installMultiplayer(api) {
     };
     status(c.url&&c.key?'Connect or refresh to find worlds.':'Solo is ready. Online rooms need your Supabase project connection.');
   }
-  function renderRoster(){const el=$('party-list');if(el){el.replaceChildren();for(const p of roster){const row=document.createElement('p');row.textContent=p.name+(p.id===id?' · you':'')+(p.id===roster.host?' · host':'');el.append(row)}}party.textContent=`Party ${roster.length}/4`}
+  function renderRoster(){const el=$('party-list');if(el){el.replaceChildren();for(const p of roster){const row=document.createElement('p');row.textContent=p.name+(p.id===id?' · you':'')+(p.id===roster.host?' · host':'')+(partyPhase==='waiting'?(ready.has(p.id)?' · Ready':' · Not ready'):'');el.append(row)}}party.textContent=`Party ${roster.length}/4`;
+    const r=$('party-ready'),s=$('party-start'),t=$('party-start-status');if(r){r.hidden=partyPhase!=='waiting';r.textContent=ready.has(id)?'Cancel ready':'Ready';s.hidden=!host||partyPhase!=='waiting';s.disabled=!roster.length||!roster.every(p=>ready.has(p.id));t.textContent=partyPhase==='waiting'?'Ready up when everyone has joined. The host starts the journey.':partyPhase==='countdown'?'Waking in '+Math.max(1,Math.ceil(deadline-clock))+'…':'Your journey is underway.';}
+  }
+  function beginJourney(elapsed=0){partyPhase='playing';api.closeModal();api.prologue.wake(Math.max(0,2.4-elapsed));if(host){living.serialize().climate={version:1,days:22/24};sendSnapshot(true)}api.toast('THE UNMARKED GRAVES · You are not alone.');}
+
   function removePeer(uid){const p=peers.get(uid);if(!p)return;api.companions?.removeRemote(uid);api.getHomestead()?.gathering.removeRemote(p.ch);api.scene.remove(p.ch.root);p.ch.bodyMat.dispose();p.ch.bladeMat.dispose();p.label.remove();peers.delete(uid)}
   function getPeer(uid){
     if(peers.has(uid))return peers.get(uid);if(peers.size>=3)return null;
@@ -55,13 +60,13 @@ export function installMultiplayer(api) {
       for(const r of m.rooms){const row=document.createElement('div');row.className='room-row';const name=document.createElement('span');name.textContent=r.name+` · ${r.count}/4`;const b=document.createElement('button');b.textContent='Join';b.onclick=()=>send({type:'join',code:r.code,name:$('room-name')?.value.trim()||'Wanderer'});row.append(name,b);el.append(row)}return;
     }
     if(m.type==='joined'){
-      loadingWorld=true;pendingSnapshot=null;active=true;host=m.host===m.id;id=m.id;code=m.code;isPublic=m.public;sequence=0;seen.clear();request=0;lastSnapshot=clock;
+      partyPhase='waiting';ready=new Set();readyIntent=null;deadline=0;loadingWorld=true;pendingSnapshot=null;active=true;host=m.host===m.id;id=m.id;code=m.code;isPublic=m.public;sequence=0;seen.clear();request=0;lastSnapshot=clock;
       if(api.getAccounts()?.active)await api.getAccounts().join(m.worldId);else api.start(false,null,m.slot);loadingWorld=false;if(!host){for(const e of enemies){e.root.visible=false;e.label.style.display='none'}if(pendingSnapshot){applySnapshot(pendingSnapshot);pendingSnapshot=null;lastSnapshot=clock}}party.hidden=false;api.toast(host?'Your world is open. Share its invite code.':'Joined the party. Awaiting the host’s world…');
-      if(host)sendSnapshot(true);else send({type:'command',data:{kind:'sync',request:++request}});return;
+      lobby();if(host)sendSnapshot(true);else send({type:'command',data:{kind:'sync',request:++request}});return;
     }
     if(m.type==='ended'){leave(m.reason,false);return}
     if(!active)return;
-    if(m.type==='roster'){roster=m.players;roster.host=m.host;for(const uid of peers.keys())if(!roster.some(p=>p.id===uid))removePeer(uid);renderRoster();return}
+    if(m.type==='roster'){roster=m.players;if(host){ready=new Set([...ready].filter(uid=>roster.some(p=>p.id===uid)));if(partyPhase==='countdown'&&!roster.every(p=>ready.has(p.id)))partyPhase='waiting';}roster.host=m.host;for(const uid of peers.keys())if(!roster.some(p=>p.id===uid))removePeer(uid);renderRoster();return}
     if(m.type==='left'){removePeer(m.id);return}
     if(m.type==='pose'){
       const d=m.data;if(m.id===id||!d||!['x','y','z','yaw','hp','level'].every(k=>Number.isFinite(d[k]))||(d.x < api.bounds.left || d.x > 1150)||d.z<api.bounds.top||d.z>api.bounds.bottom||d.level<1||d.level>40||!Number.isInteger(d.level))return;
@@ -75,14 +80,20 @@ export function installMultiplayer(api) {
     if(!active)return;active=false;host=false;for(const uid of [...peers.keys()])removePeer(uid);roster=[];seen.clear();party.hidden=true;
     try{if(api.getAccounts()?.active)await api.getAccounts().leave();else api.start(!!api.readSave())}catch(e){status(e.message);if(api.getAccounts()?.active)void api.getAccounts().menu()}finally{if(notify)send({type:'leave'});api.toast(reason)}
   }
-  function pose(){const p=hero.root.position;return {x:p.x,y:p.y,z:p.z,yaw:hero.root.rotation.y,hp:api.player.hp,level:api.player.level,attributes:api.player.attributes,skills:api.player.skills,pet:api.player.pet,mount:api.player.mount,mounted:api.companions?.mounted,moving:api.companions?.speed>0.2,weapon:api.player.weapon,armour:api.player.armour,blocking:api.blocking,dodge:api.dodge,away:!!api.panel||api.state!=='playing',gathering:api.getHomestead()?.gathering.animation,attack:api.attack?{t:api.attack.t,duration:api.attack.duration,combo:api.attack.combo,whirlwind:api.attack.whirlwind}:null}}
+  function pose(){const p=hero.root.position;return {x:p.x,y:p.y,z:p.z,yaw:hero.root.rotation.y,hp:api.player.hp,level:api.player.level,attributes:api.player.attributes,skills:api.player.skills,pet:api.player.pet,mount:api.player.mount,mounted:api.companions?.mounted,moving:api.companions?.speed>0.2,weapon:api.player.weapon,armour:api.player.armour,blocking:api.blocking,dodge:api.dodge,waking:api.prologue.waking,away:!!api.panel||api.state!=='playing',gathering:api.getHomestead()?.gathering.animation,attack:api.attack?{t:api.attack.t,duration:api.attack.duration,combo:api.attack.combo,whirlwind:api.attack.whirlwind}:null}}
   function sendPose(){if(active)send({type:'pose',data:pose()})}
   function sendSnapshot(full=false){
     if(!active||!host)return;const data=living.serialize();
-    send({type:'snapshot',data:{enemies:enemies.map(e=>({x:e.root.position.x,y:e.root.position.y,z:e.root.position.z,yaw:e.root.rotation.y,hp:e.hp,maxHp:e.maxHp,xp:e.xp,dmg:e.dmg,state:e.state,dead:e.dead,generation:e.accountGeneration||0,recoil:e.recoil,pattern:e.pattern,buried:!!e.buried,rise:e.rise,attack:e.state==='attack'?{t:e.attack.t,duration:e.attack.duration,combo:e.attack.combo,range:e.attack.range,tx:e.attack.tx,tz:e.attack.tz}:null})),loot:loot.map(l=>({uid:l.netId||(l.netId=++sequence),id:l.id,qty:l.qty,x:l.g.position.x,z:l.g.position.z,reward:l.reward})),world:full||worldTime>=1?{climate:data.climate,prologue:data.prologue,citizens:api.getSettlementLife()?.serialize(),estates:api.getHomestead()?.serializeNet(),expansion:data.expansion,frontierBosses:data.frontierBosses||[],gateOpen:!!data.gateOpen,keyChest:!!data.keyChest,hiddenChest:!!data.hiddenChest,guardianDead:!!data.guardianDead,sharedKey:!!data.sharedKey}:undefined,chests:api.chests.map(c=>c.open),bossDead:api.bossDead}});if(full||worldTime>=1)worldTime=0;
+    send({type:'snapshot',data:{enemies:enemies.map(e=>({x:e.root.position.x,y:e.root.position.y,z:e.root.position.z,yaw:e.root.rotation.y,hp:e.hp,maxHp:e.maxHp,xp:e.xp,dmg:e.dmg,state:e.state,dead:e.dead,generation:e.accountGeneration||0,recoil:e.recoil,pattern:e.pattern,buried:!!e.buried,rise:e.rise,attack:e.state==='attack'?{t:e.attack.t,duration:e.attack.duration,combo:e.attack.combo,range:e.attack.range,tx:e.attack.tx,tz:e.attack.tz}:null})),loot:loot.map(l=>({uid:l.netId||(l.netId=++sequence),id:l.id,qty:l.qty,x:l.g.position.x,z:l.g.position.z,reward:l.reward})),party:{phase:partyPhase,ready:[...ready],remaining:Math.max(0,deadline-clock),elapsed:partyPhase==='playing'?Math.max(0,clock-deadline):0},world:full||worldTime>=1?{climate:data.climate,prologue:data.prologue,citizens:api.getSettlementLife()?.serialize(),estates:api.getHomestead()?.serializeNet(),expansion:data.expansion,frontierBosses:data.frontierBosses||[],gateOpen:!!data.gateOpen,keyChest:!!data.keyChest,hiddenChest:!!data.hiddenChest,guardianDead:!!data.guardianDead,sharedKey:!!data.sharedKey}:undefined,chests:api.chests.map(c=>c.open),bossDead:api.bossDead}});if(full||worldTime>=1)worldTime=0;
   }
   function applySnapshot(s){
     if(s&&Array.isArray(s.enemies)&&s.enemies.length!==enemies.length){leave('Your party uses a different game update. Everyone should reload before joining.');return}if(!s||!Array.isArray(s.enemies)||!Array.isArray(s.loot)||s.loot.length>500)return;
+    if(s.party&&['waiting','countdown','playing'].includes(s.party.phase)){
+      ready=new Set((s.party.ready||[]).filter(v=>typeof v==='string'));
+      if(s.party.phase==='playing'&&partyPhase!=='playing')beginJourney(Number(s.party.elapsed)||0);
+      else if(s.party.phase!=='playing'){partyPhase=s.party.phase;deadline=clock+Math.max(0,Number(s.party.remaining)||0)}
+      renderRoster();
+    }
     applying=true;try{
       s.enemies.forEach((v,i)=>{if(!v||!['x','y','z','yaw','hp'].every(k=>Number.isFinite(v[k])))return;const e=enemies[i];if(e.hp>v.hp){api.burst(e.root.position,0xc2da78,5);e.recoil=.28;api.sound('hit')}if(Number.isInteger(v.generation)&&v.generation!==(e.accountGeneration||0)){e.accountHits=false;e.accountDamage=0;e.accountGeneration=v.generation}e.hp=v.hp;if(e.prologue!==undefined){e.buried=!!v.buried;e.rise=Number.isFinite(v.rise)?v.rise:2}if(Number.isFinite(v.maxHp)&&v.maxHp>0)e.maxHp=v.maxHp;if(Number.isFinite(v.xp))e.xp=v.xp;if(Number.isFinite(v.dmg))e.dmg=v.dmg;e.state=v.state;e.dead=v.dead||0;e.pattern=v.pattern;e.attack=v.attack;if(!e.netPose||e.root.position.distanceToSquared(new THREE.Vector3(v.x,v.y,v.z))>144)e.root.position.set(v.x,v.y,v.z);e.netPose=v;e.recoil=Math.max(e.recoil||0,v.recoil||0);});
       const ids=new Set(s.loot.map(l=>l.uid));for(const l of [...loot])if(!ids.has(l.netId))api.removeLoot(l);
@@ -109,9 +120,12 @@ export function installMultiplayer(api) {
   function point(uid){if(uid===id)return {ch:hero,pose:pose()};const p=peers.get(uid);return p?.pose&&clock-p.last<3?{ch:p.ch,pose:p.pose}:null}
   function handleCommand(uid,d){
     if(!active||!host||!d)return;
+    if(d.kind==='ready'){if(partyPhase==='waiting'&&roster.some(p=>p.id===uid)){if(d.ready===true)ready.add(uid);else ready.delete(uid);renderRoster();sendSnapshot(true)}return}
     if(d.kind==='sync'){sendSnapshot(true);return}
+    if(partyPhase!=='playing')return;
     if(d.kind==='graveyard-gate'){const p=point(uid)?.pose;if(p&&Math.hypot(p.x-50,p.z-118)<4){api.prologue.unlockGate();sendSnapshot()}return}
     if(d.kind==='graveyard-warning'){const p=point(uid)?.pose;if(p&&Math.hypot(p.x-47.8,p.z-150)<4){api.prologue.beginAmbush(true);sendSnapshot()}return}
+    if(partyPhase!=='playing')return;
     if(!Number.isSafeInteger(d.request)||d.request<1||d.request<=(seen.get(uid)||0))return;seen.set(uid,d.request);
     const p=point(uid);if(!p||p.pose.hp<=0||p.pose.away&&d.kind!=='exp-bounty'&&d.kind!=='build')return;
     if(d.kind==='attack'){
@@ -141,6 +155,7 @@ export function installMultiplayer(api) {
     const p=hero.root.position,d=living.serialize();if((p.x>200&&((!d.gateOpen&&Math.hypot(p.x-300,p.z+31)<4)||(!d.keyChest&&Math.hypot(p.x-313,p.z+21)<3)||(!d.hiddenChest&&Math.hypot(p.x-290,p.z+59)<3)))||api.chests.some(c=>!c.open&&Math.hypot(p.x-c.x,p.z-c.z)<3)){command({kind:'structure'});return true}return false;
   }
   function target(e){
+    if(active&&partyPhase!=='playing')return null;
     if(!active||!host)return hero;
     const candidates=[];if(api.player.hp>0&&!api.panel&&api.state==='playing')candidates.push(hero);
     for(const p of peers.values())if(p.pose?.hp>0&&!p.pose.away&&clock-p.last<3)candidates.push(p.ch);
@@ -149,12 +164,17 @@ export function installMultiplayer(api) {
   }
   function update(dt){
     clock+=dt;if(!active||loadingWorld)return;poseTime+=dt;snapshotTime+=dt;worldTime+=dt;
+    if(partyPhase!=='playing'){
+      if(api.panel!=='party')lobby();
+      readyTimer+=dt;if(readyIntent!==null&&ready.has(id)!==readyIntent&&readyTimer>1){readyTimer=0;command({kind:'ready',ready:readyIntent})}
+      if(host&&partyPhase==='countdown'&&clock>=deadline)beginJourney();else if(partyPhase==='countdown')renderRoster();
+    }
     if(poseTime>=.1){poseTime=0;sendPose()}
     if(host&&snapshotTime>=.2){snapshotTime=0;sendSnapshot()}
     if(!host&&clock-lastSnapshot>20){leave('The host stopped responding. Your solo save is unchanged.');return}
     for(const [uid,p] of peers){
       if(!p.pose)continue;const d=p.pose,old=p.ch.root.position.clone();if(p.ch.root.position.distanceToSquared(new THREE.Vector3(d.x,d.y,d.z))>144)p.ch.root.position.set(d.x,d.y,d.z);p.ch.root.position.lerp(new THREE.Vector3(d.x,d.y,d.z),1-Math.exp(-dt*18));api.face(p.ch,d.yaw,dt);
-      const speed=Math.min(7,old.distanceTo(p.ch.root.position)/Math.max(dt,.001));api.resetRoll(p.ch);api.animate(p.ch,speed,dt,d.attack,d.hp<=0?2:0);p.ch.weapon.visible=!!d.weapon;api.getHomestead()?.gathering.remote(p.ch,d.hp>0&&!d.attack?d.gathering:null);
+      const speed=Math.min(7,old.distanceTo(p.ch.root.position)/Math.max(dt,.001));api.resetRoll(p.ch);api.animate(p.ch,speed,dt,d.attack,d.hp<=0?2:0);if(d.waking>0)api.prologue.wakePose(p.ch,d.waking);p.ch.weapon.visible=!!d.weapon;api.getHomestead()?.gathering.remote(p.ch,d.hp>0&&!d.attack?d.gathering:null);
       if(d.blocking)p.ch.arms[0].rotation.x=-1.35;
       if(d.dodge>0)api.groundedRoll(p.ch,d.dodge/.58);
       p.ch.root.visible=clock-p.last<5&&(d.x>200)===(hero.root.position.x>200)&&p.ch.root.position.distanceTo(hero.root.position)<55;
@@ -165,7 +185,7 @@ export function installMultiplayer(api) {
     if(!host)for(const e of enemies){const d=e.netPose;if(!d)continue;e.root.position.lerp(new THREE.Vector3(d.x,d.y,d.z),1-Math.exp(-dt*18));api.face(e,d.yaw,dt);e.root.visible=(d.x>200)===(hero.root.position.x>200)&&e.root.position.distanceTo(hero.root.position)<55&&(e.hp>0||e.dead<3);if(e.prologue!==undefined&&e.buried){e.root.visible=false;if(e.state==='emerging'&&e.rise>=0){e.root.visible=true;const u=Math.min(1,e.rise/1.8),v=u*u*(3-2*u);e.rig.position.y=-2.35*(1-v);e.rig.rotation.x=.8*(1-v)}continue}if(e.prologue!==undefined){e.rig.position.y=0;e.rig.rotation.x=0}if(e.attack)e.attack.t=Math.min(e.attack.duration,e.attack.t+dt);api.animate(e,e.state==='chase'?e.speed:e.state==='patrol'?e.speed*.35:0,dt,e.attack,e.hp<=0?e.dead:0);e.recoil=Math.max(0,(e.recoil||0)-dt);if(e.guardian)living.guardianTell(e)}
   }
   function onKill(e){if(active&&host)send({type:'event',data:{kind:'kill',enemy:enemies.indexOf(e),x:e.root.position.x,z:e.root.position.z}})}
-  return {get active(){return active},get host(){return host},get applying(){return applying},get partySize(){return Math.max(1,Math.min(4,roster.length))},graveyardGate(){command({kind:'graveyard-gate'})},graveyardWarning(){command({kind:'graveyard-warning'})},get peers(){return peers},get code(){return code},get id(){return id},lobby,leave,update,interact,target,onKill,
+  return {get waiting(){return active&&partyPhase!=='playing'},get phase(){return partyPhase},get active(){return active},get host(){return host},get applying(){return applying},get partySize(){return Math.max(1,Math.min(4,roster.length))},graveyardGate(){command({kind:'graveyard-gate'})},graveyardWarning(){command({kind:'graveyard-warning'})},get peers(){return peers},get code(){return code},get id(){return id},lobby,leave,update,interact,target,onKill,
     build(baseKind,op){command({kind:'build',baseKind,op})},expansionStructure(action){command({kind:'exp-structure',action})},expansionBounty(target){command({kind:'exp-bounty',target})},expansionProjectile(enemy,attack){if(active&&host)send({type:'event',data:{kind:'exp-projectile',enemy,attack}})},
     accountStructure(uid,id){if(active&&host)event({kind:'account-structure',id},uid)},accountHit(uid,hit){if(active&&host)event({kind:'account-hit',hit},uid)},
     onAttack(combo){if(active&&!host)command({kind:'attack',combo})},

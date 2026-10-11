@@ -1,4 +1,4 @@
-import {batchScenery} from './scene-batch.js?v=realm-net-sync-1';
+import {batchScenery} from './scene-batch.js?v=realm-party-lobby-1';
 // Encounter gates derive from the existing replicated boss HP; no duplicate save state.
 export function installBossArenas(api){
  const {THREE,scene,enemies,hero,surface,mesh,mat}=api,arenas=[];

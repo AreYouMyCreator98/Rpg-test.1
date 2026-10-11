@@ -1,6 +1,6 @@
-import {updateResourceVisuals,resourceDepleted} from './resource-visuals.js?v=realm-net-sync-1';
-import {WORLD_RESOURCES,MATERIALS,RECIPES,workshopData,packFor,nodeSpec,station,stockOf,shelterReady} from './gathering-rules.js?v=realm-net-sync-1';
-import {batchScenery} from './scene-batch.js?v=realm-net-sync-1';
+import {updateResourceVisuals,resourceDepleted} from './resource-visuals.js?v=realm-party-lobby-1';
+import {WORLD_RESOURCES,MATERIALS,RECIPES,workshopData,packFor,nodeSpec,station,stockOf,shelterReady} from './gathering-rules.js?v=realm-party-lobby-1';
+import {batchScenery} from './scene-batch.js?v=realm-party-lobby-1';
 export function installGathering(api){
  const {THREE,hero,mesh,homestead:h,$}=api,nodes=[],stations=[],tools=new Map();let receipts=[],reward=null,visualTick=0;let job=null,tab='craft',menuVersion='',menuTimer=0;
  const readout=document.createElement('section');readout.id='harvest-readout';readout.className='panel';readout.hidden=true;readout.innerHTML='<strong id="harvest-title"></strong><div class="harvest-track" role="progressbar" aria-label="Harvest progress" aria-valuemin="0" aria-valuemax="3"><i id="harvest-fill"></i></div><small id="harvest-count"></small><span id="harvest-reward" role="status" aria-live="polite"></span>';document.body.append(readout);
