@@ -22,7 +22,7 @@
       <div class="bar fury"><span id="furyFill"></span><b id="furyText">FURY 0%</b></div>
     </div>
     <div class="hud-mid"><div class="chapter" id="chapterName">THE SUNDERED GATE</div><div class="wave" id="waveText">WAVE 1</div><div id="killsText">0 SLAIN</div></div>
-    <div class="hud-right"><div id="combo" class="combo"></div><button id="pause" class="small-btn" aria-label="Pause game">Ⅱ</button></div>
+    <div class="hud-right"><div class="soul-counter" id="hudSouls">0 SOULS</div><div id="combo" class="combo"></div><button id="pause" class="small-btn" aria-label="Pause game">Ⅱ</button></div>
   </div>
 
   <div id="weaponBar" class="weapon-bar hidden" aria-label="Weapons"></div>
@@ -47,12 +47,22 @@
       <div class="subtitle"><span></span> OATH OF ASH <span></span></div>
       <p>Eight cursed armaments. One broken oath. An endless reckoning.</p>
       <button class="main-cta" id="startGame">ENTER THE ASH</button>
-      <div class="menu-secondary"><button id="howBtn">HOW TO PLAY</button><button id="soundBtn">SOUND: ON</button><button id="resetBtn">RESET RECORD</button></div>
+      <div class="menu-secondary"><button id="armoryBtn">ARMORY</button><button id="howBtn">HOW TO PLAY</button><button id="soundBtn">SOUND: ON</button><button id="resetBtn">RESET RECORD</button></div>
       <div class="best">BEST WAVE <b id="bestWave">0</b> <i>·</i> TOTAL SOULS <b id="totalSouls">0</b></div>
       <div class="footnote">ORIGINAL GAME · MOBILE + DESKTOP · V1.0</div>
     </div>
   </section>
-  <section class="overlay" id="howOverlay">
+  <section class="overlay" id="armoryOverlay">
+  <div class="modal armory-modal">
+    <div class="eyebrow">FORGED IN RUIN · EARNED IN BLOOD</div><h2>THE CURSED ARMORY</h2>
+    <div class="armory-wallet">SOULS AVAILABLE <b id="walletSouls">0</b></div>
+    <div id="armoryGrid" class="armory-grid"></div>
+    <div id="armoryDetails" class="armory-detail"></div>
+    <button class="main-cta" id="armoryAction">SELECT WEAPON</button>
+    <button class="secondary-cta" id="armoryClose">RETURN</button>
+  </div>
+</section>
+<section class="overlay" id="howOverlay">
     <div class="modal">
       <div class="eyebrow">THE CODEX</div><h2>LEARN THE SLAUGHTER</h2>
       <p><strong>Move</strong> with the left thumbstick or A/D. <strong>Jump</strong> to evade low sweeps.</p>
@@ -63,13 +73,14 @@
     </div>
   </section>
   <section class="overlay" id="pauseOverlay">
-    <div class="modal"><div class="eyebrow">THE OATH ENDURES</div><h2>PAUSED</h2><button class="main-cta" id="resume">RETURN TO BATTLE</button><button class="secondary-cta" id="quit">RETURN TO TITLE</button></div>
+    <div class="modal"><div class="eyebrow">THE OATH ENDURES</div><h2>PAUSED</h2><button class="main-cta" id="resume">RETURN TO BATTLE</button><button class="secondary-cta" id="armoryPause">ARMORY</button><button class="secondary-cta" id="quit">RETURN TO TITLE</button></div>
   </section>
   <section class="overlay" id="deathOverlay">
-    <div class="modal"><div class="eyebrow">THE ASH CLAIMS ANOTHER</div><h2>YOU HAVE FALLEN</h2><div class="results"><div>WAVE <b id="resultWave">1</b></div><div>ENEMIES SLAIN <b id="resultKills">0</b></div><div>SOULS GATHERED <b id="resultSouls">0</b></div></div><button class="main-cta" id="retry">RISE AGAIN</button><button class="secondary-cta" id="deathQuit">TITLE SCREEN</button></div>
+    <div class="modal"><div class="eyebrow">THE ASH CLAIMS ANOTHER</div><h2>YOU HAVE FALLEN</h2><div class="results"><div>WAVE <b id="resultWave">1</b></div><div>ENEMIES SLAIN <b id="resultKills">0</b></div><div>SOULS GATHERED <b id="resultSouls">0</b></div></div><button class="main-cta" id="retry">RISE AGAIN</button><button class="secondary-cta" id="armoryDeath">VISIT ARMORY</button><button class="secondary-cta" id="deathQuit">TITLE SCREEN</button></div>
   </section>
   <div id="rotate"><div class="rotate-phone">↻</div><h3>BEST PLAYED IN LANDSCAPE</h3><p>Turn your phone sideways for the full battlefield.</p></div>
 </div>
+<script src="art-v2.js" defer></script>
 <script src="game.js" defer></script>
 </body>
 </html>

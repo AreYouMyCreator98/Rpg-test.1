@@ -12,6 +12,12 @@ jobs:
         with:
           node-version: '22'
       - name: Verify JavaScript syntax
-        run: node --check chainfall-mobile/game.js
+        run: |
+          node --check chainfall-mobile/game.js
+          node --check chainfall-mobile/art-v2.js
       - name: Headless gameplay smoke test
         run: node chainfall-mobile/tests/smoke.cjs
+      - name: Validate animation atlases and 3-layer scenes
+        run: node chainfall-mobile/tests/art-v2.cjs
+      - name: XML check all original SVG assets
+        run: python -c "import glob,xml.etree.ElementTree as ET; [ET.parse(p) for p in glob.glob('chainfall-mobile/assets/v2/**/*.svg',recursive=True)]; print('All SVGs valid XML')"

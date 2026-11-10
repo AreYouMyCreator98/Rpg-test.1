@@ -1,0 +1,63 @@
+{
+  "scenes": [
+    "gate",
+    "cathedral",
+    "forge",
+    "abyss",
+    "throne"
+  ],
+  "actors": {
+    "hero": [
+      "idle",
+      "run",
+      "jump",
+      "fall",
+      "dodge",
+      "hurt",
+      "death",
+      "attack1",
+      "attack2",
+      "attack3",
+      "heavy",
+      "special"
+    ],
+    "husk": [
+      "idle",
+      "run",
+      "attack",
+      "hurt",
+      "death"
+    ],
+    "raider": [
+      "idle",
+      "run",
+      "attack",
+      "hurt",
+      "death"
+    ],
+    "shade": [
+      "idle",
+      "run",
+      "attack",
+      "hurt",
+      "death",
+      "special"
+    ],
+    "brute": [
+      "idle",
+      "run",
+      "attack",
+      "hurt",
+      "death"
+    ],
+    "warden": [
+      "idle",
+      "run",
+      "attack",
+      "hurt",
+      "death",
+      "special"
+    ]
+  },
+  "frameCount": 6
+}

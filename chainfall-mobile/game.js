@@ -33,6 +33,17 @@ const ENEMY={
  warden:{hp:1050,speed:.77,damage:30,range:125,wind:44,recovery:51,color:'#ad7258',scale:2.02,points:250}
 };
 let audio=null,soundOn=true,records={best:0,souls:0};
+const unlockCosts=[0,120,250,400,620,900,1300,1800];
+let progression={wallet:0,equipped:0,unlocked:[true,false,false,false,false,false,false,false]};
+let armoryChoice=0,armoryReturn="mainMenu",resetConfirm=false;
+try {const saved=JSON.parse(localStorage.getItem('chainfall_v2_progress')||'null');if(saved&&Array.isArray(saved.unlocked)){
+ progression.wallet=Math.max(0,Number(saved.wallet)||0);
+ progression.equipped=Number.isInteger(saved.equipped)&&saved.equipped>=0&&saved.equipped<8?saved.equipped:0;
+ progression.unlocked=unlockCosts.map((_,i)=>i===0||!!saved.unlocked[i]);
+}}catch(e){}
+function saveProgress(){try{localStorage.setItem('chainfall_v2_progress',JSON.stringify(progression))}catch(e){}}
+function unlocked(i){return i===0||!!progression.unlocked[i]}
+
 try{records={best:0,souls:0,...JSON.parse(localStorage.getItem('chainfall_v1_records')||'{}')};soundOn=localStorage.getItem('chainfall_sound')!=='off'}catch(e){}
 function save(){try{localStorage.setItem('chainfall_v1_records',JSON.stringify(records))}catch(e){}}
 function setupAudio(){if(!soundOn)return;try{if(!audio)audio=new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume()}catch(e){}}
@@ -41,24 +52,41 @@ const state={phase:'menu',t:0,wave:1,kills:0,runSouls:0,pending:0,spawnTimer:0,a
 let hero={},enemies=[],particles=[],shocks=[],projectiles=[],texts=[],ambient=[];
 let id=0,lastTime=0,stickAxis=0,lastHUD=0,toastHandle=0;
 const keys=new Set();
-const makeHero=()=>({x:210,y:FLOOR,vx:0,vy:0,face:1,ground:true,hp:140,maxHp:140,stamina:100,fury:0,weapon:0,action:null,dodge:0,inv:0,combo:0,comboTimer:0,step:0,landing:0,hit:0});
+const makeHero=()=>({x:210,y:FLOOR,vx:0,vy:0,face:1,ground:true,hp:140,maxHp:140,stamina:100,fury:0,weapon:unlocked(progression.equipped)?progression.equipped:0,action:null,dodge:0,inv:0,combo:0,comboTimer:0,step:0,landing:0,hit:0});
 hero=makeHero();
 function resize(){const dpi=Math.min(window.devicePixelRatio||1,2);cv.width=Math.round(W*dpi);cv.height=Math.round(H*dpi);g.setTransform(dpi,0,0,dpi,0,0)}
 resize();window.addEventListener('resize',resize);
-function waveName(n){if(n%4===0)return 'THE WARDEN AWAKENS';return n<5?'THE SUNDERED GATE':n<9?'THE CHARRED SANCTUM':'THE ENDLESS PYRE'}
+function waveName(n){if(n%4===0)return 'THE WARDEN AWAKENS';return ['THE SUNDERED GATE','CATHEDRAL OF EMBERS','THE BONE FORGE','MOONLIT ABYSS','THRONE OF ASH'][Math.floor((n-1)/4)%5]}
 function toast(msg,time=100){$('toast').textContent=msg;$('toast').classList.add('show');toastHandle=time}
 function show(id){document.querySelectorAll('.overlay').forEach(el=>el.classList.remove('visible'));if(id)$(id).classList.add('visible')}
-function weaponUI(){const bar=$('weaponBar');bar.innerHTML='';WEAPONS.forEach((w,i)=>{const b=document.createElement('button');b.type='button';b.className='weapon-slot'+(hero.weapon===i?' active':'');b.setAttribute('aria-label',w.name);b.innerHTML='<img src="assets/'+icons[i]+'.svg" alt=""><span class="weapon-num">'+(i+1)+'</span><span class="weapon-tip">'+w.name+'</span>';b.addEventListener('pointerdown',e=>{e.preventDefault();setupAudio();selectWeapon(i)});bar.appendChild(b)})}
-function selectWeapon(i){if(state.phase!=='playing')return;hero.weapon=i;hero.combo=0;hero.action=null;weaponUI();toast(WEAPONS[i].name,58);tone(330+i*33,.1,'triangle',.042,150)}
-function hud(){const hp=100*hero.hp/hero.maxHp;$('hpFill').style.width=clamp(hp,0,100)+'%';$('hpText').textContent=Math.ceil(hero.hp)+' / '+hero.maxHp;$('stFill').style.width=hero.stamina+'%';$('furyFill').style.width=hero.fury+'%';$('furyText').textContent='FURY '+Math.floor(hero.fury)+'%';$('waveText').textContent='WAVE '+state.wave;$('killsText').textContent=state.kills+' SLAIN';$('chapterName').textContent=waveName(state.wave);$('specialCost').textContent=hero.fury>=50?'READY':'50';document.querySelector('.combat-btn.special').classList.toggle('cooling',hero.fury<50)}
-function recordsUI(){$('bestWave').textContent=records.best;$('totalSouls').textContent=records.souls}
-function start(){setupAudio();hero=makeHero();enemies=[];particles=[];projectiles=[];shocks=[];texts=[];state.phase='playing';state.wave=1;state.kills=0;state.runSouls=0;state.t=0;state.shake=0;state.flash=0;state.slow=0;waveStart();show(null);$('hud').classList.remove('hidden');$('weaponBar').classList.remove('hidden');$('touchControls').classList.remove('hidden');weaponUI();hud();tone(90,.65,'sawtooth',.07,65)}
+function weaponUI(){const bar=$('weaponBar');bar.innerHTML='';WEAPONS.forEach((w,i)=>{const b=document.createElement('button');b.type='button';b.className='weapon-slot'+(hero.weapon===i?' active':'')+(unlocked(i)?'':' locked');b.setAttribute('aria-label',w.name+(unlocked(i)?'':' locked'));b.innerHTML='<img src="assets/'+icons[i]+'.svg" alt=""><span class="weapon-num">'+(i+1)+'</span>'+(unlocked(i)?'':'<span class="slot-lock">🔒</span>')+'<span class="weapon-tip">'+(unlocked(i)?w.name:unlockCosts[i]+' SOULS')+'</span>';b.addEventListener('pointerdown',e=>{e.preventDefault();setupAudio();selectWeapon(i)});bar.appendChild(b)})}
+function selectWeapon(i){if(state.phase!=='playing')return;if(!unlocked(i)){toast('LOCKED · '+unlockCosts[i]+' SOULS IN ARMORY',72);tone(80,.08,'sawtooth',.018,-30);return}hero.weapon=i;progression.equipped=i;saveProgress();hero.combo=0;hero.action=null;weaponUI();toast(WEAPONS[i].name,58);tone(330+i*33,.1,'triangle',.042,150)}
+function hud(){const hp=100*hero.hp/hero.maxHp;$('hpFill').style.width=clamp(hp,0,100)+'%';$('hpText').textContent=Math.ceil(hero.hp)+' / '+hero.maxHp;$('stFill').style.width=hero.stamina+'%';$('furyFill').style.width=hero.fury+'%';$('furyText').textContent='FURY '+Math.floor(hero.fury)+'%';$('hudSouls').textContent=state.runSouls+' SOULS';$('waveText').textContent='WAVE '+state.wave;$('killsText').textContent=state.kills+' SLAIN';$('chapterName').textContent=waveName(state.wave);$('specialCost').textContent=hero.fury>=50?'READY':'50';document.querySelector('.combat-btn.special').classList.toggle('cooling',hero.fury<50)}
+function recordsUI(){$('bestWave').textContent=records.best;$('totalSouls').textContent=records.souls;if($('walletSouls'))$('walletSouls').textContent=progression.wallet}
+function bankRun(){if(state.banked||state.runSouls<=0)return;state.banked=true;progression.wallet+=state.runSouls;records.souls+=state.runSouls;records.best=Math.max(records.best,state.wave);saveProgress();save()}
+function showArmory(from){armoryReturn=from||'mainMenu';if(state.phase==='playing')pause();armoryChoice=hero.weapon;renderArmory();show('armoryOverlay')}
+function closeArmory(){show(armoryReturn);recordsUI()}
+function renderArmory(){
+ const grid=$('armoryGrid');grid.innerHTML='';
+ WEAPONS.forEach((w,i)=>{const b=document.createElement('button');b.className='armory-entry'+(unlocked(i)?' owned':'')+(armoryChoice===i?' selected':'');b.type='button';
+ b.innerHTML='<img src="assets/'+icons[i]+'.svg" alt=""><span>'+w.name+'</span>'+(unlocked(i)?'':'<b class="lock">🔒</b>');
+ b.addEventListener('click',()=>{armoryChoice=i;renderArmory();tone(260,.08,'triangle',.02,40)});grid.appendChild(b)});
+ const w=WEAPONS[armoryChoice],cost=unlockCosts[armoryChoice],owned=unlocked(armoryChoice);
+ $('walletSouls').textContent=progression.wallet;
+ $('armoryDetails').innerHTML='<h3>'+w.name+'</h3><p>'+w.tag+' · Base damage '+w.moves[0].dmg+'–'+w.moves[2].dmg+' · '+w.special.name+'. '+(owned?'Unlocked. Ready to equip.':'<span class="price">Unlock for '+cost+' souls.</span> Souls are banked when a run ends.')+'</p>';
+ $('armoryAction').textContent=owned?(hero.weapon===armoryChoice?'EQUIPPED':'EQUIP WEAPON'):'UNLOCK · '+cost+' SOULS';
+ $('armoryAction').disabled=owned&&hero.weapon===armoryChoice;
+}
+function armoryAction(){const i=armoryChoice;if(!unlocked(i)){if(progression.wallet<unlockCosts[i]){toast('NOT ENOUGH SOULS',64);tone(90,.2,'sawtooth',.025,-60);return}progression.wallet-=unlockCosts[i];progression.unlocked[i]=true;saveProgress();toast(WEAPONS[i].name+' UNLOCKED',110);tone(470,.32,'triangle',.07,240)}
+ if(unlocked(i)){hero.weapon=i;progression.equipped=i;saveProgress();hero.action=null;hero.combo=0;weaponUI();renderArmory();tone(270,.15,'triangle',.04,120)}
+}
+function start(){setupAudio();hero=makeHero();enemies=[];particles=[];projectiles=[];shocks=[];texts=[];state.phase='playing';state.wave=1;state.kills=0;state.runSouls=0;state.banked=false;state.t=0;state.shake=0;state.flash=0;state.slow=0;waveStart();show(null);$('hud').classList.remove('hidden');$('weaponBar').classList.remove('hidden');$('touchControls').classList.remove('hidden');weaponUI();hud();tone(90,.65,'sawtooth',.07,65)}
 function waveStart(){state.pending=state.wave%4===0?1:Math.min(12,3+state.wave*2);state.spawnTimer=50;state.advance=-1;state.announcement=130;toast(state.wave%4===0?'THE WARDEN APPROACHES':'WAVE '+state.wave+' — '+waveName(state.wave),125);hero.hp=Math.min(hero.maxHp,hero.hp+16);hero.stamina=100;hud()}
 function spawn(){let type;if(state.wave%4===0)type='warden';else{const pool=['husk','husk','raider'];if(state.wave>1)pool.push('shade');if(state.wave>2)pool.push('brute');type=pool[Math.floor(Math.random()*pool.length)]}const def=ENEMY[type],fromRight=Math.random()<.78;enemies.push({id:++id,type,x:fromRight?rnd(820,910):rnd(50,100),y:FLOOR+rnd(-7,7),vx:0,vy:0,hp:def.hp*(1+(state.wave-1)*.13),maxHp:def.hp*(1+(state.wave-1)*.13),face:fromRight?-1:1,attack:0,telegraph:0,cooldown:rnd(40,90),stagger:0,inv:0,dead:false,walk:rnd(0,TAU),aggro:0,phase:0,flash:0})}
 function pause(){if(state.phase!=='playing')return;state.phase='paused';show('pauseOverlay')}
 function resume(){if(state.phase!=='paused')return;state.phase='playing';show(null);lastTime=performance.now()}
-function toTitle(){state.phase='menu';show('mainMenu');$('hud').classList.add('hidden');$('weaponBar').classList.add('hidden');$('touchControls').classList.add('hidden');recordsUI()}
-function die(){state.phase='dead';records.best=Math.max(records.best,state.wave);records.souls+=state.runSouls;save();$('resultWave').textContent=state.wave;$('resultKills').textContent=state.kills;$('resultSouls').textContent=state.runSouls;show('deathOverlay');$('touchControls').classList.add('hidden');$('weaponBar').classList.add('hidden');tone(180,.7,'sawtooth',.07,-130)}
+function toTitle(){if(state.phase==='playing'||state.phase==='paused')bankRun();state.phase='menu';show('mainMenu');$('hud').classList.add('hidden');$('weaponBar').classList.add('hidden');$('touchControls').classList.add('hidden');recordsUI()}
+function die(){state.phase='dead';records.best=Math.max(records.best,state.wave);bankRun();save();$('resultWave').textContent=state.wave;$('resultKills').textContent=state.kills;$('resultSouls').textContent=state.runSouls;show('deathOverlay');$('touchControls').classList.add('hidden');$('weaponBar').classList.add('hidden');tone(180,.7,'sawtooth',.07,-130)}
 function jump(){if(state.phase!=='playing'||!hero.ground||hero.stamina<8||hero.dodge>0)return;hero.vy=-13.9;hero.ground=false;hero.stamina-=8;tone(190,.11,'triangle',.025,90);dust(hero.x,hero.y,7,'#bcac90')}
 function dodge(){if(state.phase!=='playing'||hero.dodge>0||hero.stamina<22)return;hero.dodge=18;hero.inv=23;hero.vx=hero.face*12;hero.stamina-=22;hero.action=null;hero.combo=0;dust(hero.x,hero.y-30,17,'#9ab6c8');tone(280,.13,'triangle',.044,-220)}
 function light(){attack('light')}
@@ -198,6 +226,7 @@ function poly(points,color,stroke,line=1){g.beginPath();g.moveTo(points[0][0],po
 function ellipse(x,y,rx,ry,col){g.beginPath();g.ellipse(x,y,Math.abs(rx),Math.abs(ry),0,0,TAU);g.fillStyle=col;g.fill()}
 function grad(x,y,r,col){const a=g.createRadialGradient(x,y,0,x,y,r);a.addColorStop(0,col);a.addColorStop(1,'transparent');return a}
 function drawBackground(){
+ if(window.ChainfallArt&&window.ChainfallArt.drawBackground(g,state,W,H))return;
  const sky=g.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#080d19');sky.addColorStop(.4,'#22212a');sky.addColorStop(.7,'#49302d');sky.addColorStop(1,'#150e14');g.fillStyle=sky;g.fillRect(0,0,W,H);
  g.fillStyle=grad(650,170,260,'#a7593945');g.fillRect(330,-85,650,510);
  // Eclipsed star, luminous crescent and halo
@@ -234,6 +263,18 @@ function drawBackground(){
 }
 function groundShadow(x,y,s=1){g.fillStyle=grad(x,y,48*s,'#0000008f');g.fillRect(x-55*s,y-20*s,110*s,38*s);ellipse(x,y,31*s,6*s,'#0009')}
 function drawHero(){
+ if(window.ChainfallArt&&window.ChainfallArt.drawHero(g,hero,state)){
+  g.save();g.translate(hero.x,hero.y);g.scale(hero.face,1);
+  g.translate(26,-64);
+  const a=hero.action,progress=a?clamp((a.elapsed-a.move.wind)/Math.max(1,a.move.active),0,1):0;
+  let swing=a?(-1.9+progress*3.4):-0.65;
+  if(a&&a.elapsed<a.move.wind)swing=-.65-(a.elapsed/a.move.wind)*1.5;
+  if(a&&a.move.shape==='thrust')swing=-.2+progress*.35;
+  if(a&&a.move.shape==='fist')swing=-.5+progress*.75;
+  if(a&&a.move.shape==='spin')swing+=a.elapsed*.13;
+  g.rotate(swing);drawWeapon(hero.weapon,a?.move.shape||'idle',a?.elapsed||0);
+  g.restore();if(hero.action)drawAttackFX(hero);return;
+ }
  const p=hero;groundShadow(p.x,FLOOR+8,1.1);
  g.save();g.translate(p.x,p.y);g.scale(p.face,1);
  const t=state.t,walk=Math.sin(p.step)*Math.min(1,Math.abs(p.vx)*.45),bob=p.ground?Math.sin(p.step*2)*Math.min(2,Math.abs(p.vx)*.5):-1;
@@ -313,6 +354,7 @@ function drawAttackFX(p){
  g.restore();
 }
 function drawEnemy(e){
+ if(window.ChainfallArt&&window.ChainfallArt.drawEnemy(g,e,ENEMY[e.type],state))return;
  const d=ENEMY[e.type],s=d.scale;groundShadow(e.x,FLOOR+8,s*.75);
  g.save();g.translate(e.x,e.y);g.scale(e.face*s,s);
  const wobble=Math.sin(e.walk)*Math.min(3,Math.abs(e.vx)*3);g.translate(0,wobble);
@@ -336,7 +378,7 @@ function render(){
  g.save();
  g.translate(state.shake?rnd(-state.shake,state.shake):0,state.shake?rnd(-state.shake*.45,state.shake*.45):0);
  drawBackground();
- const sorted=[...enemies.filter(e=>!e.dead).map(e=>({y:e.y,enemy:e})),{y:hero.y,hero:true}].sort((a,b)=>a.y-b.y);
+ const sorted=[...enemies.filter(e=>!e.dead||e.deathTimer>0).map(e=>({y:e.y,enemy:e})),{y:hero.y,hero:true}].sort((a,b)=>a.y-b.y);
  sorted.forEach(o=>o.hero?drawHero():drawEnemy(o.enemy));
  for(const p of projectiles){g.fillStyle=grad(p.x,p.y,33,p.color+'bb');g.fillRect(p.x-32,p.y-32,64,64);ellipse(p.x,p.y,p.r,'#fce6b9')}
  for(const s of shocks){g.save();g.globalAlpha=s.life/s.max;g.beginPath();g.ellipse(s.x,s.y,s.r*(1-s.life/s.max),Math.max(10,s.r*.19)*(1-s.life/s.max),0,0,TAU);g.strokeStyle=s.color;g.lineWidth=6*(s.life/s.max)+1;g.stroke();g.restore()}
@@ -369,11 +411,16 @@ document.addEventListener('keydown',e=>{
 });document.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));
 window.addEventListener('blur',()=>{keys.clear();stickAxis=0;if(state.phase==='playing')pause()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&state.phase==='playing')pause()});
+$('armoryBtn').addEventListener('click',()=>showArmory('mainMenu'));
+$('armoryPause').addEventListener('click',()=>showArmory('pauseOverlay'));
+$('armoryDeath').addEventListener('click',()=>showArmory('deathOverlay'));
+$('armoryClose').addEventListener('click',closeArmory);
+$('armoryAction').addEventListener('click',armoryAction);
 $('startGame').addEventListener('click',start);$('retry').addEventListener('click',start);$('pause').addEventListener('click',pause);$('resume').addEventListener('click',resume);$('quit').addEventListener('click',toTitle);$('deathQuit').addEventListener('click',toTitle);
 $('howBtn').addEventListener('click',()=>show('howOverlay'));$('closeHow').addEventListener('click',()=>show('mainMenu'));
 function updateSound(){$('soundBtn').textContent='SOUND: '+(soundOn?'ON':'OFF')}
 $('soundBtn').addEventListener('click',()=>{soundOn=!soundOn;try{localStorage.setItem('chainfall_sound',soundOn?'on':'off')}catch(e){}updateSound();setupAudio()});
-$('resetBtn').addEventListener('click',()=>{records={best:0,souls:0};save();recordsUI();toast('RECORD CLEARED',55)});
+$('resetBtn').addEventListener('click',()=>{if(!resetConfirm){resetConfirm=true;$('resetBtn').textContent='TAP AGAIN TO CONFIRM';toast('THIS ERASES WEAPON UNLOCKS',85);return}records={best:0,souls:0};progression={wallet:0,equipped:0,unlocked:[true,false,false,false,false,false,false,false]};resetConfirm=false;$('resetBtn').textContent='RESET RECORD';save();saveProgress();recordsUI();toast('PROGRESS RESET',65)});
 updateSound();recordsUI();
 if('serviceWorker' in navigator&&location.protocol==='https:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 })();

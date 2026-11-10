@@ -18,3 +18,11 @@ This is a playable **2D vertical slice**, not a full 3D console-size game. It us
 
 ## Deployment
 The files live under chainfall-mobile/ on a dedicated Git branch so the repository's main project remains unchanged.
+
+## V2: ASH REFORGED
+- Five original, layered vector arenas: Sundered Gate, Cathedral of Embers, Bone Forge, Moonlit Abyss, Throne of Ash.
+- Original authored SVG sprite atlases: 6 frames per animation for the hero and five enemy species; 234 rendered art frames, with real animation-state selection. If artwork isn't loaded yet the previous procedural renderer is used as fallback.
+- Persistent souls wallet, eight unlockable weapons, Armory on title/pause/death, purchase and equip buttons. Only Chain Blades are unlocked from a new save.
+- Weapon unlock costs: 0, 120, 250, 400, 620, 900, 1300, 1800. Souls are banked on death or returning to title.
+- Progress is stored locally under `chainfall_v2_progress`; existing lifetime totals are separate.
+- Mobile performance: atlas images loaded asynchronously and reused.
