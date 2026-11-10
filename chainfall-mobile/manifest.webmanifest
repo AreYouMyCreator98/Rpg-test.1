@@ -1,0 +1,19 @@
+{
+  "name": "CHAINFALL: Oath of Ash",
+  "short_name": "CHAINFALL",
+  "description": "Eight-weapon mobile hack-and-slash arena",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "theme_color": "#090d14",
+  "background_color": "#090d14",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

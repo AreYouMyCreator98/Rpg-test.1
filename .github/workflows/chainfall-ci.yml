@@ -1,0 +1,17 @@
+name: CHAINFALL CI
+on:
+  push:
+    branches: [chainfall-mobile]
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify JavaScript syntax
+        run: node --check chainfall-mobile/game.js
+      - name: Headless gameplay smoke test
+        run: node chainfall-mobile/tests/smoke.cjs

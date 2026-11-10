@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#090d14">
+  <meta name="description" content="CHAINFALL: Oath of Ash — an original mobile dark fantasy hack-and-slash arena. Eight weapons. Relentless combat.">
+  <title>CHAINFALL — Oath of Ash</title>
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="game" aria-label="Dark fantasy combat arena"></canvas>
+  <div id="vignette" aria-hidden="true"></div>
+  <div id="hud" class="hidden">
+    <div class="hud-left">
+      <div class="hud-caption">THE ASHEN VOW</div>
+      <div class="bar hp"><span id="hpFill"></span><b id="hpText">140 / 140</b></div>
+      <div class="bar stamina"><span id="stFill"></span><b>STAMINA</b></div>
+      <div class="bar fury"><span id="furyFill"></span><b id="furyText">FURY 0%</b></div>
+    </div>
+    <div class="hud-mid"><div class="chapter" id="chapterName">THE SUNDERED GATE</div><div class="wave" id="waveText">WAVE 1</div><div id="killsText">0 SLAIN</div></div>
+    <div class="hud-right"><div id="combo" class="combo"></div><button id="pause" class="small-btn" aria-label="Pause game">Ⅱ</button></div>
+  </div>
+
+  <div id="weaponBar" class="weapon-bar hidden" aria-label="Weapons"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <div id="touchControls" class="hidden">
+    <div id="stick" aria-label="Movement joystick"><div id="stickNub"></div></div>
+    <div class="action-controls">
+      <button class="combat-btn dodge" data-act="dodge" aria-label="Dodge">DODGE</button>
+      <button class="combat-btn jump" data-act="jump" aria-label="Jump">JUMP</button>
+      <button class="combat-btn light" data-act="light" aria-label="Fast attack">STRIKE</button>
+      <button class="combat-btn heavy" data-act="heavy" aria-label="Heavy attack">HEAVY</button>
+      <button class="combat-btn special" data-act="special" aria-label="Weapon special"><span>FURY</span><small id="specialCost">50</small></button>
+    </div>
+  </div>
+
+  <section class="overlay visible" id="mainMenu">
+    <div class="menu-panel">
+      <div class="eyebrow">A DARK FANTASY COMBAT EXPERIENCE</div>
+      <img src="assets/icon.svg" alt="" class="emblem">
+      <h1>CHAINFALL</h1>
+      <div class="subtitle"><span></span> OATH OF ASH <span></span></div>
+      <p>Eight cursed armaments. One broken oath. An endless reckoning.</p>
+      <button class="main-cta" id="startGame">ENTER THE ASH</button>
+      <div class="menu-secondary"><button id="howBtn">HOW TO PLAY</button><button id="soundBtn">SOUND: ON</button><button id="resetBtn">RESET RECORD</button></div>
+      <div class="best">BEST WAVE <b id="bestWave">0</b> <i>·</i> TOTAL SOULS <b id="totalSouls">0</b></div>
+      <div class="footnote">ORIGINAL GAME · MOBILE + DESKTOP · V1.0</div>
+    </div>
+  </section>
+  <section class="overlay" id="howOverlay">
+    <div class="modal">
+      <div class="eyebrow">THE CODEX</div><h2>LEARN THE SLAUGHTER</h2>
+      <p><strong>Move</strong> with the left thumbstick or A/D. <strong>Jump</strong> to evade low sweeps.</p>
+      <p><strong>Strike</strong> for a three-hit weapon combo. <strong>Heavy</strong> staggers and breaks guards. <strong>Dodge</strong> grants brief invulnerability. <strong>Fury</strong> unleashes a unique special attack at 50 charge.</p>
+      <p>Select any of the <strong>eight weapons</strong> from the rack. Every armament has different reach, timings, damage and combat effects. Defeat waves and survive the Warden.</p>
+      <p>Keyboard: A/D or ←/→ move, W/↑/Space jump, J strike, K heavy, L fury, Shift dodge, 1–8 switch, Esc pause.</p>
+      <button class="main-cta" id="closeHow">UNDERSTOOD</button>
+    </div>
+  </section>
+  <section class="overlay" id="pauseOverlay">
+    <div class="modal"><div class="eyebrow">THE OATH ENDURES</div><h2>PAUSED</h2><button class="main-cta" id="resume">RETURN TO BATTLE</button><button class="secondary-cta" id="quit">RETURN TO TITLE</button></div>
+  </section>
+  <section class="overlay" id="deathOverlay">
+    <div class="modal"><div class="eyebrow">THE ASH CLAIMS ANOTHER</div><h2>YOU HAVE FALLEN</h2><div class="results"><div>WAVE <b id="resultWave">1</b></div><div>ENEMIES SLAIN <b id="resultKills">0</b></div><div>SOULS GATHERED <b id="resultSouls">0</b></div></div><button class="main-cta" id="retry">RISE AGAIN</button><button class="secondary-cta" id="deathQuit">TITLE SCREEN</button></div>
+  </section>
+  <div id="rotate"><div class="rotate-phone">↻</div><h3>BEST PLAYED IN LANDSCAPE</h3><p>Turn your phone sideways for the full battlefield.</p></div>
+</div>
+<script src="game.js" defer></script>
+</body>
+</html>
