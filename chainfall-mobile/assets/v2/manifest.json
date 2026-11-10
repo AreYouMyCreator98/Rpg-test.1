@@ -59,5 +59,8 @@
       "special"
     ]
   },
-  "frameCount": 6
+  "frameCount": 6,
+  "assetVersion": "3.1",
+  "frameFilesPerAnimation": 6,
+  "layout": "standalone-SVG-per-frame"
 }
