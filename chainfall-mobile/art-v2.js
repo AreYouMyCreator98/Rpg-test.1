@@ -54,9 +54,20 @@ function frameOf(actor,key,game,isEnemy){
 }
 function sprite(ctx,image,frame,x,y,size,alpha=1){
  if(!ready(image))return false;
- ctx.save();ctx.globalAlpha=alpha;
- ctx.drawImage(image,Math.max(0,Math.min(5,frame))*FRAME_W,0,FRAME_W,FRAME_H,x-size*.5,y-FRAME_H*(size/FRAME_W)+8,size,FRAME_H*(size/FRAME_W));
- ctx.restore();return true;
+ // Mobile Chrome can ignore 9-argument canvas source cropping for SVG images.
+ // Draw the entire atlas as one scaled image and explicitly clip to a single
+ // frame viewport instead. This prevents overlapping/duplicated actors.
+ const current=Math.max(0,Math.min(FRAMES-1,Math.floor(frame)||0));
+ const height=FRAME_H*(size/FRAME_W);
+ const left=x-size*.5,top=y-height+8;
+ ctx.save();
+ ctx.globalAlpha=alpha;
+ ctx.beginPath();
+ ctx.rect(left,top,size,height);
+ ctx.clip();
+ ctx.drawImage(image,left-current*size,top,size*FRAMES,height);
+ ctx.restore();
+ return true;
 }
 function shadow(ctx,x,y,scale){
  ctx.save();ctx.fillStyle="#0009";ctx.beginPath();ctx.ellipse(x,y+7,27*scale,5*scale,0,0,Math.PI*2);ctx.fill();ctx.restore();
