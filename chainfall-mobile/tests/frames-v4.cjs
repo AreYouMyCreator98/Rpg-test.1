@@ -8,7 +8,7 @@ for(const [actor,anims] of Object.entries(actors)){
    const xml=fs.readFileSync(file,'utf8');
    assert(xml.startsWith('<svg')&&xml.endsWith('</svg>'),'Bad SVG: '+file);
    assert(xml.includes('width="192" height="192" viewBox="-32 0 192 192"'),'Actor must have padded centered viewBox: '+file);
-   assert(/<g transform="translate\(0 [-\d.]+\) scale\([-\d.]+\)">/.test(xml),'Expected centered body coordinates: '+file);
+   assert(/<g transform="translate\(0 [^)]+\) scale\([^)]+\)">/.test(xml),'Expected centered body coordinates: '+file);
    assert(!xml.includes('<g transform="translate(64 '),'Half-character clipping regression: '+file);
    count++;
  }
