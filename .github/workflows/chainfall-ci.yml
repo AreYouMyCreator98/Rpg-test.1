@@ -16,6 +16,7 @@ jobs:
           node --check chainfall-mobile/game.js
           node --check chainfall-mobile/art-v4.js
           node --check chainfall-mobile/hero-v5.js
+          node --check chainfall-mobile/hero-v6.js
       - name: Headless gameplay smoke test
         run: node chainfall-mobile/tests/smoke.cjs
       - name: Validate animation atlases and 3-layer scenes
@@ -32,5 +33,7 @@ jobs:
         run: node chainfall-mobile/tests/renderer-v4.cjs
       - name: Verify illustrated hero sheets and animation wiring
         run: node chainfall-mobile/tests/hero-v5.cjs
+      - name: Validate 84 illustrated frames and seven-hit combat
+        run: node chainfall-mobile/tests/combo-v6.cjs
       - name: XML check all original SVG assets
         run: python -c "import glob,xml.etree.ElementTree as ET; [ET.parse(p) for p in glob.glob('chainfall-mobile/assets/v2/**/*.svg',recursive=True)]; print('All SVGs valid XML')"

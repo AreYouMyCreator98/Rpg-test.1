@@ -29,3 +29,10 @@ The files live under chainfall-mobile/ on a dedicated Git branch so the reposito
 
 ## V5 Illustrated hero
 Added the four original generated transparent character animation sheets in assets/hero-v5: idle, walk, run, attack. Each is WebP RGBA 768x512 (3 columns x 2 rows, each frame 256x256). The renderer creates **24 separate 256x256 canvases** once at load and draws a single canvas per animation tick. Only Chain Blades (weapon index 0) use this illustrated character; other weapons use the V4 original rendering until matching weapon-specific animations are created. Game combat, hitboxes, upgrades and enemy systems unchanged. The originals as separate full-resolution PNG frame files are also provided in the downloadable asset ZIP.
+
+## V6: Seven-hit Chain Blades combo (84 illustrated frames)
+- Uses the previously generated 7-row × 12-column attack image. The image was split into seven transparent 1920 × 160 WebP strips (12 frames per hit); original 160 × 160 transparent PNG frames are in the downloadable asset ZIP.
+- Chain Blades now have seven independent moves and attack timing/hitboxes. Tap STRIKE once to start. Tap again during the attack to queue the next hit. Only one attack is buffered, and the current attack finishes all twelve frames before advancing.
+- Combo counts display in the HUD as CHAIN 1/7 → CHAIN 7/7. If you stop attacking, the chain resets after a short timeout. Dodging, enemy hits, and weapon switching cancel the chain.
+- Different animation and hitbox for each of the seven moves. Heavy/Fury remain separate. Other seven weapons retain their existing movesets.
+- The renderer pre-extracts individual frames to canvas so Android Chrome never draws multiple poses from a shared source rectangle at runtime. The V5 hero poses remain in use for idle, walking, running, and non-combo attacks.

@@ -16,7 +16,7 @@ function m(name,dmg,reach,wind,active,rec,knock,lift,stagger,shape='arc',multi=1
  return {name,dmg,reach,wind,active,rec,knock,lift,stagger,shape,multi};
 }
 const WEAPONS=[
- {name:names[0],tag:'REACH / CROWD',speed:1,stamina:7,moves:[m('Serpent Lash',12,154,7,12,11,15,0,8,'chain',2),m('Twin Eclipse',16,174,7,13,12,22,0,11,'chain',2),m('Infernal Cyclone',28,195,12,17,18,37,5,23,'spin',2)],heavy:m('Chainbreaker',34,210,19,13,23,53,10,32,'spin'),special:m('ABYSSAL TEMPEST',62,255,9,43,25,65,21,70,'spin',4)},
+ {name:names[0],tag:'SEVEN-HIT CHAIN / REACH',speed:1,stamina:7,moves:[m('Ash Ripper',14,160,6,10,9,18,0,10,'chain'),m('Crossfire',16,176,5,11,9,21,0,12,'chain'),m('Low Ember',18,188,7,11,10,25,3,16,'chain'),m('Cinderwheel',22,210,7,13,11,28,5,20,'spin'),m('Falling Star',24,198,7,12,9,34,8,24,'chain'),m('Twin Inferno',30,220,9,14,11,42,10,33,'spin'),m('Final Oath',44,235,12,16,14,60,20,50,'spin')],heavy:m('Chainbreaker',34,210,19,13,23,53,10,32,'spin'),special:m('ABYSSAL TEMPEST',62,255,9,43,25,65,21,70,'spin',4)},
  {name:names[1],tag:'POWER / GUARD BREAK',speed:.78,stamina:11,moves:[m('Iron Requiem',26,125,15,10,20,40,4,19),m('Falling Oath',32,140,17,11,20,47,12,28),m('Kingbreaker',48,156,21,12,22,65,20,44)],heavy:m('Sundering Blade',62,168,28,14,28,83,35,63,'crush'),special:m('LAST JUDGEMENT',115,210,24,17,37,105,55,100,'crush',2)},
  {name:names[2],tag:'PRECISION / PIERCE',speed:1.08,stamina:7,moves:[m('Dawn Thrust',16,175,7,8,9,21,0,11,'thrust'),m('Sunspike',22,205,10,10,12,31,2,16,'thrust'),m('Heaven Piercer',33,235,14,12,16,43,13,30,'thrust')],heavy:m('Lance of Ruin',47,258,20,13,18,59,17,37,'thrust'),special:m('RADIANT IMPALE',85,340,15,18,25,81,30,87,'thrust',2)},
  {name:names[3],tag:'SPEED / CRITICAL',speed:1.31,stamina:5,moves:[m('Shadow Nick',12,105,4,7,6,13,0,7,'dagger',2),m('Backstab Waltz',14,115,5,10,7,17,0,9,'dagger',2),m('Nightfall',25,135,8,11,10,25,3,20,'dagger',3)],heavy:m('Assassin Cross',37,145,14,13,13,38,6,32,'dagger',2),special:m('THOUSAND CUTS',18,170,5,48,12,15,2,65,'dagger',7)},
@@ -60,7 +60,7 @@ function waveName(n){if(n%4===0)return 'THE WARDEN AWAKENS';return ['THE SUNDERE
 function toast(msg,time=100){$('toast').textContent=msg;$('toast').classList.add('show');toastHandle=time}
 function show(id){document.querySelectorAll('.overlay').forEach(el=>el.classList.remove('visible'));if(id)$(id).classList.add('visible')}
 function weaponUI(){const bar=$('weaponBar');bar.innerHTML='';WEAPONS.forEach((w,i)=>{const b=document.createElement('button');b.type='button';b.className='weapon-slot'+(hero.weapon===i?' active':'')+(unlocked(i)?'':' locked');b.setAttribute('aria-label',w.name+(unlocked(i)?'':' locked'));b.innerHTML='<img src="assets/'+icons[i]+'.svg" alt=""><span class="weapon-num">'+(i+1)+'</span>'+(unlocked(i)?'':'<span class="slot-lock">🔒</span>')+'<span class="weapon-tip">'+(unlocked(i)?w.name:unlockCosts[i]+' SOULS')+'</span>';b.addEventListener('pointerdown',e=>{e.preventDefault();setupAudio();selectWeapon(i)});bar.appendChild(b)})}
-function selectWeapon(i){if(state.phase!=='playing')return;if(!unlocked(i)){toast('LOCKED · '+unlockCosts[i]+' SOULS IN ARMORY',72);tone(80,.08,'sawtooth',.018,-30);return}hero.weapon=i;progression.equipped=i;saveProgress();hero.combo=0;hero.action=null;weaponUI();toast(WEAPONS[i].name,58);tone(330+i*33,.1,'triangle',.042,150)}
+function selectWeapon(i){if(state.phase!=='playing')return;if(!unlocked(i)){toast('LOCKED · '+unlockCosts[i]+' SOULS IN ARMORY',72);tone(80,.08,'sawtooth',.018,-30);return}hero.weapon=i;progression.equipped=i;saveProgress();hero.combo=0;hero.action=null;$('combo').textContent='';weaponUI();toast(WEAPONS[i].name,58);tone(330+i*33,.1,'triangle',.042,150)}
 function hud(){const hp=100*hero.hp/hero.maxHp;$('hpFill').style.width=clamp(hp,0,100)+'%';$('hpText').textContent=Math.ceil(hero.hp)+' / '+hero.maxHp;$('stFill').style.width=hero.stamina+'%';$('furyFill').style.width=hero.fury+'%';$('furyText').textContent='FURY '+Math.floor(hero.fury)+'%';$('hudSouls').textContent=state.runSouls+' SOULS';$('waveText').textContent='WAVE '+state.wave;$('killsText').textContent=state.kills+' SLAIN';$('chapterName').textContent=waveName(state.wave);$('specialCost').textContent=hero.fury>=50?'READY':'50';document.querySelector('.combat-btn.special').classList.toggle('cooling',hero.fury<50)}
 function recordsUI(){$('bestWave').textContent=records.best;$('totalSouls').textContent=records.souls;if($('walletSouls'))$('walletSouls').textContent=progression.wallet}
 function bankRun(){if(state.banked||state.runSouls<=0)return;state.banked=true;progression.wallet+=state.runSouls;records.souls+=state.runSouls;records.best=Math.max(records.best,state.wave);saveProgress();save()}
@@ -73,14 +73,14 @@ function renderArmory(){
  b.addEventListener('click',()=>{armoryChoice=i;renderArmory();tone(260,.08,'triangle',.02,40)});grid.appendChild(b)});
  const w=WEAPONS[armoryChoice],cost=unlockCosts[armoryChoice],owned=unlocked(armoryChoice);
  $('walletSouls').textContent=progression.wallet;
- $('armoryDetails').innerHTML='<h3>'+w.name+'</h3><p>'+w.tag+' · Base damage '+w.moves[0].dmg+'–'+w.moves[2].dmg+' · '+w.special.name+'. '+(owned?'Unlocked. Ready to equip.':'<span class="price">Unlock for '+cost+' souls.</span> Souls are banked when a run ends.')+'</p>';
+ $('armoryDetails').innerHTML='<h3>'+w.name+'</h3><p>'+w.tag+' · Base damage '+w.moves[0].dmg+'–'+w.moves[w.moves.length-1].dmg+' · '+w.special.name+'. '+(owned?'Unlocked. Ready to equip.':'<span class="price">Unlock for '+cost+' souls.</span> Souls are banked when a run ends.')+'</p>';
  $('armoryAction').textContent=owned?(hero.weapon===armoryChoice?'EQUIPPED':'EQUIP WEAPON'):'UNLOCK · '+cost+' SOULS';
  $('armoryAction').disabled=owned&&hero.weapon===armoryChoice;
 }
 function armoryAction(){const i=armoryChoice;if(!unlocked(i)){if(progression.wallet<unlockCosts[i]){toast('NOT ENOUGH SOULS',64);tone(90,.2,'sawtooth',.025,-60);return}progression.wallet-=unlockCosts[i];progression.unlocked[i]=true;saveProgress();toast(WEAPONS[i].name+' UNLOCKED',110);tone(470,.32,'triangle',.07,240)}
- if(unlocked(i)){hero.weapon=i;progression.equipped=i;saveProgress();hero.action=null;hero.combo=0;weaponUI();renderArmory();tone(270,.15,'triangle',.04,120)}
+ if(unlocked(i)){hero.weapon=i;progression.equipped=i;saveProgress();hero.action=null;hero.combo=0;$('combo').textContent='';weaponUI();renderArmory();tone(270,.15,'triangle',.04,120)}
 }
-function start(){setupAudio();hero=makeHero();enemies=[];particles=[];projectiles=[];shocks=[];texts=[];state.phase='playing';state.wave=1;state.kills=0;state.runSouls=0;state.banked=false;state.t=0;state.shake=0;state.flash=0;state.slow=0;waveStart();show(null);$('hud').classList.remove('hidden');$('weaponBar').classList.remove('hidden');$('touchControls').classList.remove('hidden');weaponUI();hud();tone(90,.65,'sawtooth',.07,65)}
+function start(){setupAudio();hero=makeHero();$('combo').textContent='';enemies=[];particles=[];projectiles=[];shocks=[];texts=[];state.phase='playing';state.wave=1;state.kills=0;state.runSouls=0;state.banked=false;state.t=0;state.shake=0;state.flash=0;state.slow=0;waveStart();show(null);$('hud').classList.remove('hidden');$('weaponBar').classList.remove('hidden');$('touchControls').classList.remove('hidden');weaponUI();hud();tone(90,.65,'sawtooth',.07,65)}
 function waveStart(){state.pending=state.wave%4===0?1:Math.min(12,3+state.wave*2);state.spawnTimer=50;state.advance=-1;state.announcement=130;toast(state.wave%4===0?'THE WARDEN APPROACHES':'WAVE '+state.wave+' — '+waveName(state.wave),125);hero.hp=Math.min(hero.maxHp,hero.hp+16);hero.stamina=100;hud()}
 function spawn(){let type;if(state.wave%4===0)type='warden';else{const pool=['husk','husk','raider'];if(state.wave>1)pool.push('shade');if(state.wave>2)pool.push('brute');type=pool[Math.floor(Math.random()*pool.length)]}const def=ENEMY[type],fromRight=Math.random()<.78;enemies.push({id:++id,type,x:fromRight?rnd(820,910):rnd(50,100),y:FLOOR+rnd(-7,7),vx:0,vy:0,hp:def.hp*(1+(state.wave-1)*.13),maxHp:def.hp*(1+(state.wave-1)*.13),face:fromRight?-1:1,attack:0,telegraph:0,cooldown:rnd(40,90),stagger:0,inv:0,dead:false,walk:rnd(0,TAU),aggro:0,phase:0,flash:0})}
 function pause(){if(state.phase!=='playing')return;state.phase='paused';show('pauseOverlay')}
@@ -96,13 +96,26 @@ function attack(kind){
  if(state.phase!=='playing'||hero.dodge>0)return;
  const w=WEAPONS[hero.weapon];
  if(kind==='special'&&hero.fury<50){toast('FURY NOT READY',32);return}
- if(hero.action){if(kind!=='light'||hero.action.kind!=='light'||hero.action.elapsed<hero.action.move.wind+hero.action.move.active*.55)return;hero.action=null}
+ if(hero.action){
+  if(hero.weapon===0&&kind==='light'&&hero.action.kind==='light'){
+    // Buffer exactly one light input while the current 12-frame attack completes.
+    // This guarantees no attack sprites get skipped when the player mashes STRIKE.
+    hero.action.queueNext=true;
+    return;
+  }
+  if(kind!=='light'||hero.action.kind!=='light'||hero.action.elapsed<hero.action.move.wind+hero.action.move.active*.55)return;
+  hero.action=null;
+ }
  const cost=kind==='special'?0:kind==='heavy'?18:w.stamina;
  if(hero.stamina<cost){toast('EXHAUSTED',35);return}
  let move;
  if(kind==='light'){
-   hero.combo=hero.comboTimer>0?(hero.combo+1)%3:0;
-   move=w.moves[hero.combo];hero.comboTimer=52;
+   hero.combo=hero.comboTimer>0?(hero.combo+1)%w.moves.length:0;
+   move=w.moves[hero.combo];hero.comboTimer=hero.weapon===0?70:52;
+   if(hero.weapon===0){
+     $('combo').textContent='CHAIN '+(hero.combo+1)+' / 7';
+     if(hero.combo===6){state.shake+=2;tone(240,.16,'triangle',.04,280)}
+   }
  }else {move=kind==='heavy'?w.heavy:w.special;hero.combo=0;hero.comboTimer=0}
  if(kind==='special'){hero.fury-=50;state.flash=9;toast(move.name,65);tone(100,.43,'sawtooth',.09,350)}
  else {hero.stamina-=cost;tone(kind==='heavy'?88:170+rnd(-20,90),kind==='heavy'?.22:.12,'sawtooth',.03,kind==='heavy'?-55:150)}
@@ -148,7 +161,7 @@ function strikeAt(a,idx){
 }
 function hurtHero(amount,from){
  if(state.phase!=='playing'||hero.inv>0||hero.dodge>0)return;
- hero.hp=Math.max(0,hero.hp-amount);hero.inv=31;hero.hit=13;hero.vx=from*4;hero.action=null;hero.combo=0;state.flash=10;state.shake=13;spark(hero.x,hero.y-55,15,'#e75e54');popText(hero.x,hero.y-100,'-'+amount,'#ff736a',19);tone(72,.28,'sawtooth',.09,-46);
+ hero.hp=Math.max(0,hero.hp-amount);hero.inv=31;hero.hit=13;hero.vx=from*4;hero.action=null;hero.combo=0;$('combo').textContent='';state.flash=10;state.shake=13;spark(hero.x,hero.y-55,15,'#e75e54');popText(hero.x,hero.y-100,'-'+amount,'#ff736a',19);tone(72,.28,'sawtooth',.09,-46);
  if(hero.hp<=0)die();
 }
 function updateHero(dt){
@@ -166,12 +179,18 @@ function updateHero(dt){
  hero.step+=Math.abs(hero.vx)*.055*dt;
  hero.stamina=clamp(hero.stamina+(.28+(hero.action?0:.36))*dt,0,100);
  hero.inv=Math.max(0,hero.inv-dt);hero.dodge=Math.max(0,hero.dodge-dt);hero.hit=Math.max(0,hero.hit-dt);hero.landing=Math.max(0,hero.landing-dt);hero.comboTimer=Math.max(0,hero.comboTimer-dt);
- if(hero.comboTimer===0&&!hero.action)hero.combo=0;
+ if(hero.comboTimer===0&&!hero.action){hero.combo=0;if(hero.weapon===0)$('combo').textContent='';}
  const a=hero.action;
  if(a){
    const old=a.elapsed;a.elapsed+=dt;
    for(let i=0;i<a.strikeTimes.length;i++)if(old<a.strikeTimes[i]&&a.elapsed>=a.strikeTimes[i])strikeAt(a,i);
-   const total=a.move.wind+a.move.active+a.move.rec;if(a.elapsed>=total)hero.action=null;
+   const total=a.move.wind+a.move.active+a.move.rec;
+   if(a.elapsed>=total){
+     // Finish all 12 sprite frames before advancing to the next attack.
+     const chained=hero.weapon===0&&a.kind==='light'&&a.queueNext&&hero.comboTimer>0;
+     hero.action=null;
+     if(chained&&state.phase==='playing')attack('light');
+   }
  }
 }
 function updateEnemies(dt){
@@ -263,7 +282,7 @@ function drawBackground(){
 }
 function groundShadow(x,y,s=1){g.fillStyle=grad(x,y,48*s,'#0000008f');g.fillRect(x-55*s,y-20*s,110*s,38*s);ellipse(x,y,31*s,6*s,'#0009')}
 function drawHero(){
- if(window.ChainfallHeroV5 && window.ChainfallHeroV5.drawHero(g,hero,state)){return;}
+ if(window.ChainfallHeroV6 && window.ChainfallHeroV6.drawHero(g,hero,state)){if(hero.action&&hero.action.kind!=='light')drawAttackFX(hero);return;}
  if(window.ChainfallArt&&window.ChainfallArt.drawHero(g,hero,state)){
   g.save();g.translate(hero.x,hero.y);g.scale(hero.face,1);
   g.translate(26,-64);
