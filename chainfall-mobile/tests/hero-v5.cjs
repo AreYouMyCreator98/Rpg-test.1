@@ -26,5 +26,6 @@ assert.equal(sandbox.window.ChainfallHeroV5.getState(p),'attack');
 assert.equal(sandbox.window.ChainfallHeroV5.frameIndex(p,{t:30},'attack'),2);
 p.weapon=1;assert(!sandbox.window.ChainfallHeroV5.drawHero(ctx,p,{t:6}),'other weapons must use original art renderer');
 const game=fs.readFileSync('chainfall-mobile/game.js','utf8');
-assert(game.includes('ChainfallHeroV5.drawHero'),'hero art not installed in combat renderer');
+assert(game.includes('ChainfallHeroV6.drawHero'),'new hero V6 renderer not installed');
+assert(fs.readFileSync('chainfall-mobile/hero-v6.js','utf8').includes('assets/hero-v5/'),'V6 must preserve V5 idle/walk/run assets');
 console.log('V5 illustrated hero assets verified: 4 transparent 3x2 raster sheets, 24 frames, state transitions, safe weapon fallback.');
