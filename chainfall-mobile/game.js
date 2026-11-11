@@ -263,6 +263,7 @@ function drawBackground(){
 }
 function groundShadow(x,y,s=1){g.fillStyle=grad(x,y,48*s,'#0000008f');g.fillRect(x-55*s,y-20*s,110*s,38*s);ellipse(x,y,31*s,6*s,'#0009')}
 function drawHero(){
+ if(window.ChainfallHeroV5 && window.ChainfallHeroV5.drawHero(g,hero,state)){return;}
  if(window.ChainfallArt&&window.ChainfallArt.drawHero(g,hero,state)){
   g.save();g.translate(hero.x,hero.y);g.scale(hero.face,1);
   g.translate(26,-64);

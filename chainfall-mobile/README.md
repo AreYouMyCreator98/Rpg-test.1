@@ -26,3 +26,6 @@ The files live under chainfall-mobile/ on a dedicated Git branch so the reposito
 - Weapon unlock costs: 0, 120, 250, 400, 620, 900, 1300, 1800. Souls are banked on death or returning to title.
 - Progress is stored locally under `chainfall_v2_progress`; existing lifetime totals are separate.
 - Mobile performance: atlas images loaded asynchronously and reused.
+
+## V5 Illustrated hero
+Added the four original generated transparent character animation sheets in assets/hero-v5: idle, walk, run, attack. Each is WebP RGBA 768x512 (3 columns x 2 rows, each frame 256x256). The renderer creates **24 separate 256x256 canvases** once at load and draws a single canvas per animation tick. Only Chain Blades (weapon index 0) use this illustrated character; other weapons use the V4 original rendering until matching weapon-specific animations are created. Game combat, hitboxes, upgrades and enemy systems unchanged. The originals as separate full-resolution PNG frame files are also provided in the downloadable asset ZIP.
