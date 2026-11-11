@@ -1,0 +1,22 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const script=fs.readFileSync('chainfall-mobile/art-v4.js','utf8');
+const drawn=[],requested=[];
+class ImageStub{get complete(){return true}get naturalWidth(){return 192}set src(v){this.url=v;requested.push(v)}}
+const ctx={save(){},restore(){},drawImage(...a){drawn.push(a)},beginPath(){},ellipse(){},fill(){},fillRect(){},translate(){},scale(){},stroke(){},arc(){},fillText(){}};
+const env={window:{},Image:ImageStub,Math,console};
+vm.runInNewContext(script,env,{filename:'art-v4.js'});
+const api=env.window.ChainfallArt;
+const hero={x:210,y:427,face:1,action:null,inv:0,fury:0,vx:0,ground:true,vy:0,dodge:0,hit:0};
+assert(api.drawHero(ctx,hero,{t:77,wave:1}));
+assert.equal(drawn.length,1,'Only one hero sprite drawn');
+assert.equal(drawn[0].length,5,'Whole SVG draw only');
+assert(/assets\/v4\/actors\/hero\/idle\/f[0-5]\.svg$/.test(drawn[0][0].url));
+assert(drawn[0][3]>175&&drawn[0][3]<185,'Hero must preserve visual scale');
+assert(Math.abs(drawn[0][1]+drawn[0][3]/2)<.01,'Sprite centered on player');
+drawn.length=0;
+const enemy={type:'husk',x:730,y:427,face:-1,hp:60,maxHp:65,telegraph:0,attack:0,vx:0,dead:false,flash:0};
+assert(api.drawEnemy(ctx,enemy,{scale:1,range:52},{t:77,wave:1}));
+assert.equal(drawn.length,1,'Only one enemy sprite drawn');
+assert(/assets\/v4\/actors\/husk\/idle\/f[0-5]\.svg$/.test(drawn[0][0].url));
+assert(!requested.some(x=>x.includes('/v3/actors/')),'Old sprites still loading');
+console.log('V4 renderer verified: one centered individual 192x192 sprite per character.');

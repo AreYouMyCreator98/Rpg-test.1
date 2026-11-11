@@ -14,7 +14,7 @@ jobs:
       - name: Verify JavaScript syntax
         run: |
           node --check chainfall-mobile/game.js
-          node --check chainfall-mobile/art-v3.js
+          node --check chainfall-mobile/art-v4.js
       - name: Headless gameplay smoke test
         run: node chainfall-mobile/tests/smoke.cjs
       - name: Validate animation atlases and 3-layer scenes
@@ -25,5 +25,9 @@ jobs:
         run: node chainfall-mobile/tests/frames-v3.cjs
       - name: Real single-frame renderer regression
         run: node chainfall-mobile/tests/renderer-v3.cjs
+      - name: Verify all 234 centered character frames
+        run: node chainfall-mobile/tests/frames-v4.cjs
+      - name: Verify new renderer is centered
+        run: node chainfall-mobile/tests/renderer-v4.cjs
       - name: XML check all original SVG assets
         run: python -c "import glob,xml.etree.ElementTree as ET; [ET.parse(p) for p in glob.glob('chainfall-mobile/assets/v2/**/*.svg',recursive=True)]; print('All SVGs valid XML')"

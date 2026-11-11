@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="-32 0 192 192"><defs>
+<linearGradient id="steel" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#eef1e8"/><stop offset=".25" stop-color="#85939a"/><stop offset=".55" stop-color="#303845"/><stop offset=".8" stop-color="#abb0a4"/><stop offset="1" stop-color="#25232b"/></linearGradient>
+<linearGradient id="bronze" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#f9e0a7"/><stop offset=".4" stop-color="#b17a48"/><stop offset=".8" stop-color="#513c36"/><stop offset="1" stop-color="#dbad70"/></linearGradient>
+<linearGradient id="black" x1="0" y1="0" x2=".6" y2="1"><stop stop-color="#73757a"/><stop offset=".22" stop-color="#292e39"/><stop offset=".65" stop-color="#171d29"/><stop offset="1" stop-color="#49505b"/></linearGradient>
+<radialGradient id="aura"><stop stop-color="#eeb16f" stop-opacity=".75"/><stop offset=".32" stop-color="#b66441" stop-opacity=".24"/><stop offset="1" stop-color="#ad6d44" stop-opacity="0"/></radialGradient>
+<filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
+</defs><g transform="translate(0 -1.5588457268119895) scale(1)"><g transform="rotate(7 64 115)"><path d="M44 82L29 103Q20 130 15.725386608210716 169L37 152L30 179L57 160L87 169L104 184L101 144L96 96L82 79Z" fill="#592b31" stroke="#e2b77a" stroke-opacity=".55" stroke-width="2"/>
+ <path d="M39 87L27 136L48 144M88 95L103 157L89 148" fill="none" stroke="#e2b77a" stroke-opacity=".35" stroke-width="2"/><g transform="rotate(9.699484522385713 51 128)">
+  <path d="M41 121L61 122L56 154L51 180L31 180L43 157Z" fill="url(#black)" stroke="#e2b77a" stroke-width="1.5"/>
+  <path d="M44 143L59 144L61 164L42 166Z" fill="url(#steel)" opacity=".62"/>
+  <path d="M41 175L53 174L56 183L37 184Z" fill="#171921" stroke="#e2b77a" stroke-width="2"/>
+  <path d="M41 176H61" stroke="#e2b77a" opacity=".8"/></g><g transform="rotate(-9.699484522385713 77 128)">
+  <path d="M67 121L87 122L96 154L95 180L75 180L69 157Z" fill="url(#black)" stroke="#e2b77a" stroke-width="1.5"/>
+  <path d="M70 143L85 144L87 164L68 166Z" fill="url(#steel)" opacity=".62"/>
+  <path d="M67 175L95 174L100 183L63 184Z" fill="#171921" stroke="#e2b77a" stroke-width="2"/>
+  <path d="M67 176H87" stroke="#e2b77a" opacity=".8"/></g><path d="M39 83L51 72L78 72L91 85L92 116L81 139L47 139L35 116Z" fill="url(#black)" stroke="#e2b77a" stroke-width="3"/>
+ <path d="M48 86L64 79L80 87L77 116L64 128L51 116Z" fill="#343b49" stroke="url(#bronze)" stroke-width="2"/>
+ <path d="M49 93L64 98L80 91M47 109L64 116L81 108" stroke="#e2b77a" stroke-width="2" opacity=".9"/>
+ <path d="M36 126L93 126L90 135L38 135Z" fill="#17191f" stroke="#e2b77a" stroke-width="3"/>
+ <path d="M64 130L69 137L64 143L59 137Z" fill="#e2b77a"/><polygon points="64,94 73,105 64,119 55,105" fill="#62d5d7"/><polygon points="64,97 69,105 64,113 59,105" fill="#e9f9f3"/><path d="M48 86L37 75L49 64L65 72L80 64L92 76L80 86" fill="none" stroke="#e2b77a" stroke-width="4"/><path d="M49 77Q32 58 17 72L13 90L35 96Z" fill="url(#steel)" stroke="#e2b77a" stroke-width="3"/>
+ <path d="M37 69L18 59L21 78" fill="#777784" stroke="#e2b77a" stroke-width="2"/>
+ <circle cx="24" cy="84" r="4" fill="#e2b77a"/><path d="M79 77Q96 58 111 72L115 90L93 96Z" fill="url(#steel)" stroke="#e2b77a" stroke-width="3"/>
+ <path d="M91 69L110 59L107 78" fill="#777784" stroke="#e2b77a" stroke-width="2"/>
+ <circle cx="104" cy="84" r="4" fill="#e2b77a"/><path d="M48 45L56 39L73 39L81 48L81 73L72 84L56 84L47 73Z" fill="#161c26" stroke="#e2b77a" stroke-width="2.5"/>
+ <path d="M45 56L42 38L52 24L63 32L77 22L85 40L82 56L75 49L52 50Z" fill="url(#steel)" stroke="#e2b77a" stroke-width="2.5"/>
+ <path d="M50 58L61 60L63 68L51 66Z" fill="#ffb263" filter="url(#glow)"/><path d="M66 60L78 58L77 66L65 68Z" fill="#ffb263" filter="url(#glow)"/>
+ <path d="M48 57L61 58L61 65L49 65M67 58L80 57L78 65L66 65" fill="none" stroke="#ffb263" stroke-width="2.2"/>
+ <path d="M59 75L68 75L73 70L70 82L58 82L54 71Z" fill="url(#bronze)"/><g transform="rotate(24.24871130596428 34 89)">
+  <path d="M31 89L45 91L41 125L35 139L24 132Z" fill="url(#black)" stroke="#e2b77a" stroke-width="2.5"/>
+  <path d="M26 124L40 121L43 139L32 149L22 138Z" fill="url(#steel)" stroke="#e2b77a" stroke-width="2"/>
+  </g><g transform="rotate(-24.24871130596428 95 91)">
+  <path d="M88 90L99 84L111 128L102 140L89 124Z" fill="url(#black)" stroke="#e2b77a" stroke-width="3"/>
+  <path d="M99 124L112 122L115 140L103 151L94 141Z" fill="url(#steel)" stroke="#e2b77a" stroke-width="2.5"/>
+  
+  </g></g></g></svg>
